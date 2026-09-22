@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleName</key><string>ChatGPT Proxy Launcher</string>
+<key>CFBundleDisplayName</key><string>ChatGPT 代理启动器</string>
+<key>CFBundleIdentifier</key><string>local.chatgpt-proxy-launcher</string>
+<key>CFBundleExecutable</key><string>ChatGPTProxyLauncher</string>
+<key>CFBundleIconFile</key><string>LauncherIcon.icns</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>LSMinimumSystemVersion</key><string>13.0</string>
+<key>NSHighResolutionCapable</key><true/>
+<key>NSPrincipalClass</key><string>NSApplication</string>
+<key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
+<key>NSHumanReadableCopyright</key><string>Copyright © 2026 Oliver. MIT License.</string>
+</dict></plist>

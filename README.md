@@ -15,6 +15,21 @@
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
 </p>
 
+## Preview
+
+<table>
+  <tr>
+    <th width="50%">Dark</th>
+    <th width="50%">Light</th>
+  </tr>
+  <tr>
+    <td><a href="docs/images/preview-dark.png"><img src="docs/images/preview-dark.png" alt="深色模式" width="100%"></a></td>
+    <td><a href="docs/images/preview-light.png"><img src="docs/images/preview-light.png" alt="浅色模式" width="100%"></a></td>
+  </tr>
+</table>
+
+<sub>截图展示早期界面，当前开源发布版本为 v1.0.0。</sub>
+
 ## 简介
 
 如果你使用 Clash Verge 等代理工具，希望 ChatGPT 通过本地代理连接，又不想为了一个应用开启 TUN、影响其他网络工具，这个启动器可以帮你单独配置 ChatGPT 的代理入口。

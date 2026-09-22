@@ -7,6 +7,8 @@ ROOT_FILES = {
     '.editorconfig', '.gitattributes', '.gitignore', 'VERSION', 'LICENSE', 'Makefile',
     'THIRD_PARTY_NOTICES.md', 'README.md', 'README.en.md', 'AUTHORS.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md',
 }
+# Only reviewed README screenshots are included in source exports.
+DOCUMENTATION_IMAGES = {'docs/images/preview-dark.png', 'docs/images/preview-light.png'}
 SOURCE_DIRS = {'.github', 'Sources', 'Tests', 'Resources', 'scripts', 'docs'}
 EXTENSIONS = {'.swift', '.py', '.sh', '.md', '.txt', '.plist', '.html', '.yml', '.yaml'}
 
@@ -20,7 +22,7 @@ def version():
 
 def source_files():
     result = []
-    for name in sorted(ROOT_FILES):
+    for name in sorted(ROOT_FILES | DOCUMENTATION_IMAGES):
         path = ROOT / name
         if path.exists():
             if path.is_symlink():

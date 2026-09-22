@@ -15,6 +15,21 @@
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">Report an issue</a>
 </p>
 
+## Preview
+
+<table>
+  <tr>
+    <th width="50%">Dark</th>
+    <th width="50%">Light</th>
+  </tr>
+  <tr>
+    <td><a href="docs/images/preview-dark.png"><img src="docs/images/preview-dark.png" alt="Dark appearance" width="100%"></a></td>
+    <td><a href="docs/images/preview-light.png"><img src="docs/images/preview-light.png" alt="Light appearance" width="100%"></a></td>
+  </tr>
+</table>
+
+<sub>Screenshots show an earlier build; the current open-source release is v1.0.0.</sub>
+
 ## About
 
 If you use a proxy tool such as Clash Verge and want ChatGPT to use its local proxy without enabling TUN or affecting other networking tools, this launcher lets you configure a dedicated proxy entry point for ChatGPT.

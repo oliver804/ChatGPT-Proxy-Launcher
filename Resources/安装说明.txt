@@ -1,0 +1,27 @@
+ChatGPT Proxy Launcher
+作者：Oliver
+邮箱：oliver804x@gmail.com
+许可证：MIT（见 LICENSE）
+
+安装与使用
+1. 将 ChatGPT Proxy Launcher 拖入 Applications。
+2. 保持 Clash Verge 等 HTTP 代理运行，确认混合端口可用。
+3. 默认地址 127.0.0.1，端口 7890；按实际配置保存。
+4. 完全退出已运行的 ChatGPT，再通过启动器启动。
+5. 查看代理情况，可打开本地详细报告。
+
+关闭主窗口后隐藏 Dock 图标，保留菜单栏入口；重新打开时恢复。
+菜单栏电源按钮用于完全退出启动器，不会停止 ChatGPT。
+更新时先退出旧启动器再替换应用，设置会保留。
+
+适用于 Apple Silicon、macOS 13+ 和可识别的 Electron 版 ChatGPT。
+不支持旧版原生 ChatGPT。界面为中文，项目文档提供中文和英文。
+本工具不修改系统代理、DNS 或 TUN。以后请从启动器启动 ChatGPT。
+不保证语音、WebRTC、UDP 或所有子进程均经过代理。
+
+默认安装包使用 ad-hoc 签名，未获得 Apple Developer ID 签名或公证。
+如系统阻止打开，请核对来源后在“隐私与安全性”中允许打开。
+无需关闭 SIP。无账号登录、遥测或自动上传诊断功能。
+诊断报告可能含网络信息，公开分享前请脱敏。
+
+独立项目，与 OpenAI 无隶属关系。English: see Installation.txt.

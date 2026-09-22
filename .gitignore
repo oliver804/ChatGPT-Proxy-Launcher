@@ -1,0 +1,23 @@
+# Generated output and local development state
+/build/
+/dist/
+/.idea/
+/.vscode/
+/.agents/
+/.codex/
+.DS_Store
+*.xcuserstate
+__pycache__/
+*.py[cod]
+*.log
+*.dmg
+*.app/
+*.dSYM/
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile

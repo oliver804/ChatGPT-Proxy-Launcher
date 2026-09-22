@@ -1,0 +1,27 @@
+ChatGPT Proxy Launcher
+Author: Oliver
+Email: oliver804x@gmail.com
+License: MIT (see LICENSE)
+
+Installation and use
+1. Drag ChatGPT Proxy Launcher into Applications.
+2. Keep an HTTP proxy such as Clash Verge running with its mixed port available.
+3. The defaults are 127.0.0.1 and port 7890; save your actual proxy settings.
+4. Fully quit any running ChatGPT instance, then launch it through this launcher.
+5. Check proxy status and optionally open the local diagnostic report.
+
+Closing the main window hides the Dock icon and keeps the menu bar entry.
+Reopening the window restores the Dock icon. The power button quits only the launcher.
+Quit the old launcher before replacing it during an update; settings are preserved.
+
+Requires Apple Silicon, macOS 13+, and a detectable Electron version of ChatGPT.
+Older native ChatGPT versions are unsupported. The UI is Chinese; project docs are bilingual.
+The launcher does not change system proxy, DNS, or TUN. Start ChatGPT through it to apply settings.
+Voice, WebRTC, UDP, and all child processes are not guaranteed to use the proxy.
+
+Default packages are ad-hoc signed, not Developer ID signed or notarized by Apple.
+If macOS blocks the app, verify the source and allow it in Privacy & Security.
+Disabling SIP is unnecessary. No login, telemetry, or automatic diagnostic uploads.
+Reports may contain network details; redact them before public sharing.
+
+Independent project; not affiliated with OpenAI. 中文：见 安装说明.txt。

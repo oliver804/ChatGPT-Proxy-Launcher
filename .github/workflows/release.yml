@@ -1,0 +1,52 @@
+name: Draft release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      SKIP_SYSTEM_ICON_CHECK: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate version tag
+        shell: bash
+        run: |
+          source scripts/common.sh
+          test "$GITHUB_REF_NAME" = "v$PROJECT_VERSION"
+      - name: Check source and test core behavior
+        run: |
+          make check
+          make test
+      - name: Build and verify
+        run: |
+          make dmg
+          make verify
+      - name: Create a draft release for review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          source scripts/common.sh
+          gh release create "$GITHUB_REF_NAME" \
+            "$RELEASE_DIR/$DMG_NAME" \
+            "$RELEASE_DIR/$SOURCE_NAME" \
+            "$RELEASE_DIR/SHA256SUMS.txt" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag --draft \
+            --title "ChatGPT Proxy Launcher $PROJECT_VERSION" \
+            --notes-file docs/RELEASE_NOTES.md

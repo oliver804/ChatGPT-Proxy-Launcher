@@ -13,6 +13,8 @@
 
 A `v*` tag runs the release workflow: validate the tag against `VERSION`, run source and core checks, build and verify the DMG, export clean source, and create a **draft GitHub Release** with attachments. Review the draft and files before clicking Publish release. The workflow uses the repository's temporary `GITHUB_TOKEN`; never commit personal tokens.
 
+To explicitly request public publication, use an annotated tag with a standalone `Publish-Release: true` line in its message. The workflow publishes only after every check passes and all assets are uploaded. Tags without that marker remain draft-only.
+
 ## Local release files
 
 ```sh

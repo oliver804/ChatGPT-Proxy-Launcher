@@ -7,10 +7,10 @@ ROOT_FILES = {
     '.editorconfig', '.gitattributes', '.gitignore', 'VERSION', 'LICENSE', 'Makefile',
     'THIRD_PARTY_NOTICES.md', 'README.md', 'README.en.md', 'AUTHORS.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md',
 }
-# Only reviewed README screenshots are included in source exports.
-DOCUMENTATION_IMAGES = {'docs/images/preview-dark.png', 'docs/images/preview-light.png'}
-SOURCE_DIRS = {'.github', 'Sources', 'Tests', 'Resources', 'scripts', 'docs'}
-EXTENSIONS = {'.swift', '.py', '.sh', '.md', '.txt', '.plist', '.html', '.yml', '.yaml'}
+# Only reviewed documentation and brand images are included in source exports.
+DOCUMENTATION_IMAGES = {'docs/images/preview-dark.png', 'docs/images/preview-light.png', 'site/assets/icon.png'}
+SOURCE_DIRS = {'.github', 'Sources', 'Tests', 'Resources', 'scripts', 'docs', 'site'}
+EXTENSIONS = {'.swift', '.py', '.sh', '.md', '.txt', '.plist', '.html', '.yml', '.yaml', '.css', '.js'}
 
 
 def version():

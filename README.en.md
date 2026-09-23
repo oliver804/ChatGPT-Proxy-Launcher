@@ -9,6 +9,7 @@
 </p>
 <p align="center">
   <a href="README.md">简体中文</a> · <b>English</b><br>
+  <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/en/">Website</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.0.0">Download</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#faq">FAQ</a> ·

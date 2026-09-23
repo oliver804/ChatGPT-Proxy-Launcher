@@ -45,3 +45,11 @@ Update `VERSION`, README version/download examples, `CHANGELOG.md`, and the supp
 - The exported source ZIP excludes Git history and local settings.
 - Do not upload raw diagnostics, desktop screenshots, signing certificates, configuration backups, or build caches.
 - Local checks do not prove remote CI has passed; verify the workflow after pushing to your repository.
+
+## Website (GitHub Pages)
+
+Website sources live in `site/`, with a Chinese homepage and an English page under `en/`. Run `make site` to build and check `build/site/`; preview locally with `python3 -m http.server 4173 --directory build/site`. The build copies only explicitly listed pages and reviewed images, never the repository root.
+
+For the first deployment, a repository administrator must select **GitHub Actions** under **Settings → Pages → Build and deployment → Source**. Then push website changes, or use **Actions → Website → Run workflow**. The workflow checks both locales, assets, download versions, and privacy before deploying only the website files. Pull requests run build checks without deploying.
+
+The website is hosted at `https://oliver804.github.io/ChatGPT-Proxy-Launcher/`, with English under `en/`. When releasing a new version, update the download links and version copy in both pages; `make site` checks download links against `VERSION`. Website deployments do not change app releases or tags.

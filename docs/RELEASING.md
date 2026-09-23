@@ -45,3 +45,11 @@ make verify
 - 默认导出的源码 ZIP 不含 Git 历史和本地配置。
 - 不上传原始诊断报告、屏幕截图、签名证书、配置备份或构建缓存。
 - 工作流尚未在你的 GitHub 仓库执行前，不能把本地通过视为远端 CI 已通过。
+
+## 官网（GitHub Pages）
+
+官网源码位于 `site/`，包含中文首页与 `en/` 英文页面。运行 `make site` 生成并检查 `build/site/`；可用 `python3 -m http.server 4173 --directory build/site` 本地预览。构建只复制明确列出的网页和已审核图片，不发布仓库根目录。
+
+首次部署需由仓库管理员在 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。随后推送网站修改，或在 **Actions → Website → Run workflow** 手动触发。工作流检查双语链接、资源、下载版本和隐私后，仅部署网站文件。PR 只构建检查，不部署。
+
+官网地址为 `https://oliver804.github.io/ChatGPT-Proxy-Launcher/`，英文版为其 `en/` 子路径。更新版本时同步两种语言的安装包链接和版本文案；`make site` 会核验下载链接与 `VERSION` 一致。官网发布不修改应用 Release 或标签。

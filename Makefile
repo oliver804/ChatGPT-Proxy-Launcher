@@ -1,4 +1,4 @@
-.PHONY: check test build dmg verify source integration ui previews
+.PHONY: check test build dmg verify source integration ui previews site
 check:
 	python3 scripts/privacy-check.py
 	for script in scripts/*.sh; do bash -n "$$script" || exit; done
@@ -26,3 +26,7 @@ ui:
 
 previews:
 	bash scripts/render-previews.sh
+
+site:
+	python3 scripts/build-site.py
+	python3 scripts/check-site.py

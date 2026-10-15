@@ -12,3 +12,7 @@ Launches use Chromium's `--proxy-server` plus HTTP/HTTPS/ALL_PROXY environment v
 Builds generate version metadata from `VERSION` and preserve the compatible preferences domain. Fresh packaging directories contain bilingual installation instructions and the MIT license. Compiler path mapping avoids embedding developer directories in the executable.
 
 CI runs source checks, core tests, builds, and package validation. Without a graphical session, system icon-service validation is skipped while icon declaration and ICNS decoding checks remain enabled. Run full `make verify`, `make integration`, and `make ui` in a local graphical session before publishing.
+
+## Interface language
+
+`Sources/Localization.swift` contains the Chinese / English catalog. First launch follows the system language (Chinese or English fallback), then saves an explicit choice in `interfaceLanguage`. SwiftUI observes the model language; background checks receive an immutable language snapshot. Switching is disabled while an operation runs and clears stale diagnostic text, without saving network edits. System-owned dialogs may retain the macOS language.

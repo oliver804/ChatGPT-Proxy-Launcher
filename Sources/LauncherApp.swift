@@ -41,11 +41,12 @@ private struct ActionStyle: ButtonStyle {
 }
 
 private struct RunningBadge: View {
-    var running: Bool
+    @ObservedObject var model: LauncherModel
+    var running: Bool { model.running }
     var body: some View {
         HStack(spacing: 6) {
             Circle().fill(running ? Palette.accent : Color.secondary).frame(width: 6, height: 6)
-            Text(running ? "ChatGPT 运行中" : "ChatGPT 未运行").font(.system(size: 11, weight: .medium))
+            Text(running ? model.text("ChatGPT 运行中") : model.text("ChatGPT 未运行")).font(.system(size: 11, weight: .medium))
         }.foregroundStyle(running ? Palette.accent : .secondary)
             .padding(.horizontal, 11).padding(.vertical, 7)
             .background((running ? Palette.accent : Color.secondary).opacity(0.08), in: Capsule())
@@ -75,6 +76,22 @@ private struct StatusTile: View {
     }
 }
 
+private struct LanguagePicker: View {
+    @ObservedObject var model: LauncherModel
+    var body: some View {
+        Picker("中文 / English", selection: Binding(get: { model.language }, set: { model.setLanguage($0) })) {
+            ForEach(AppLanguage.allCases) { language in
+                Text(language.label).tag(language)
+            }
+        }
+        .labelsHidden()
+        .accessibilityLabel("中文 / English")
+        .help(model.text("界面语言"))
+        .frame(width: 135)
+        .disabled(model.busy)
+    }
+}
+
 struct LauncherView: View {
     @ObservedObject var model: LauncherModel
 
@@ -91,6 +108,7 @@ struct LauncherView: View {
         .background(Palette.canvas)
         .background(MainWindowPresence())
         .tint(Palette.accent)
+        .environment(\.locale, model.language.locale)
         .sheet(isPresented: $model.showDetails) { reportSheet }
     }
 
@@ -98,12 +116,11 @@ struct LauncherView: View {
         HStack(spacing: 12) {
             BrandMark()
             VStack(alignment: .leading, spacing: 4) {
-                Text("ChatGPT 代理").font(.system(size: 23, weight: .semibold))
-                Text("独立连接，轻松启动").font(.system(size: 12)).foregroundStyle(.secondary)
+                Text("Local Route Launcher").font(.system(size: 23, weight: .semibold))
+                Text(model.text("独立连接，轻松启动")).font(.system(size: 12)).foregroundStyle(.secondary)
             }
             Spacer()
-            Text("PROXY LAUNCHER").font(.system(size: 9, weight: .medium, design: .monospaced))
-                .tracking(1.5).foregroundStyle(.tertiary)
+            LanguagePicker(model: model)
         }.padding(.bottom, 2)
     }
 
@@ -111,13 +128,13 @@ struct LauncherView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(model.running ? "连接，从这里开始。" : "为 ChatGPT 准备就绪。")
+                    Text(model.running ? model.text("连接，从这里开始。") : model.text("为 ChatGPT 准备就绪。"))
                         .font(.system(size: 20, weight: .semibold))
-                    Text("使用专属代理入口，无需开启 TUN。")
+                    Text(model.text("仅为兼容应用传入设置，不修改系统网络。"))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 Spacer()
-                RunningBadge(running: model.running)
+                RunningBadge(model: model)
             }
             HStack(spacing: 12) {
                 Label("ChatGPT", systemImage: "bubble.left.and.bubble.right")
@@ -125,12 +142,12 @@ struct LauncherView: View {
                 Rectangle().fill(Palette.accent.opacity(0.2)).frame(height: 1)
                 Image(systemName: "arrow.right").font(.system(size: 10, weight: .medium)).foregroundStyle(Palette.accent)
                 Text(model.endpointLabel).font(.system(size: 12, weight: .medium, design: .monospaced)).foregroundStyle(Palette.accent)
-                Text("HTTP 代理").font(.system(size: 10)).foregroundStyle(.secondary)
+                Text(model.text("HTTP 代理")).font(.system(size: 10)).foregroundStyle(.secondary)
             }.padding(13).background(Palette.accent.opacity(0.045), in: RoundedRectangle(cornerRadius: 10))
             HStack(spacing: 10) {
-                Button(action: model.start) { Label("启动 ChatGPT", systemImage: "play.fill") }
+                Button(action: model.start) { Label(model.text("启动 ChatGPT"), systemImage: "play.fill") }
                     .buttonStyle(ActionStyle(prominent: true)).disabled(model.busy || model.running)
-                Button(action: model.stop) { Label("停止 ChatGPT", systemImage: "stop.fill") }
+                Button(action: model.stop) { Label(model.text("停止 ChatGPT"), systemImage: "stop.fill") }
                     .buttonStyle(ActionStyle()).disabled(model.busy || !model.running)
             }
         }.modifier(Surface())
@@ -139,20 +156,20 @@ struct LauncherView: View {
     private var settingsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Label("代理设置", systemImage: "slider.horizontal.3").font(.system(size: 13, weight: .semibold))
+                Label(model.text("代理设置"), systemImage: "slider.horizontal.3").font(.system(size: 13, weight: .semibold))
                 Spacer()
-                Text("更改后需重新启动 ChatGPT").font(.system(size: 10)).foregroundStyle(.secondary)
+                Text(model.text("更改后需重新启动 ChatGPT")).font(.system(size: 10)).foregroundStyle(.secondary)
             }
             HStack(alignment: .bottom, spacing: 12) {
-                proxyField("代理地址", placeholder: "127.0.0.1", text: $model.host)
-                proxyField("混合端口", placeholder: "7890", text: $model.port).frame(width: 95)
-                Button("保存设置", action: model.save).controlSize(.large).frame(height: 36)
+                proxyField(model.text("代理地址"), placeholder: "127.0.0.1", text: $model.host)
+                proxyField(model.text("端口"), placeholder: "7890", text: $model.port).frame(width: 95)
+                Button(model.text("保存设置"), action: model.save).controlSize(.large).frame(height: 36)
             }
             HStack(spacing: 7) {
                 Image(systemName: "app").foregroundStyle(.tertiary)
-                Text(model.appPath).lineLimit(1).truncationMode(.middle).help("ChatGPT 版本：\(model.version)")
+                Text(model.appPath).lineLimit(1).truncationMode(.middle).help(model.text("ChatGPT 版本：%@" , String(model.version)))
                 Spacer(minLength: 12)
-                Button("选择应用", action: model.chooseApplication).buttonStyle(.link)
+                Button(model.text("选择应用"), action: model.chooseApplication).buttonStyle(.link)
             }.font(.system(size: 11)).foregroundStyle(.secondary)
         }.modifier(Surface()).disabled(model.busy)
     }
@@ -172,21 +189,21 @@ struct LauncherView: View {
     private var diagnosticsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Label("连接检查", systemImage: "waveform.path.ecg").font(.system(size: 13, weight: .semibold))
+                Label(model.text("连接检查"), systemImage: "waveform.path.ecg").font(.system(size: 13, weight: .semibold))
                 Spacer()
-                Button(action: model.refresh) { Label("查看代理情况", systemImage: "arrow.clockwise") }
+                Button(action: model.refresh) { Label(model.text("查看代理情况"), systemImage: "arrow.clockwise") }
                     .buttonStyle(.link).font(.system(size: 11)).disabled(model.busy)
             }
             HStack(spacing: 10) {
-                StatusTile(title: "代理连通", value: model.proxyStatus, success: model.proxyOK, checked: model.checkedAt != nil, symbol: "network")
-                StatusTile(title: "启动参数", value: model.parameterStatus, success: model.parameterOK, checked: model.checkedAt != nil, symbol: "slider.horizontal.3")
-                StatusTile(title: "实际连接", value: model.connectionStatus, success: model.connectionOK, checked: model.checkedAt != nil, symbol: "arrow.left.arrow.right")
+                StatusTile(title: model.text("代理连通"), value: model.proxyStatus, success: model.proxyOK, checked: model.checkedAt != nil, symbol: "network")
+                StatusTile(title: model.text("启动参数"), value: model.parameterStatus, success: model.parameterOK, checked: model.checkedAt != nil, symbol: "slider.horizontal.3")
+                StatusTile(title: model.text("实际连接"), value: model.connectionStatus, success: model.connectionOK, checked: model.checkedAt != nil, symbol: "arrow.left.arrow.right")
             }
             HStack {
-                Text(model.checkedAt.map { "最近检查 " + $0.formatted(date: .omitted, time: .standard) } ?? "检查代理连通性、启动配置与实际连接")
+                Text(model.checkedAt.map { model.text("最近检查 ") + $0.formatted(date: .omitted, time: .standard) } ?? model.text("检查代理连通性、启动配置与实际连接"))
                     .font(.system(size: 10)).foregroundStyle(.secondary)
                 Spacer()
-                Button("详细报告") { model.showDetails = true }.buttonStyle(.link).font(.system(size: 11))
+                Button(model.text("详细报告")) { model.showDetails = true }.buttonStyle(.link).font(.system(size: 11))
             }
         }.modifier(Surface())
     }
@@ -201,26 +218,28 @@ struct LauncherView: View {
                 .frame(minHeight: 27, alignment: .topLeading)
             HStack(spacing: 5) {
                 Image(systemName: "menubar.rectangle")
-                Text("关闭窗口后，仍可从菜单栏访问")
+                Text(model.text("关闭窗口后，仍可从菜单栏访问"))
                 Spacer()
                 Text("v\(model.launcherVersion)")
             }.font(.system(size: 10)).foregroundStyle(.secondary)
+            Text(model.text("独立开源工具，与 OpenAI 无隶属或背书关系。"))
+                .font(.system(size: 10)).foregroundStyle(.secondary)
         }.padding(.horizontal, 3)
     }
 
     private var reportSheet: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Label("代理检查报告", systemImage: "doc.text.magnifyingglass").font(.system(size: 18, weight: .semibold))
+                Label(model.text("代理检查报告"), systemImage: "doc.text.magnifyingglass").font(.system(size: 18, weight: .semibold))
                 Spacer()
-                Button("完成") { model.showDetails = false }.keyboardShortcut(.defaultAction)
+                Button(model.text("完成")) { model.showDetails = false }.keyboardShortcut(.defaultAction)
             }
             ScrollView {
                 Text(model.details).font(.system(size: 12, design: .monospaced)).textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading).padding(16)
             }.background(Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 12))
             Button { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(model.details, forType: .string) }
-                label: { Label("复制报告", systemImage: "doc.on.doc") }
+                label: { Label(model.text("复制报告"), systemImage: "doc.on.doc") }
         }.padding(24).frame(width: 650, height: 470)
     }
 }
@@ -240,41 +259,47 @@ struct MenuPanel: View {
             HStack(spacing: 10) {
                 BrandMark(size: 34)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("ChatGPT 代理").font(.system(size: 14, weight: .semibold))
+                    Text("Local Route Launcher").font(.system(size: 14, weight: .semibold))
                     Text(model.endpointLabel).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
                 }
                 Spacer()
             }
-            RunningBadge(running: model.running)
+            RunningBadge(model: model)
             HStack(spacing: 8) {
-                Button(action: model.start) { Label("启动", systemImage: "play.fill") }
+                Button(action: model.start) { Label(model.text("启动"), systemImage: "play.fill") }
                     .buttonStyle(ActionStyle(prominent: true)).disabled(model.busy || model.running)
-                Button(action: model.stop) { Label("停止", systemImage: "stop.fill") }
+                Button(action: model.stop) { Label(model.text("停止"), systemImage: "stop.fill") }
                     .buttonStyle(ActionStyle()).disabled(model.busy || !model.running)
             }
             VStack(spacing: 9) {
-                menuStatus("代理连通", model.proxyStatus, model.proxyOK)
-                menuStatus("启动参数", model.parameterStatus, model.parameterOK)
-                menuStatus("实际连接", model.connectionStatus, model.connectionOK)
+                menuStatus(model.text("代理连通"), model.proxyStatus, model.proxyOK)
+                menuStatus(model.text("启动参数"), model.parameterStatus, model.parameterOK)
+                menuStatus(model.text("实际连接"), model.connectionStatus, model.connectionOK)
             }.padding(12).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
-            Button(action: model.refresh) { Label(model.busy ? "正在处理…" : "查看代理情况", systemImage: "arrow.clockwise").frame(maxWidth: .infinity) }
+            Button(action: model.refresh) { Label(model.busy ? model.text("正在处理…") : model.text("查看代理情况"), systemImage: "arrow.clockwise").frame(maxWidth: .infinity) }
                 .disabled(model.busy).controlSize(.large)
             if model.busy || model.isError {
                 Text(model.message).font(.system(size: 11)).foregroundStyle(model.isError ? Color.orange : .secondary)
                     .lineLimit(3).help(model.message)
             } else if let date = model.checkedAt {
-                Text("检查于 " + date.formatted(date: .omitted, time: .standard))
+                Text(model.text("检查于 ") + date.formatted(date: .omitted, time: .standard))
                     .font(.system(size: 10)).foregroundStyle(.secondary)
             }
             Divider()
             HStack {
-                Button(action: showMain) { Label("打开主窗口", systemImage: "macwindow") }.buttonStyle(.plain)
+                Text(model.text("界面语言")).font(.system(size: 11)).foregroundStyle(.secondary)
+                Spacer()
+                LanguagePicker(model: model)
+            }
+            HStack {
+                Button(action: showMain) { Label(model.text("打开主窗口"), systemImage: "macwindow") }.buttonStyle(.plain)
                 Spacer()
                 Button { NSApp.terminate(nil) } label: { Image(systemName: "power") }
-                    .buttonStyle(.plain).help("退出启动器，ChatGPT 继续运行")
-                    .accessibilityLabel("退出启动器").disabled(model.busy)
+                    .buttonStyle(.plain).help(model.text("退出启动器，ChatGPT 继续运行"))
+                    .accessibilityLabel(model.text("退出启动器")).disabled(model.busy)
             }.font(.system(size: 12)).foregroundStyle(.secondary)
         }.padding(20).frame(width: 320).background(Palette.canvas).tint(Palette.accent)
+            .environment(\.locale, model.language.locale)
             .onAppear { model.updateRunning() }
     }
 
@@ -344,10 +369,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 private struct LauncherCommands: SwiftUI.Commands {
+    @ObservedObject var model: LauncherModel
     @Environment(\.openWindow) private var openWindow
     var body: some SwiftUI.Commands {
         CommandGroup(replacing: .newItem) {
-            Button("显示主窗口") {
+            Button(model.text("显示主窗口")) {
                 DockPresence.shared.prepareToShow()
                 openWindow(id: "main")
                 DockPresence.shared.activateMainWindow()
@@ -360,16 +386,16 @@ struct LauncherApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var model = LauncherModel()
     var body: some Scene {
-        Window("ChatGPT 代理启动器", id: "main") { LauncherView(model: model) }
+        Window("Local Route Launcher", id: "main") { LauncherView(model: model) }
             .windowStyle(.hiddenTitleBar)
             .windowResizability(.contentSize)
             .defaultPosition(.center)
-            .commands { LauncherCommands() }
+            .commands { LauncherCommands(model: model) }
         MenuBarExtra {
             MenuPanel(model: model)
         } label: {
             Image(systemName: BrandIdentity.symbolName)
-                .accessibilityLabel(model.running ? "ChatGPT 代理：运行中" : "ChatGPT 代理：未运行")
+                .accessibilityLabel(model.running ? model.text("Local Route Launcher：运行中") : model.text("Local Route Launcher：未运行"))
         }.menuBarExtraStyle(.window)
     }
 }

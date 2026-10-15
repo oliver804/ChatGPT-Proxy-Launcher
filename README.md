@@ -1,8 +1,8 @@
-<h1 align="center">ChatGPT Proxy Launcher</h1>
-<p align="center">独立连接，轻松启动 · 为 ChatGPT 单独配置代理的 macOS 原生启动器</p>
+<h1 align="center">Local Route Launcher</h1>
+<p align="center">管理应用启动网络配置的原生 macOS 工具</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-168570" alt="Version 1.0.0"></a>
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-1.1.0-168570" alt="Version 1.1.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
@@ -10,7 +10,7 @@
 <p align="center">
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
   <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/">官网</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.0.0">下载安装</a> ·
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0">下载安装</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
@@ -29,35 +29,35 @@
   </tr>
 </table>
 
-<sub>截图展示早期界面，当前开源发布版本为 v1.0.0。</sub>
+<sub>v1.1.0 界面，使用示例诊断数据渲染。应用内可切换简体中文和 English。</sub>
 
 ## 简介
 
-如果你使用 Clash Verge 等代理工具，希望 ChatGPT 通过本地代理连接，又不想为了一个应用开启 TUN、影响其他网络工具，这个启动器可以帮你单独配置 ChatGPT 的代理入口。
+Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Electron 版 ChatGPT 时传入配置。它使用你已运行的代理，不提供网络接入或代理服务。
 
 它通过应用支持的启动参数与环境变量设置代理，不修改系统代理或 DNS。使用 SwiftUI + AppKit 开发，无第三方运行时依赖。
 
 ## 功能
 
-- **独立代理**：保存地址与端口，支持无需认证的 HTTP 代理和 Clash 混合端口。
+- **独立代理**：保存地址与端口，支持无需认证的 HTTP 代理和 兼容的混合代理端口。
 - **启动与停止**：携带代理配置启动 ChatGPT，也可请求其正常退出。
 - **连接检查**：查看代理连通性、实际启动参数和应用 TCP 连接。
 - **菜单栏操作**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 图标。
-- **原生界面**：支持浅色、深色外观；中文界面，中英文项目文档。
+- **原生界面**：支持浅色、深色外观；中英文界面即时切换并记住选择，中英文项目文档。
 
 ## 下载与安装
 
 | 版本 | 运行环境 | 下载 |
 | --- | --- | --- |
-| **v1.0.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.0.0/ChatGPT-Proxy-Launcher-1.0.0-arm64.dmg) |
+| **v1.1.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.1.0/Local-Route-Launcher-1.1.0-arm64.dmg) |
 
-打开 DMG，将 **ChatGPT Proxy Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.0.0)同时提供源码包和 SHA-256 校验文件。
+打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0)同时提供源码包和 SHA-256 校验文件。
 
 > 仅支持可识别的 **Electron 版 ChatGPT**，不支持旧版原生应用；当前安装包不支持 Intel Mac。
 
 ## 快速开始
 
-1. 保持 Clash Verge 等代理程序运行，确认其 HTTP / 混合端口可用。
+1. 保持你有权使用的本地 HTTP 代理运行；在启动器语言菜单中选择 **简体中文** 或 **English**。
 2. 在启动器填写代理地址与端口，例如 `127.0.0.1` 和 `7890`，点击 **保存设置**。
 3. 完全退出已经运行的 ChatGPT，再点击 **启动 ChatGPT**。
 4. 点击 **查看代理情况** 检查连接，按需打开详细报告。
@@ -76,9 +76,9 @@
 </details>
 
 <details>
-<summary><b>还需要开启 TUN 吗？所有流量都会走代理吗？</b></summary>
+<summary><b>启动器提供代理服务吗？所有流量都会走代理吗？</b></summary>
 
-兼容的 ChatGPT 应用可直接使用本地代理端口，无需依赖 TUN 或系统代理。代理程序本身仍需运行；启动器不会自动修改它的设置。
+启动器需要现有的本地 HTTP 代理。它向兼容应用传入配置，不修改系统代理或 DNS，也不保证每个组件都遵循这些设置。
 
 主要覆盖 Chromium 的 HTTP、HTTPS 和 WebSocket 请求，并禁用 QUIC。语音、WebRTC、UDP，以及不识别代理环境变量的子进程不保证经过代理；ChatGPT 或 Electron 更新后，代理行为也可能变化。
 
@@ -100,7 +100,7 @@ HTTP 403 只能说明隧道与 TLS 检查取得了响应，不代表聊天或账
 <details>
 <summary><b>如何更新应用？</b></summary>
 
-从菜单栏退出启动器，再用新版本替换“应用程序”中的旧版本。已有代理设置会保留，无需停止 ChatGPT。
+从菜单栏退出旧启动器，再安装 **Local Route Launcher.app**。从 v1.0.0 升级时，确认新版本正常后移除旧启动器应用，避免同时运行两份。保留原偏好设置标识，因此原配置可继续使用，ChatGPT 无需停止。语言切换即时生效；macOS 自带菜单和系统对话框可能跟随系统语言。
 
 </details>
 
@@ -116,7 +116,7 @@ make dmg         # 生成 DMG、源码 ZIP 和校验文件
 make verify      # 验证安装包、签名与图标
 ```
 
-应用输出到 `build/release/`，发布文件输出到 `dist/1.0.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
+应用输出到 `build/release/`，发布文件输出到 `dist/1.1.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
 
 `make integration`、`make ui` 需要已登录的 macOS 图形会话，仅操作独立测试应用与窗口；`make previews` 可生成模拟数据界面预览。
 
@@ -129,4 +129,6 @@ make verify      # 验证安装包、签名与图标
 **作者：Oliver** · [oliver804x@gmail.com](mailto:oliver804x@gmail.com)<br>
 **许可证：[MIT](LICENSE)** · [更新日志](CHANGELOG.md)
 
-独立开源项目，与 OpenAI 无隶属关系。ChatGPT 等名称属于其各自权利人，参见[第三方说明](THIRD_PARTY_NOTICES.md)。
+独立项目，与 OpenAI 无隶属、赞助或背书关系。ChatGPT 是 OpenAI 的商标，仅用于说明兼容性。请仅用于有权访问的网络和服务，并遵守适用法律及服务条款。[使用边界](docs/USAGE.md) · [第三方说明](THIRD_PARTY_NOTICES.md) · [项目介绍](docs/ANNOUNCEMENT.md)。
+
+为保持已有链接有效，仓库网址保持不变；应用对外名称为 **Local Route Launcher**。

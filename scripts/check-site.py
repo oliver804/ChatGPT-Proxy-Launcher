@@ -45,7 +45,7 @@ def main():
     pages = {path.resolve(): Page(path) for path in SITE.rglob('*.html')}
     assert len(pages) == 2, 'Expected Chinese and English pages'
     assert {p.locale for p in pages.values()} == {'zh-CN', 'en'}
-    release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/ChatGPT-Proxy-Launcher-{VERSION}-arm64.dmg'
+    release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-arm64.dmg'
     for path, page in pages.items():
         assert page.h1_count == 1, 'Expected one primary heading'
         assert len(page.downloads) == 2 and set(page.downloads) == {release}, 'Wrong release link'
@@ -64,10 +64,10 @@ def main():
                 assert target in pages and unquote(parsed.fragment) in pages[target].ids, f'Missing anchor: {link}'
         print(f'PASS: {path.relative_to(SITE.resolve())}: links, assets, anchors, locale and downloads')
     expected = {'index.html', 'en/index.html', 'style.css', 'app.js', '.nojekyll',
-                'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png'}
+                'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png', 'assets/preview-dark.en.png', 'assets/preview-light.en.png'}
     actual = {str(p.relative_to(SITE)) for p in SITE.rglob('*') if p.is_file()}
     assert actual == expected, 'Unexpected or missing deployed files'
-    print('PASS: deployment contains only the eight public website files')
+    print('PASS: deployment contains only the ten public website files')
 
 
 if __name__ == '__main__':

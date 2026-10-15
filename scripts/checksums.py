@@ -4,7 +4,7 @@ import sys
 from project_files import ROOT, version
 
 release = ROOT / 'dist' / version()
-names = [f'ChatGPT-Proxy-Launcher-{version()}-arm64.dmg', f'ChatGPT-Proxy-Launcher-{version()}-source.zip']
+names = [f'Local-Route-Launcher-{version()}-arm64.dmg', f'Local-Route-Launcher-{version()}-source.zip']
 text = ''.join(f'{hashlib.sha256((release / name).read_bytes()).hexdigest()}  {name}\n' for name in names)
 manifest = release / 'SHA256SUMS.txt'
 if '--verify' in sys.argv:

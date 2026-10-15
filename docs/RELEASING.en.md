@@ -9,7 +9,7 @@
 3. The original author's public commit identity is `Oliver <oliver804x@gmail.com>`. Contributors should use their own public identity, not Oliver's.
 4. Add the remote URL of the repository you created and push `main`.
 5. Confirm GitHub Actions CI passes and review the release contents.
-6. Tag the reviewed commit `v1.0.0` and push that tag.
+6. Tag the reviewed commit `v1.1.0` and push that tag.
 
 A `v*` tag runs the release workflow: validate the tag against `VERSION`, run source and core checks, build and verify the DMG, export clean source, and create a **draft GitHub Release** with attachments. Review the draft and files before clicking Publish release. The workflow uses the repository's temporary `GITHUB_TOKEN`; never commit personal tokens.
 
@@ -26,10 +26,10 @@ make dmg
 make verify
 ```
 
-Upload only these three files from `dist/1.0.0/`:
+Upload only these three files from `dist/1.1.0/`:
 
-- `ChatGPT-Proxy-Launcher-1.0.0-arm64.dmg`
-- `ChatGPT-Proxy-Launcher-1.0.0-source.zip`
+- `Local-Route-Launcher-1.1.0-arm64.dmg`
+- `Local-Route-Launcher-1.1.0-source.zip`
 - `SHA256SUMS.txt`
 
 The checksum file uses relative filenames. Run `shasum -a 256 -c SHA256SUMS.txt` inside that directory to verify integrity. The app includes credits and its license. Default packages are ad-hoc signed, not notarized.

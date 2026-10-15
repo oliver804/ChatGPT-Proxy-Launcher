@@ -20,7 +20,7 @@ def main():
         target = OUTPUT / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
-    for theme in ('dark', 'light'):
+    for theme in ('dark', 'light', 'dark.en', 'light.en'):
         shutil.copyfile(ROOT / 'docs' / 'images' / f'preview-{theme}.png',
                         OUTPUT / 'assets' / f'preview-{theme}.png')
     (OUTPUT / '.nojekyll').touch()

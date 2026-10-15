@@ -15,9 +15,9 @@ if app.exists():
 (app / 'Contents/MacOS').mkdir(parents=True)
 (app / 'Contents/Resources').mkdir()
 PY
-swiftc "${SWIFT_FLAGS[@]}" -O -parse-as-library -module-name ChatGPTProxyLauncher \
+swiftc "${SWIFT_FLAGS[@]}" -O -parse-as-library -module-name LocalRouteLauncher \
   "${APP_SOURCES[@]}" -framework SwiftUI -framework AppKit \
-  -o "$APP_PATH/Contents/MacOS/ChatGPTProxyLauncher"
+  -o "$APP_PATH/Contents/MacOS/LocalRouteLauncher"
 python3 - "$APP_PATH" "$PROJECT_VERSION" <<'PY'
 from pathlib import Path
 import plistlib,sys
@@ -31,8 +31,8 @@ swiftc "${SWIFT_FLAGS[@]}" -parse-as-library Sources/BrandMark.swift scripts/mak
   -framework SwiftUI -framework AppKit -o build/make-icon
 ICON_FILE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$APP_PATH/Contents/Info.plist")"
 build/make-icon "$APP_PATH/Contents/Resources/$ICON_FILE"
-strip -S "$APP_PATH/Contents/MacOS/ChatGPTProxyLauncher"
+strip -S "$APP_PATH/Contents/MacOS/LocalRouteLauncher"
 codesign --force --sign - --timestamp=none "$APP_PATH"
 codesign --verify --deep --strict "$APP_PATH"
 python3 scripts/privacy-check.py --bundle "$APP_PATH"
-echo "Built ChatGPT Proxy Launcher $PROJECT_VERSION (arm64)."
+echo "Built Local Route Launcher $PROJECT_VERSION (arm64)."

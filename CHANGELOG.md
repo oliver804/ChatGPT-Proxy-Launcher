@@ -1,5 +1,14 @@
 # Changelog / 更新日志
 
+## 1.1.0
+
+- Rename the public application and release packages to Local Route Launcher; keep existing repository links and preference storage compatible.
+  对外名称与发布包更名为 Local Route Launcher，保留现有仓库链接和偏好设置兼容性。
+- Add immediate, persistent English / Simplified Chinese switching for launcher UI, menu panel, validation, and reports.
+  主窗口、菜单栏、校验提示和诊断报告支持中英文即时切换并保存选择。
+- Refresh bilingual previews and documentation; clarify independent branding, authorized use, compatibility, and diagnostic limits.
+  更新双语预览及文档，明确独立品牌、授权使用、兼容性及诊断边界。
+
 ## 1.0.0
 
 Initial public release / 首个开源版本。

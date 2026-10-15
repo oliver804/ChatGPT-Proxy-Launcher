@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleName</key><string>ChatGPT Proxy Launcher</string>
-<key>CFBundleDisplayName</key><string>ChatGPT 代理启动器</string>
+<key>CFBundleName</key><string>Local Route Launcher</string>
+<key>CFBundleDisplayName</key><string>Local Route Launcher</string>
 <key>CFBundleIdentifier</key><string>local.chatgpt-proxy-launcher</string>
-<key>CFBundleExecutable</key><string>ChatGPTProxyLauncher</string>
+<key>CFBundleExecutable</key><string>LocalRouteLauncher</string>
 <key>CFBundleIconFile</key><string>LauncherIcon.icns</string>
+<key>CFBundleDevelopmentRegion</key><string>en</string>
+<key>CFBundleLocalizations</key><array><string>en</string><string>zh-Hans</string></array>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>LSMinimumSystemVersion</key><string>13.0</string>
 <key>NSHighResolutionCapable</key><true/>

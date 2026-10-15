@@ -8,11 +8,11 @@ if [[ ! "$PROJECT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "VERSION must contain a semantic version such as 1.0.0" >&2
   exit 1
 fi
-APP_PATH="$PROJECT_ROOT/build/release/ChatGPT Proxy Launcher.app"
+APP_PATH="$PROJECT_ROOT/build/release/Local Route Launcher.app"
 RELEASE_DIR="$PROJECT_ROOT/dist/$PROJECT_VERSION"
-DMG_NAME="ChatGPT-Proxy-Launcher-$PROJECT_VERSION-arm64.dmg"
-SOURCE_NAME="ChatGPT-Proxy-Launcher-$PROJECT_VERSION-source.zip"
-APP_SOURCES=(Sources/BrandMark.swift Sources/ProxyCore.swift Sources/LauncherModel.swift Sources/LauncherApp.swift)
+DMG_NAME="Local-Route-Launcher-$PROJECT_VERSION-arm64.dmg"
+SOURCE_NAME="Local-Route-Launcher-$PROJECT_VERSION-source.zip"
+APP_SOURCES=(Sources/Localization.swift Sources/BrandMark.swift Sources/ProxyCore.swift Sources/LauncherModel.swift Sources/LauncherApp.swift)
 SWIFT_FLAGS=(-swift-version 5 -target arm64-apple-macosx13.0
   -module-cache-path build/module-cache -file-compilation-dir .
   -debug-prefix-map "$PROJECT_ROOT=." -file-prefix-map "$PROJECT_ROOT=.")

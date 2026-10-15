@@ -3,8 +3,10 @@ import Darwin
 
 struct LauncherError: LocalizedError {
     let message: String
-    var errorDescription: String? { message }
-    init(_ message: String) { self.message = message }
+    let arguments: [String]
+    var errorDescription: String? { localized(in: .current) }
+    init(_ message: String, arguments: [String] = []) { self.message = message; self.arguments = arguments }
+    func localized(in language: AppLanguage) -> String { L10n.text(message, language: language, arguments: arguments) }
 }
 
 struct ProxyEndpoint: Equatable, Codable {
@@ -81,7 +83,7 @@ struct TargetApplication {
     let identifier: String
     let version: String
 
-    init(path: String) throws {
+    init(path: String, language: AppLanguage = .current) throws {
         let url = URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath()
         guard url.pathExtension == "app", let bundle = Bundle(url: url),
               let executable = bundle.executableURL,
@@ -102,7 +104,7 @@ struct TargetApplication {
         self.url = url
         self.executable = executable
         self.identifier = identifier
-        self.version = info["CFBundleShortVersionString"] as? String ?? "未知版本"
+        self.version = info["CFBundleShortVersionString"] as? String ?? L10n.text("未知版本", language: language)
     }
 }
 
@@ -147,11 +149,11 @@ struct TCPConnection: Equatable {
         return result
     }
 
-    static func warnings(_ result: CommandResult) -> [String] {
+    static func warnings(_ result: CommandResult, language: AppLanguage = .current) -> [String] {
         // A vanished PID or a PID without a matching socket can yield exit 1 even with valid records.
         let messages = result.output.split(separator: "\n").filter { $0.hasPrefix("lsof:") }
-        if !messages.isEmpty { return ["连接读取提示：" + messages.joined(separator: "\n").prefix(400)] }
-        if result.status != 0 && result.status != 1 { return ["连接读取未完成（状态 \(result.status)）。"] }
+        if !messages.isEmpty { return [L10n.text("连接读取提示：", language: language) + messages.joined(separator: "\n").prefix(400)] }
+        if result.status != 0 && result.status != 1 { return [L10n.text("连接读取未完成（状态 %@）。", language: language, arguments: [String(result.status)])] }
         return []
     }
 }
@@ -160,26 +162,26 @@ struct ProxyProbe {
     let usable: Bool
     let description: String
 
-    static func interpret(_ result: CommandResult) -> ProxyProbe {
+    static func interpret(_ result: CommandResult, language: AppLanguage = .current) -> ProxyProbe {
         let metrics = result.output.split(separator: "\n").last.map(String.init) ?? ""
         let codes = metrics.split(separator: " ")
         let connect = codes.count == 2 ? Int(codes[0]) ?? 0 : 0
         let response = codes.count == 2 ? Int(codes[1]) ?? 0 : 0
         if result.status == 0 && connect == 200 && (200...599).contains(response) {
-            return ProxyProbe(usable: true, description: "HTTP 代理隧道和 TLS 已连通；chatgpt.com 返回 HTTP \(response)。" + (response >= 400 ? "网站拒绝了此探测请求，不代表账号或聊天可用。" : ""))
+            return ProxyProbe(usable: true, description: L10n.text("HTTP 代理隧道和 TLS 已连通；chatgpt.com 返回 HTTP %@。", language: language, arguments: [String(response)]) + (response >= 400 ? L10n.text("网站拒绝了此探测请求，不代表账号或聊天可用。", language: language) : ""))
         }
-        if connect == 407 { return ProxyProbe(usable: false, description: "代理要求认证。请使用无需账号密码的本地混合代理端口。") }
-        return ProxyProbe(usable: false, description: "代理测试未通过。请确认 Clash Verge 正在运行、混合端口正确且节点可用。\n" + String(result.output.prefix(900)))
+        if connect == 407 { return ProxyProbe(usable: false, description: L10n.text("代理要求认证。请使用无需账号密码的本地代理端口。", language: language)) }
+        return ProxyProbe(usable: false, description: L10n.text("代理测试未通过。请确认本地代理正在运行、端口正确且服务可用。\n", language: language) + String(result.output.prefix(900)))
     }
 
-    static func check(_ endpoint: ProxyEndpoint) -> ProxyProbe {
+    static func check(_ endpoint: ProxyEndpoint, language: AppLanguage = .current) -> ProxyProbe {
         do {
             let result = try Commands.run("/usr/bin/curl", ["--disable", "--silent", "--show-error", "--head",
                 "--proxy", endpoint.url, "--noproxy", "", "--connect-timeout", "5", "--max-time", "12",
                 "--output", "/dev/null", "--write-out", "\n%{http_connect} %{http_code}\n",
                 "https://chatgpt.com/"], timeout: 15)
-            return interpret(result)
-        } catch { return ProxyProbe(usable: false, description: error.localizedDescription) }
+            return interpret(result, language: language)
+        } catch { return ProxyProbe(usable: false, description: L10n.error(error, language: language)) }
     }
 }
 
@@ -190,9 +192,9 @@ struct DiagnosticSnapshot {
     let connections: [TCPConnection]
     let warnings: [String]
 
-    static func collect(target: TargetApplication, endpoint: ProxyEndpoint) throws -> DiagnosticSnapshot {
+    static func collect(target: TargetApplication, endpoint: ProxyEndpoint, language: AppLanguage = .current) throws -> DiagnosticSnapshot {
         let ps = try Commands.run("/bin/ps", ["-axo", "pid=,ppid=,comm="])
-        guard ps.status == 0 else { throw LauncherError("无法读取进程列表：\(ps.output)") }
+        guard ps.status == 0 else { throw LauncherError("无法读取进程列表：%@" , arguments: [String(ps.output)]) }
         let rows = ProcessRow.parse(ps.output)
         let mainPIDs = rows.filter { $0.executable == target.executable.path }.map(\.pid)
         guard !mainPIDs.isEmpty else {
@@ -203,7 +205,7 @@ struct DiagnosticSnapshot {
         for pid in mainPIDs {
             let args = try Commands.run("/bin/ps", ["-ww", "-p", String(pid), "-o", "args="])
             if args.status == 0 { argumentLines.append(args.output.trimmingCharacters(in: .whitespacesAndNewlines)) }
-            else { warnings.append("无法读取 PID \(pid) 的启动参数。") }
+            else { warnings.append(L10n.text("无法读取 PID %@ 的启动参数。", language: language, arguments: [String(pid)])) }
         }
         let configured = argumentLines.count == mainPIDs.count && argumentLines.allSatisfy { line in
             let tokens = line.split(whereSeparator: { $0.isWhitespace }).map(String.init)
@@ -213,27 +215,30 @@ struct DiagnosticSnapshot {
         let family = ProcessRow.family(roots: Set(mainPIDs), rows: rows)
         let sockets = try Commands.run("/usr/sbin/lsof", ["-nP", "-a", "-p", family.sorted().map(String.init).joined(separator: ","),
             "-iTCP", "-sTCP:ESTABLISHED", "-F", "pn"], timeout: 12)
-        warnings.append(contentsOf: TCPConnection.warnings(sockets))
+        warnings.append(contentsOf: TCPConnection.warnings(sockets, language: language))
         return DiagnosticSnapshot(mainPIDs: mainPIDs, configured: configured, arguments: argumentLines.joined(separator: "\n"),
                                   connections: TCPConnection.parse(sockets.output), warnings: warnings)
     }
 
-    func report(endpoint: ProxyEndpoint, probe: ProxyProbe) -> String {
+    func report(endpoint: ProxyEndpoint, probe: ProxyProbe, language: AppLanguage = .current) -> String {
+        func t(_ key: String, _ args: String...) -> String { L10n.text(key, language: language, arguments: args) }
         let matched = connections.filter { endpoint.matches(remote: $0.remote) }
-        return """
-        检查时间：\(Date().formatted())
-        检查地址：\(endpoint.url)
-        ChatGPT：\(mainPIDs.isEmpty ? "未运行" : "运行中（PID \(mainPIDs.map(String.init).joined(separator: ", "))）")
-        启动参数：\(configured ? "与当前代理地址匹配" : "未确认匹配")
-        代理探测：\(probe.description)
-        实际连接：\(matched.isEmpty ? "本次快照未观察到到该代理的 TCP 连接" : "观察到 \(matched.count) 条到该代理的 TCP 连接")
-
-        ChatGPT 及其子进程的当前 TCP 连接：
-        \(connections.isEmpty ? "无可见的已建立连接" : connections.map { "PID \($0.pid)  \($0.route)" }.joined(separator: "\n"))
-
-        \(warnings.joined(separator: "\n"))
-        连接快照不证明全部流量均经过代理；域名代理地址与数字 IP 可能无法直接匹配。其他连接也可能来自本地工具或子进程。
-        代理探测由启动器独立发起，不等于 ChatGPT 已使用代理。语音 / WebRTC / UDP 与不支持代理环境变量的子进程不在保证范围内。
-        """
+        let formatter = DateFormatter()
+        formatter.locale = language.locale
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        return [
+            t("检查时间：%@", formatter.string(from: Date())),
+            t("检查地址：%@", endpoint.url),
+            "ChatGPT: " + (mainPIDs.isEmpty ? t("未运行") : t("运行中（PID %@）", mainPIDs.map(String.init).joined(separator: ", "))),
+            t("启动参数：%@", configured ? t("与当前代理地址匹配") : t("未确认匹配")),
+            t("代理探测：%@", probe.description),
+            t("实际连接：%@", matched.isEmpty ? t("本次快照未观察到到该代理的 TCP 连接") : t("观察到 %@ 条到该代理的 TCP 连接", String(matched.count))),
+            "", t("ChatGPT 及其子进程的当前 TCP 连接："),
+            connections.isEmpty ? t("无可见的已建立连接") : connections.map { "PID \($0.pid)  \($0.route)" }.joined(separator: "\n"),
+            "", warnings.joined(separator: "\n"),
+            t("连接快照不证明全部流量均经过代理；域名代理地址与数字 IP 可能无法直接匹配。其他连接也可能来自本地工具或子进程。"),
+            t("代理探测由启动器独立发起，不等于 ChatGPT 已使用代理。语音 / WebRTC / UDP 与不支持代理环境变量的子进程不在保证范围内。")
+        ].joined(separator: "\n")
     }
 }

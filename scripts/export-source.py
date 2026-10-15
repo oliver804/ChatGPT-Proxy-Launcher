@@ -8,7 +8,7 @@ from project_files import ROOT, source_files, version
 subprocess.run([sys.executable, str(ROOT / 'scripts/privacy-check.py')], check=True, cwd=ROOT)
 release = ROOT / 'dist' / version()
 release.mkdir(parents=True, exist_ok=True)
-prefix = f'ChatGPT-Proxy-Launcher-{version()}'
+prefix = f'Local-Route-Launcher-{version()}'
 archive = release / f'{prefix}-source.zip'
 with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as output:
     for path in source_files():

@@ -8,19 +8,24 @@ enum RenderPreviews {
         let app = NSApplication.shared
         app.setActivationPolicy(.prohibited)
         let defaults = UserDefaults(suiteName: "local.chatgpt-proxy-launcher.preview")!
-        let model = LauncherModel(defaults: defaults, monitor: false)
-        model.running = true
-        model.checkedAt = Date()
-        model.proxyOK = true; model.parameterOK = true; model.connectionOK = true
-        model.proxyStatus = "隧道与 TLS 连通"; model.parameterStatus = "当前地址已传入"; model.connectionStatus = "观察到 4 条连接"
-        model.message = "检查完成。连接情况是此刻的快照，可在 ChatGPT 请求后再次检查。"
-        try render(LauncherView(model: model), name: "window-light", dark: false)
-        try render(LauncherView(model: model), name: "window-dark", dark: true)
-        model.clearDiagnostics()
-        model.running = false
-        try render(MenuPanel(model: model), name: "menu-light", dark: false)
-        try render(MenuPanel(model: model), name: "menu-dark", dark: true)
-        print("PASS: rendered window and menu in light/dark modes")
+        defer { defaults.removePersistentDomain(forName: "local.chatgpt-proxy-launcher.preview") }
+        for language in AppLanguage.allCases {
+            defaults.set(language.rawValue, forKey: "interfaceLanguage")
+            let model = LauncherModel(defaults: defaults, monitor: false, previewVersion: try String(contentsOfFile: "VERSION").trimmingCharacters(in: .whitespacesAndNewlines))
+            model.running = true
+            model.checkedAt = Date(timeIntervalSince1970: 1_760_000_000)
+            model.proxyOK = true; model.parameterOK = true; model.connectionOK = true
+            model.proxyStatus = model.text("隧道与 TLS 连通")
+            model.parameterStatus = model.text("当前地址已传入")
+            model.connectionStatus = model.text("观察到 %@ 条连接", "4")
+            model.message = model.text("检查完成。连接情况是此刻的快照，可在 ChatGPT 请求后再次检查。")
+            for dark in [false, true] {
+                let suffix = "\(language.rawValue)-\(dark ? "dark" : "light")"
+                try render(LauncherView(model: model), name: "window-" + suffix, dark: dark)
+                try render(MenuPanel(model: model), name: "menu-" + suffix, dark: dark)
+            }
+        }
+        print("PASS: rendered Chinese/English windows and menus in light/dark modes")
     }
 
     @MainActor

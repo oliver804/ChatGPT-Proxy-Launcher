@@ -56,7 +56,7 @@ jobs:
             "$RELEASE_DIR/SHA256SUMS.txt" \
             --repo "$GITHUB_REPOSITORY" \
             --verify-tag --draft \
-            --title "ChatGPT Proxy Launcher $PROJECT_VERSION" \
+            --title "Local Route Launcher $PROJECT_VERSION" \
             --notes-file docs/RELEASE_NOTES.md
       - name: Publish when explicitly requested by the annotated tag
         if: steps.release-mode.outputs.publish == 'true'

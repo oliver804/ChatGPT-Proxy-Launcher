@@ -4,7 +4,7 @@
 
 ## Local preferences
 
-The proxy host, port, and selected application path are stored in the macOS preferences domain `local.chatgpt-proxy-launcher`. The launcher does not read or store ChatGPT passwords, cookies, tokens, or chat history.
+The interface language, proxy host, port, and selected application path are stored in the macOS preferences domain `local.chatgpt-proxy-launcher`. The launcher does not read or store ChatGPT passwords, cookies, tokens, or chat history.
 
 ## Network requests
 
@@ -21,3 +21,5 @@ The launcher reads application processes, launch arguments, and established TCP 
 The author's public identity is limited to Oliver and oliver804x@gmail.com. Source exports use an explicit allowlist and exclude IDE settings, build caches, old installers, real logs, desktop screenshots, and Git metadata. Release checks scan source and app files for private paths, access tokens, authenticated URLs, private keys, internal IPv4 addresses, and unapproved email addresses.
 
 These checks cover known patterns, not every kind of sensitive information. Manually review new files, particularly screenshots, logs, certificates, and organizational material. No company affiliation is provided by this repository.
+
+The historical preferences domain is retained across the 1.1.0 rename so existing settings continue to work. Changing the interface language does not change or save network settings.

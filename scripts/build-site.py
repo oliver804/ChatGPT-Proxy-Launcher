@@ -2,10 +2,30 @@
 """Build only reviewed public website files, independently of the app bundle."""
 from pathlib import Path
 import shutil
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / 'build' / 'site'
 SITE_FILES = ('index.html', 'en/index.html', 'style.css', 'app.js', 'assets/icon.png')
+BASE_URL = 'https://oliver804.github.io/ChatGPT-Proxy-Launcher/'
+
+
+def write_sitemap():
+    namespace = 'http://www.sitemaps.org/schemas/sitemap/0.9'
+    xhtml = 'http://www.w3.org/1999/xhtml'
+    ET.register_namespace('', namespace)
+    ET.register_namespace('xhtml', xhtml)
+    root = ET.Element(f'{{{namespace}}}urlset')
+    locales = {'zh-CN': BASE_URL, 'en': BASE_URL + 'en/', 'x-default': BASE_URL}
+    for url in (BASE_URL, BASE_URL + 'en/'):
+        entry = ET.SubElement(root, f'{{{namespace}}}url')
+        ET.SubElement(entry, f'{{{namespace}}}loc').text = url
+        for language, href in locales.items():
+            ET.SubElement(entry, f'{{{xhtml}}}link',
+                          rel='alternate', hreflang=language, href=href)
+    # Omit lastmod instead of inventing a modification date at each deployment.
+    ET.indent(root)
+    ET.ElementTree(root).write(OUTPUT / 'sitemap.xml', encoding='utf-8', xml_declaration=True)
 
 
 def main():
@@ -24,6 +44,7 @@ def main():
         shutil.copyfile(ROOT / 'docs' / 'images' / f'preview-{theme}.png',
                         OUTPUT / 'assets' / f'preview-{theme}.png')
     (OUTPUT / '.nojekyll').touch()
+    write_sitemap()
     print('Website built in build/site')
 
 

@@ -53,3 +53,11 @@ Website sources live in `site/`, with a Chinese homepage and an English page und
 For the first deployment, a repository administrator must select **GitHub Actions** under **Settings → Pages → Build and deployment → Source**. Then push website changes, or use **Actions → Website → Run workflow**. The workflow checks both locales, assets, download versions, and privacy before deploying only the website files. Pull requests run build checks without deploying.
 
 The website is hosted at `https://oliver804.github.io/ChatGPT-Proxy-Launcher/`, with English under `en/`. When releasing a new version, update the download links and version copy in both pages; `make site` checks download links against `VERSION`. Website deployments do not change app releases or tags.
+
+### Search engines and sharing metadata
+
+The build generates `sitemap.xml` with both pages and reciprocal language links. Each page includes its own title, description, canonical URL, sharing preview, and software structured data. Update `softwareVersion` and `downloadUrl` when releasing a new version. Do not add unsubstantiated ratings or reviews; structured data does not guarantee search rich results.
+
+Create a URL-prefix property with the full website URL in Google Search Console, and add the same site in Bing Webmaster Tools. Verify ownership with the public HTML verification tags supplied by each service, then submit `https://oliver804.github.io/ChatGPT-Proxy-Launcher/sitemap.xml`. Keep verification tags in place. They are not account passwords or API access tokens; never commit those credentials.
+
+A `robots.txt` under the project path would not control crawling, so this build does not generate one. If crawl rules need changing, the site owner must maintain `/robots.txt` at the host root. The sitemap does not fabricate `lastmod` dates from deployment times. Check crawl and indexing status in each console after submission; successful submission guarantees neither indexing nor ranking.

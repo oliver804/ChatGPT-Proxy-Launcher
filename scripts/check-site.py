@@ -3,10 +3,14 @@
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import json
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / 'build' / 'site'
 VERSION = (ROOT / 'VERSION').read_text().strip()
+BASE_URL = 'https://oliver804.github.io/ChatGPT-Proxy-Launcher/'
+LOCALES = {'zh-CN': BASE_URL, 'en': BASE_URL + 'en/', 'x-default': BASE_URL}
 
 
 class Page(HTMLParser):
@@ -18,6 +22,11 @@ class Page(HTMLParser):
         self.locale = None
         self.h1_count = 0
         self.downloads = []
+        self.meta = {}
+        self.alternates = {}
+        self.canonical = None
+        self.structured_data = []
+        self.json_buffer = None
         self.feed(path.read_text())
 
     def handle_starttag(self, tag, attrs):
@@ -29,6 +38,14 @@ class Page(HTMLParser):
             self.locale = attrs.get('lang')
         if tag == 'h1':
             self.h1_count += 1
+        if tag == 'meta':
+            self.meta[attrs.get('name', attrs.get('property'))] = attrs.get('content', '')
+        if tag == 'link' and attrs.get('rel') == 'canonical':
+            self.canonical = attrs['href']
+        if tag == 'link' and attrs.get('rel') == 'alternate':
+            self.alternates[attrs.get('hreflang')] = attrs['href']
+        if tag == 'script' and attrs.get('type') == 'application/ld+json':
+            self.json_buffer = ''
         if tag == 'img':
             assert 'alt' in attrs, 'Image has no alt attribute'
         for key in ('href', 'src', 'data-dark', 'data-light'):
@@ -40,6 +57,15 @@ class Page(HTMLParser):
             target = attrs.get('src', attrs.get('href', ''))
             assert not urlsplit(target).netloc, 'Assets must be self-hosted'
 
+    def handle_data(self, data):
+        if self.json_buffer is not None:
+            self.json_buffer += data
+
+    def handle_endtag(self, tag):
+        if tag == 'script' and self.json_buffer is not None:
+            self.structured_data.append(json.loads(self.json_buffer))
+            self.json_buffer = None
+
 
 def main():
     pages = {path.resolve(): Page(path) for path in SITE.rglob('*.html')}
@@ -49,6 +75,20 @@ def main():
     for path, page in pages.items():
         assert page.h1_count == 1, 'Expected one primary heading'
         assert len(page.downloads) == 2 and set(page.downloads) == {release}, 'Wrong release link'
+        assert page.canonical == LOCALES[page.locale], 'Incorrect canonical URL'
+        assert page.alternates == LOCALES, 'Incomplete reciprocal language links'
+        assert page.meta.get('description'), 'Missing search description'
+        assert 'noindex' not in page.meta.get('robots', '').lower(), 'Page excludes search indexing'
+        assert page.meta.get('og:url') == page.canonical, 'Share URL differs from canonical'
+        assert page.meta.get('og:title') and page.meta.get('og:description'), 'Missing share metadata'
+        image = page.meta.get('og:image', '')
+        assert image.startswith(BASE_URL) and (SITE / image.removeprefix(BASE_URL)).is_file(), 'Missing share image'
+        assert len(page.structured_data) == 1, 'Expected one application description'
+        app = page.structured_data[0]
+        assert app['@type'] == 'SoftwareApplication' and app['name'] == 'Local Route Launcher'
+        assert app['softwareVersion'] == VERSION and app['downloadUrl'] == release, 'Stale app schema'
+        assert app['url'] == page.canonical and app['offers']['price'] == 0
+        assert 'aggregateRating' not in app and 'review' not in app, 'Do not invent ratings or reviews'
         for link in page.links:
             parsed = urlsplit(link)
             if parsed.scheme or parsed.netloc:
@@ -62,12 +102,18 @@ def main():
             assert target.is_file(), f'Missing local target: {link}'
             if parsed.fragment:
                 assert target in pages and unquote(parsed.fragment) in pages[target].ids, f'Missing anchor: {link}'
-        print(f'PASS: {path.relative_to(SITE.resolve())}: links, assets, anchors, locale and downloads')
+        print(f'PASS: {path.relative_to(SITE.resolve())}: links, assets, locale, downloads and SEO metadata')
+    ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9', 'x': 'http://www.w3.org/1999/xhtml'}
+    entries = ET.parse(SITE / 'sitemap.xml').getroot().findall('s:url', ns)
+    assert len(entries) == 2 and {e.findtext('s:loc', namespaces=ns) for e in entries} == set(LOCALES.values())
+    for entry in entries:
+        alternates = {link.attrib['hreflang']: link.attrib['href'] for link in entry.findall('x:link', ns)}
+        assert alternates == LOCALES, 'Sitemap language links differ from pages'
     expected = {'index.html', 'en/index.html', 'style.css', 'app.js', '.nojekyll',
-                'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png', 'assets/preview-dark.en.png', 'assets/preview-light.en.png'}
+                'sitemap.xml', 'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png', 'assets/preview-dark.en.png', 'assets/preview-light.en.png'}
     actual = {str(p.relative_to(SITE)) for p in SITE.rglob('*') if p.is_file()}
     assert actual == expected, 'Unexpected or missing deployed files'
-    print('PASS: deployment contains only the ten public website files')
+    print('PASS: bilingual sitemap and deployment allowlist (eleven public files)')
 
 
 if __name__ == '__main__':

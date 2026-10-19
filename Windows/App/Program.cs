@@ -44,8 +44,18 @@ public static class Program
                         windowApp.Preview(language, theme);
                         await Task.Delay(150);
                         windowApp.UpdateLayout();
-                        var bitmap = new RenderTargetBitmap((int)windowApp.ActualWidth, (int)windowApp.ActualHeight, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
-                        bitmap.Render(windowApp);
+                        // Capture the actual scroll content, including controls below small runner displays.
+                        var content = (FrameworkElement)((System.Windows.Controls.ScrollViewer)windowApp.Content).Content;
+                        var width = (int)Math.Ceiling(content.ActualWidth) + 56;
+                        var height = (int)Math.Ceiling(content.ActualHeight) + 56;
+                        var visual = new System.Windows.Media.DrawingVisual();
+                        using (var drawing = visual.RenderOpen())
+                        {
+                            drawing.DrawRectangle(windowApp.Background, null, new Rect(0, 0, width, height));
+                            drawing.DrawRectangle(new System.Windows.Media.VisualBrush(content), null, new Rect(28, 28, content.ActualWidth, content.ActualHeight));
+                        }
+                        var bitmap = new RenderTargetBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+                        bitmap.Render(visual);
                         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
                         using var file = File.Create(Path.Combine(args[1], $"windows-{language}-{theme}.png")); encoder.Save(file);
                     }

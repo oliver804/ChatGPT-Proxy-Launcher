@@ -1,9 +1,5 @@
 import SwiftUI
 
-enum BrandIdentity {
-    static let symbolName = "arrow.triangle.branch"
-}
-
 // The window, menu panel and generated Finder / Dock icon all use this artwork.
 struct BrandMark: View {
     var size: CGFloat = 44
@@ -24,7 +20,7 @@ struct BrandMark: View {
 }
 
 // Original vector artwork shared across platforms; no system symbol is exported.
-private struct RouteGlyph: Shape {
+struct RouteGlyph: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint {

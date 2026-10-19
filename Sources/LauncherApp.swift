@@ -394,7 +394,9 @@ struct LauncherApp: App {
         MenuBarExtra {
             MenuPanel(model: model)
         } label: {
-            Image(systemName: BrandIdentity.symbolName)
+            RouteGlyph()
+                .stroke(.primary, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+                .frame(width: 17, height: 17)
                 .accessibilityLabel(model.running ? model.text("Local Route Launcher：运行中") : model.text("Local Route Launcher：未运行"))
         }.menuBarExtraStyle(.window)
     }

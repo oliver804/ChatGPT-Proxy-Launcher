@@ -1,5 +1,13 @@
 # Changelog / 更新日志
 
+## 1.2.0 — 2026-10-19
+
+- Windows x64 self-contained installer with bilingual WPF interface, themes, system tray, app discovery, process-scoped proxy launch, graceful stop and local diagnostics.
+- Added Windows core, integration-fixture, UI and installer/uninstaller checks; release publication waits for both platform builds.
+- Shared original icon artwork; updated website download choices, bilingual docs and announcement articles.
+- Windows installer is unsigned. Actual ChatGPT account compatibility is not covered by the isolated CI fixture; restricted Store packages may reject direct launch.
+
+
 ## 1.1.0
 
 - Rename the public application and release packages to Local Route Launcher; keep existing repository links and preference storage compatible.

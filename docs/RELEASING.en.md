@@ -9,7 +9,7 @@
 3. The original author's public commit identity is `Oliver <oliver804x@gmail.com>`. Contributors should use their own public identity, not Oliver's.
 4. Add the remote URL of the repository you created and push `main`.
 5. Confirm GitHub Actions CI passes and review the release contents.
-6. Tag the reviewed commit `v1.1.0` and push that tag.
+6. Tag the reviewed commit `v1.2.0` and push that tag.
 
 A `v*` tag runs the release workflow: validate the tag against `VERSION`, run source and core checks, build and verify the DMG, export clean source, and create a **draft GitHub Release** with attachments. Review the draft and files before clicking Publish release. The workflow uses the repository's temporary `GITHUB_TOKEN`; never commit personal tokens.
 
@@ -26,10 +26,11 @@ make dmg
 make verify
 ```
 
-Upload only these three files from `dist/1.1.0/`:
+Upload these four files from `dist/1.2.0/`:
 
-- `Local-Route-Launcher-1.1.0-arm64.dmg`
-- `Local-Route-Launcher-1.1.0-source.zip`
+- `Local-Route-Launcher-1.2.0-arm64.dmg`
+- `Local-Route-Launcher-1.2.0-windows-x64-setup.exe`
+- `Local-Route-Launcher-1.2.0-source.zip`
 - `SHA256SUMS.txt`
 
 The checksum file uses relative filenames. Run `shasum -a 256 -c SHA256SUMS.txt` inside that directory to verify integrity. The app includes credits and its license. Default packages are ad-hoc signed, not notarized.
@@ -61,3 +62,17 @@ The build generates `sitemap.xml` with both pages and reciprocal language links.
 Create a URL-prefix property with the full website URL in Google Search Console, and add the same site in Bing Webmaster Tools. Verify ownership with the public HTML verification tags supplied by each service, then submit `https://oliver804.github.io/ChatGPT-Proxy-Launcher/sitemap.xml`. Keep verification tags in place. They are not account passwords or API access tokens; never commit those credentials.
 
 A `robots.txt` under the project path would not control crawling, so this build does not generate one. If crawl rules need changing, the site owner must maintain `/robots.txt` at the host root. The sitemap does not fabricate `lastmod` dates from deployment times. Check crawl and indexing status in each console after submission; successful submission guarantees neither indexing nor ranking.
+
+## Windows / 跨平台发布
+
+On Windows x64, install .NET SDK 10.0.402 and Inno Setup 6, then run:
+
+```powershell
+./scripts/build-windows.ps1 -Test
+```
+
+The script creates a self-contained EXE installer and tests per-user installation, an isolated fixture, four localized theme renders, tray lifecycle and uninstall. It does not test a real signed-in ChatGPT account. CI uses Windows Server runners; release compatibility with Windows 10/11 target packages still depends on their installation and Electron support. Inno Setup's installer wizard uses English; the application itself supports Chinese and English.
+
+Windows 与 macOS 构建分别完成后，Release 工作流收集合格产物，生成覆盖两个平台和源码包的统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出系统托盘中的启动器后再升级或卸载。发布前核对三个构建任务和官网检查均通过。
+
+Do not claim Windows Authenticode signing or notarization: current Windows packages are unsigned. Bundled .NET notices must accompany the self-contained runtime. Source ZIPs exclude all .NET bin/obj output and local test results.

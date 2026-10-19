@@ -1,16 +1,17 @@
 <h1 align="center">Local Route Launcher</h1>
-<p align="center">管理应用启动网络配置的原生 macOS 工具</p>
+<p align="center">管理应用启动网络配置的 macOS / Windows 工具</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-1.1.0-168570" alt="Version 1.1.0"></a>
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0"><img src="https://img.shields.io/badge/version-1.2.0-168570" alt="Version 1.2.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
+  <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 <p align="center">
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
   <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/">官网</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0">下载安装</a> ·
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0">下载安装</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
@@ -29,31 +30,36 @@
   </tr>
 </table>
 
-<sub>v1.1.0 界面，使用示例诊断数据渲染。应用内可切换简体中文和 English。</sub>
+<sub>macOS v1.2.0 界面，使用示例诊断数据渲染。应用内可切换简体中文和 English。</sub>
 
 ## 简介
 
 Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Electron 版 ChatGPT 时传入配置。它使用你已运行的代理，不提供网络接入或代理服务。
 
-它通过应用支持的启动参数与环境变量设置代理，不修改系统代理或 DNS。使用 SwiftUI + AppKit 开发，无第三方运行时依赖。
+它通过应用支持的启动参数与环境变量设置代理，不修改系统代理或 DNS。macOS 使用 SwiftUI + AppKit，Windows 使用 WPF 并内置 .NET 运行库。
 
 ## 功能
 
-- **独立代理**：保存地址与端口，支持无需认证的 HTTP 代理和 兼容的混合代理端口。
+- **独立代理**：保存地址与端口，支持无需认证的 HTTP 代理和兼容的混合代理端口。
 - **启动与停止**：携带代理配置启动 ChatGPT，也可请求其正常退出。
 - **连接检查**：查看代理连通性、实际启动参数和应用 TCP 连接。
-- **菜单栏操作**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 图标。
+- **菜单栏 / 系统托盘**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 或任务栏入口。
 - **原生界面**：支持浅色、深色外观；中英文界面即时切换并记住选择，中英文项目文档。
 
 ## 下载与安装
 
 | 版本 | 运行环境 | 下载 |
 | --- | --- | --- |
-| **v1.1.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.1.0/Local-Route-Launcher-1.1.0-arm64.dmg) |
+| **v1.2.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-arm64.dmg) |
+| **v1.2.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-windows-x64-setup.exe) |
 
-打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0)同时提供源码包和 SHA-256 校验文件。
+打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0)同时提供源码包和 SHA-256 校验文件。
 
 > 仅支持可识别的 **Electron 版 ChatGPT**，不支持旧版原生应用；当前安装包不支持 Intel Mac。
+
+**Windows：**运行 EXE 安装包，按提示安装到当前用户，无需另装 .NET。应用支持简体中文 / English、系统托盘和深浅外观。自动查找已安装的兼容应用；找不到时使用「选择应用」指定 `ChatGPT.exe`。Windows ARM64 尚未验证，不作为支持平台。
+
+安装包暂未进行 Authenticode 签名，可能显示 SmartScreen 提示。请核对官方 Release 来源与 SHA-256；不要关闭系统安全功能。若组织策略禁止安装，请联系管理员。
 
 ## 快速开始
 
@@ -64,7 +70,7 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 
 **修改配置后需要重启 ChatGPT，后续也请通过启动器打开。** 从 Dock 直接打开 ChatGPT，不会自动附带这里保存的代理配置。
 
-关闭主窗口后，仍可从菜单栏操作。退出启动器不会停止已运行的 ChatGPT。
+关闭主窗口后，仍可从 macOS 菜单栏或 Windows 系统托盘操作。退出启动器不会停止已运行的 ChatGPT。
 
 ## 常见问题
 
@@ -116,7 +122,7 @@ make dmg         # 生成 DMG、源码 ZIP 和校验文件
 make verify      # 验证安装包、签名与图标
 ```
 
-应用输出到 `build/release/`，发布文件输出到 `dist/1.1.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
+应用输出到 `build/release/`，发布文件输出到 `dist/1.2.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
 
 `make integration`、`make ui` 需要已登录的 macOS 图形会话，仅操作独立测试应用与窗口；`make previews` 可生成模拟数据界面预览。
 

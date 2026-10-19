@@ -9,8 +9,8 @@ ROOT_FILES = {
 }
 # Only reviewed documentation and brand images are included in source exports.
 DOCUMENTATION_IMAGES = {'docs/images/preview-dark.png', 'docs/images/preview-light.png', 'site/assets/icon.png', 'docs/images/preview-dark.en.png', 'docs/images/preview-light.en.png'}
-SOURCE_DIRS = {'.github', 'Sources', 'Tests', 'Resources', 'scripts', 'docs', 'site'}
-EXTENSIONS = {'.swift', '.py', '.sh', '.md', '.txt', '.plist', '.html', '.yml', '.yaml', '.css', '.js'}
+SOURCE_DIRS = {'.github', 'Sources', 'Tests', 'Resources', 'scripts', 'docs', 'site', 'Windows'}
+EXTENSIONS = {'.swift', '.py', '.sh', '.md', '.txt', '.plist', '.html', '.yml', '.yaml', '.css', '.js', '.cs', '.csproj', '.manifest', '.ps1', '.iss'}
 
 
 def version():
@@ -37,6 +37,6 @@ def source_files():
         for path in sorted(directory.rglob('*')):
             if path.is_symlink():
                 raise ValueError('Symlinks are not allowed in source exports')
-            if path.is_file() and path.suffix in EXTENSIONS and '__pycache__' not in path.parts:
+            if path.is_file() and path.suffix in EXTENSIONS and not {'__pycache__', 'bin', 'obj'}.intersection(path.relative_to(ROOT).parts):
                 result.append(path)
     return sorted(result)

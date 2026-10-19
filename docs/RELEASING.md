@@ -9,7 +9,7 @@
 3. 原作者的公开提交身份使用 `Oliver <oliver804x@gmail.com>`。其他贡献者使用各自愿意公开的姓名和邮箱；不复用 Oliver 身份。
 4. 将本地仓库关联到你实际创建的远端，再推送 `main`。
 5. 在 GitHub Actions 中确认 CI 成功，手动检查发布内容。
-6. 给经审核的提交打标签 `v1.1.0`，然后将该标签推送到远端。
+6. 给经审核的提交打标签 `v1.2.0`，然后将该标签推送到远端。
 
 `v*` 标签会运行 Release 工作流：检查标签与 `VERSION` 一致、执行源码与核心检查、构建并验证 DMG、导出纯净源码包，最后创建带附件的 **草稿 Release**。在 GitHub 检查草稿说明和文件后，再手动点击 Publish release。工作流使用当前仓库的临时 `GITHUB_TOKEN`，无需把个人令牌写入项目。
 
@@ -26,10 +26,11 @@ make dmg
 make verify
 ```
 
-只上传 `dist/1.1.0/` 中以下三个文件：
+只上传 `dist/1.2.0/` 中以下三个文件：
 
-- `Local-Route-Launcher-1.1.0-arm64.dmg`
-- `Local-Route-Launcher-1.1.0-source.zip`
+- `Local-Route-Launcher-1.2.0-arm64.dmg`
+- `Local-Route-Launcher-1.2.0-windows-x64-setup.exe`
+- `Local-Route-Launcher-1.2.0-source.zip`
 - `SHA256SUMS.txt`
 
 校验文件使用相对文件名。在产物目录运行 `shasum -a 256 -c SHA256SUMS.txt` 可验证完整性。应用内包含作者信息与许可证；默认签名为 ad-hoc，未公证。
@@ -61,3 +62,17 @@ make verify
 在 Google Search Console 使用官网完整地址创建“网址前缀”资源，在 Bing Webmaster Tools 添加同一站点。使用各平台提供的公开 HTML 验证标签完成所有权验证，再提交 `https://oliver804.github.io/ChatGPT-Proxy-Launcher/sitemap.xml`。验证标签需要持续保留；它们不是账号密码或 API 访问令牌，后两者不得写入源码。
 
 项目子路径下的 `robots.txt` 不会控制抓取，因此不在此处生成。需要修改抓取规则时，应由站点所有者维护主机根路径 `/robots.txt`。网站地图不使用部署时间伪造 `lastmod`。提交后在各平台检查抓取与收录状态；成功提交不保证收录或排名。
+
+## Windows / 跨平台发布
+
+On Windows x64, install .NET SDK 10.0.402 and Inno Setup 6, then run:
+
+```powershell
+./scripts/build-windows.ps1 -Test
+```
+
+The script creates a self-contained EXE installer and tests per-user installation, an isolated fixture, four localized theme renders, tray lifecycle and uninstall. It does not test a real signed-in ChatGPT account. CI uses Windows Server runners; release compatibility with Windows 10/11 target packages still depends on their installation and Electron support. Inno Setup's installer wizard uses English; the application itself supports Chinese and English.
+
+Windows 与 macOS 构建分别完成后，Release 工作流收集合格产物，生成覆盖两个平台和源码包的统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出系统托盘中的启动器后再升级或卸载。发布前核对三个构建任务和官网检查均通过。
+
+Do not claim Windows Authenticode signing or notarization: current Windows packages are unsigned. Bundled .NET notices must accompany the self-contained runtime. Source ZIPs exclude all .NET bin/obj output and local test results.

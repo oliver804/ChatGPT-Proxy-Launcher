@@ -21,3 +21,7 @@ __pycache__/
 *.pfx
 *.mobileprovision
 *.provisionprofile
+
+# .NET generated outputs
+Windows/**/bin/
+Windows/**/obj/

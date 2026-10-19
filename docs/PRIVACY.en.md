@@ -23,3 +23,7 @@ The author's public identity is limited to Oliver and oliver804x@gmail.com. Sour
 These checks cover known patterns, not every kind of sensitive information. Manually review new files, particularly screenshots, logs, certificates, and organizational material. No company affiliation is provided by this repository.
 
 The historical preferences domain is retained across the 1.1.0 rename so existing settings continue to work. Changing the interface language does not change or save network settings.
+
+## Windows settings and checks
+
+Windows stores language, theme, host, port and selected executable in `%LOCALAPPDATA%\LocalRouteLauncher\settings.json`. Uninstall preserves this file; you may delete it separately. Launch only passes child-process settings; the proxy HEAD request occurs when you choose Check connection. Discovery queries current-user installed packages. Process inspection reads the Windows process list locally and filters reports to the selected app and descendants. TCP inspection uses the system API, without capturing traffic contents or uploading reports. Account data, cookies and chats are not read. System proxy, DNS and network registry settings are not changed.

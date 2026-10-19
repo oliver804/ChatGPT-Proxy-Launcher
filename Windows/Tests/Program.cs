@@ -1,0 +1,35 @@
+using LocalRouteLauncher;
+using System.Net;
+
+int assertions = 0;
+void Check(bool ok, string message) { assertions++; if (!ok) throw new Exception(message); }
+void Reject(Action action, string message) { try { action(); } catch (Exception e) when (e is ArgumentException or System.Text.Json.JsonException or InvalidDataException) { assertions++; return; } throw new Exception(message); }
+var endpoint = new ProxyEndpoint(" 127.0.0.1 ", " 7890 ");
+Check(endpoint.Url == "http://127.0.0.1:7890", "IPv4 normalization");
+Check(new ProxyEndpoint("[::1]", "1").Url == "http://[::1]:1", "IPv6 brackets");
+Check(new ProxyEndpoint("LOCALHOST", "65535").Host == "localhost", "Case normalization");
+foreach (var host in new[] { "", "https://example.com", "user:pass@host", "a/b", "a b", "a\n--no-proxy-server", "a&b", "-host", "a..b", "::1%3" }) Reject(() => new ProxyEndpoint(host, "7890"), "Accepted malformed host");
+foreach (var port in new[] { "", "0", "65536", "1;exit", "12.3", "-1", "１２", "99999999999999" }) Reject(() => new ProxyEndpoint("localhost", port), "Accepted malformed port");
+Check(endpoint.MatchesArguments(endpoint.Arguments), "Proxy flag missing");
+Check(!endpoint.MatchesArguments(endpoint.Arguments.Append("--proxy-server=http://evil:80")), "Duplicate proxy accepted");
+Check(!endpoint.MatchesArguments(endpoint.Arguments.Append("--no-proxy-server")), "Direct flag accepted");
+Check(!endpoint.MatchesArguments(["--proxy-server=http://127.0.0.1:78900"]), "Substring proxy match");
+Check(endpoint.Environment["http_proxy"] == endpoint.Url && endpoint.Environment.Count == 5, "Windows env case handling");
+Check(endpoint.Matches(IPAddress.Loopback, 7890) && !endpoint.Matches(IPAddress.Loopback, 7891), "TCP endpoint match");
+Check(new ProxyEndpoint("localhost", "7890").Matches(IPAddress.IPv6Loopback, 7890), "IPv6 localhost match");
+ProcessRow[] rows = [new(10, 0, "target", ""), new(11, 10, "target", ""), new(13, 12, "helper", ""), new(12, 11, "helper", ""), new(20, 0, "other", ""), new(21, 20, "other", "")];
+Check(ProcessFamily.Collect([10], rows).SetEquals([10, 11, 12, 13]), "Process-family isolation");
+Check(ProcessFamily.Collect([], rows).Count == 0, "No root should not match PID 0 descendants");
+var folder = Path.Combine(Path.GetTempPath(), "lrl-core-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(folder);
+try
+{
+    var file = Path.Combine(folder, "settings.json"); var settings = new Settings { Language = "en", Theme = "dark", ApplicationPath = "C:\\Example Folder\\ChatGPT.exe" }; settings.Save(file);
+    Check(Settings.Load(file) == settings, "Round-trip settings");
+    settings = settings with { Language = "zh-CN" }; settings.Save(file); Check(Settings.Load(file).Language == "zh-CN", "Atomic replace");
+    File.WriteAllText(file, "{\"Host\":null}"); Reject(() => Settings.Load(file), "Null host accepted");
+    File.WriteAllText(file, "{broken"); Reject(() => Settings.Load(file), "Corrupt settings accepted");
+    File.WriteAllText(file, "{\"Language\":\"unknown\"}"); Reject(() => Settings.Load(file), "Unknown language accepted");
+    Check(Directory.GetFiles(folder).Length == 1, "Temporary settings leaked");
+}
+finally { Directory.Delete(folder, true); }
+Console.WriteLine($"PASS: {assertions} core assertions.");

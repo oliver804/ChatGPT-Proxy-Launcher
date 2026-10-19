@@ -11,3 +11,7 @@ Local Route Launcher 是独立开发、采用 MIT 许可证的工具，用于向
 ChatGPT 与 OpenAI 是 OpenAI 的商标，相关名称仅用于说明兼容性。本项目与 OpenAI 无隶属、赞助或背书关系。历史仓库网址和内部偏好设置标识仅为保持链接与升级兼容而保留；应用对外名称为 Local Route Launcher。
 
 发布包使用 ad-hoc 签名，尚未取得 Apple Developer ID 签名或公证。安装前请核对源码、校验文件、兼容性说明和 macOS 提示。[MIT 许可证](../LICENSE)适用于项目代码及其免责条款，不授予第三方商标或服务的使用权。[隐私说明](PRIVACY.md) · [第三方说明](../THIRD_PARTY_NOTICES.md)。
+
+Windows: requires a directly launchable Electron-based ChatGPT.exe; restricted Microsoft Store packages may reject direct launch. Windows ARM64 is not supported. Windows installers are unsigned and may trigger SmartScreen. Do not disable security protections or bypass managed-device policies.
+
+Windows：需要能够直接启动的 Electron 版 ChatGPT.exe；受限制的商店安装包可能不兼容。暂不支持 ARM64。安装包未签名，可能出现 SmartScreen 提示，不应关闭系统安全功能或绕过设备管理策略。

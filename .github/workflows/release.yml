@@ -1,65 +1,90 @@
 name: Release
-
 on:
   push:
     tags: ['v*']
-
 permissions:
   contents: read
-
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
-
 jobs:
-  release:
+  macos:
     runs-on: macos-15
     timeout-minutes: 20
-    permissions:
-      contents: write
     env:
       SKIP_SYSTEM_ICON_CHECK: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+      - name: Check, build and verify macOS package
+        run: |
+          test "$GITHUB_REF_NAME" = "v$(cat VERSION | tr -d '\n')"
+          make check test dmg verify site
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-release
+          path: |
+            dist/*/*.dmg
+            dist/*/*-source.zip
+          if-no-files-found: error
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: '10.0.402'
+      - name: Check, build, install and test Windows package
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_NAME -ne "v$((Get-Content VERSION -Raw).Trim())") { throw 'Tag/version mismatch' }
+          ./scripts/build-windows.ps1 -Test
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-release
+          path: dist/*/*-windows-x64-setup.exe
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: windows-validation
+          path: build/windows/test-results/*
+          if-no-files-found: warn
+          retention-days: 7
+  release:
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
           fetch-depth: 0
-      - name: Validate version tag
-        id: release-mode
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: '*-release'
+          path: build/release-assets
+          merge-multiple: true
+      - name: Validate assets and generate combined checksums
+        run: python3 scripts/prepare-release.py
+      - name: Create complete draft, then publish if authorized by tag
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          source scripts/common.sh
-          test "$GITHUB_REF_NAME" = "v$PROJECT_VERSION"
+          version="$(cat VERSION | tr -d '\n')"
+          test "$GITHUB_REF_NAME" = "v$version"
+          gh release create "$GITHUB_REF_NAME" build/release-ready/* \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+            --title "Local Route Launcher $version — Windows + macOS" \
+            --notes-file docs/RELEASE_NOTES.md
           if [[ "$(git cat-file -t "$GITHUB_REF")" == tag ]] && \
              git for-each-ref --format='%(contents)' "$GITHUB_REF" | grep -Fxq 'Publish-Release: true'; then
-            echo 'publish=true' >> "$GITHUB_OUTPUT"
-          else
-            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
           fi
-      - name: Check source and test core behavior
-        run: |
-          make check
-          make test
-      - name: Build and verify
-        run: |
-          make dmg
-          make verify
-      - name: Create a draft release for review
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          source scripts/common.sh
-          gh release create "$GITHUB_REF_NAME" \
-            "$RELEASE_DIR/$DMG_NAME" \
-            "$RELEASE_DIR/$SOURCE_NAME" \
-            "$RELEASE_DIR/SHA256SUMS.txt" \
-            --repo "$GITHUB_REPOSITORY" \
-            --verify-tag --draft \
-            --title "Local Route Launcher $PROJECT_VERSION" \
-            --notes-file docs/RELEASE_NOTES.md
-      - name: Publish when explicitly requested by the annotated tag
-        if: steps.release-mode.outputs.publish == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false

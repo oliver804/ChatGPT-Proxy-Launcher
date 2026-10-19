@@ -51,7 +51,7 @@ class Page(HTMLParser):
         for key in ('href', 'src', 'data-dark', 'data-light'):
             if key in attrs:
                 self.links.append(attrs[key])
-        if tag == 'a' and attrs.get('href', '').endswith('.dmg'):
+        if tag == 'a' and attrs.get('href', '').endswith(('.dmg', '.exe')):
             self.downloads.append(attrs['href'])
         if tag in ('script', 'img') or (tag == 'link' and attrs.get('rel') == 'stylesheet'):
             target = attrs.get('src', attrs.get('href', ''))
@@ -72,9 +72,10 @@ def main():
     assert len(pages) == 2, 'Expected Chinese and English pages'
     assert {p.locale for p in pages.values()} == {'zh-CN', 'en'}
     release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-arm64.dmg'
+    windows_release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-windows-x64-setup.exe'
     for path, page in pages.items():
         assert page.h1_count == 1, 'Expected one primary heading'
-        assert len(page.downloads) == 2 and set(page.downloads) == {release}, 'Wrong release link'
+        assert len(page.downloads) == 4 and set(page.downloads) == {release, windows_release}, 'Wrong release link'
         assert page.canonical == LOCALES[page.locale], 'Incorrect canonical URL'
         assert page.alternates == LOCALES, 'Incomplete reciprocal language links'
         assert page.meta.get('description'), 'Missing search description'
@@ -86,7 +87,7 @@ def main():
         assert len(page.structured_data) == 1, 'Expected one application description'
         app = page.structured_data[0]
         assert app['@type'] == 'SoftwareApplication' and app['name'] == 'Local Route Launcher'
-        assert app['softwareVersion'] == VERSION and app['downloadUrl'] == release, 'Stale app schema'
+        assert app['softwareVersion'] == VERSION and set(app['downloadUrl']) == {release, windows_release}, 'Stale app schema'
         assert app['url'] == page.canonical and app['offers']['price'] == 0
         assert 'aggregateRating' not in app and 'review' not in app, 'Do not invent ratings or reviews'
         for link in page.links:

@@ -2,7 +2,7 @@
 
 ## Supported version / 支持版本
 
-The current public release, 1.1.0, receives fixes. / 当前公开版本 1.1.0 接收修复。
+The current public release, 1.2.0, receives fixes. / 当前公开版本 1.2.0 接收修复。
 
 ## Reporting / 报告问题
 
@@ -13,6 +13,6 @@ Do not open a public issue with an exploit involving private accounts, credentia
 
 ## Boundaries / 能力边界
 
-This launcher configures supported proxy mechanisms; it does not enforce network isolation or intercept all protocols. Default packages are ad-hoc signed and not notarized. Review diagnostic reports before sharing them. Pattern-based repository checks reduce accidental disclosure but do not replace human review.
+This launcher configures supported proxy mechanisms; it does not enforce network isolation or intercept all protocols. macOS packages are ad-hoc signed and not notarized; Windows packages are unsigned. Review diagnostic reports before sharing them. Pattern-based repository checks reduce accidental disclosure but do not replace human review.
 
-启动器配置受支持的代理机制，不提供强制网络隔离，也不拦截所有协议。默认安装包为 ad-hoc 签名，未公证。分享诊断报告前须检查内容。仓库中的模式扫描有助于减少意外泄露，但不能代替人工检查。
+启动器配置受支持的代理机制，不提供强制网络隔离，也不拦截所有协议。macOS 安装包为 ad-hoc 签名、未公证；Windows 安装包未签名。分享诊断报告前须检查内容。仓库中的模式扫描有助于减少意外泄露，但不能代替人工检查。

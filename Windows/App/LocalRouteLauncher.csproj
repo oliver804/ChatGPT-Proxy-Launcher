@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>LocalRouteLauncher</AssemblyName>
+    <RootNamespace>LocalRouteLauncher</RootNamespace>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../../VERSION').Trim())</Version>
+    <ApplicationIcon Condition="Exists('../../build/windows/Launcher.ico')">../../build/windows/Launcher.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <PathMap>$(MSBuildThisFileDirectory)../..=.</PathMap>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Core/LocalRouteLauncher.Core.csproj" />
+    <Resource Include="../../site/assets/icon.png" Link="Brand.png" />
+    <EmbeddedResource Include="../../build/windows/Launcher.ico" LogicalName="Launcher.ico" Condition="Exists('../../build/windows/Launcher.ico')" />
+  </ItemGroup>
+</Project>

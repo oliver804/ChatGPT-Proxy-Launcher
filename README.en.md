@@ -1,16 +1,17 @@
 <h1 align="center">Local Route Launcher</h1>
-<p align="center">A native macOS utility for app-specific launch settings</p>
+<p align="center">App-specific launch settings for macOS and Windows</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-1.1.0-168570" alt="Version 1.1.0"></a>
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0"><img src="https://img.shields.io/badge/version-1.2.0-168570" alt="Version 1.2.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
+  <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 <p align="center">
   <a href="README.md">简体中文</a> · <b>English</b><br>
   <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/en/">Website</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0">Download</a> ·
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0">Download</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#faq">FAQ</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">Report an issue</a>
@@ -29,31 +30,36 @@
   </tr>
 </table>
 
-<sub>v1.1.0 interface rendered with sample diagnostic data. Chinese and English are available in the app.</sub>
+<sub>macOS v1.2.0 interface rendered with sample diagnostic data. Chinese and English are available in the app.</sub>
 
 ## About
 
 Local Route Launcher saves local HTTP proxy settings and passes them to compatible Electron-based ChatGPT installations at launch. It uses a proxy you already run and does not supply network access or a proxy service.
 
-It uses application-supported launch arguments and environment variables, without changing system proxy or DNS settings. Built with SwiftUI + AppKit, with no third-party runtime dependencies.
+It uses application-supported launch arguments and environment variables, without changing system proxy or DNS settings. Built with SwiftUI + AppKit on macOS and WPF on Windows. The Windows installer includes its .NET runtime.
 
 ## Features
 
 - **Dedicated proxy**: save a host and port; supports HTTP proxies and compatible mixed proxy ports without authentication.
 - **Start and stop**: launch ChatGPT with proxy settings or request a graceful shutdown.
 - **Connection checks**: inspect proxy connectivity, actual launch arguments, and application TCP connections.
-- **Menu bar controls**: start, stop, and check status; closing the main window hides the Dock icon.
+- **Menu bar / system tray**: start, stop, and check status; closing the window hides its Dock or taskbar entry.
 - **Native interface**: light and dark appearance; instant Chinese / English switching, with the choice saved for future launches.
 
 ## Download and install
 
 | Version | Requirements | Download |
 | --- | --- | --- |
-| **v1.1.0** | Apple Silicon · macOS 13+ | [Download DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.1.0/Local-Route-Launcher-1.1.0-arm64.dmg) |
+| **v1.2.0** | Apple Silicon · macOS 13+ | [Download DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-arm64.dmg) |
+| **v1.2.0** | Windows 10 22H2 / Windows 11 · x64 | [Download EXE installer](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-windows-x64-setup.exe) |
 
-Open the DMG and drag **Local Route Launcher** to **Applications**. The [release page](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.1.0) also provides a source archive and SHA-256 checksums.
+Open the DMG and drag **Local Route Launcher** to **Applications**. The [release page](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0) also provides a source archive and SHA-256 checksums.
 
-> Only detectable **Electron versions of ChatGPT** are supported. Older native versions and Intel Macs are unsupported by the current release.
+> Only detectable **Electron versions of ChatGPT** are supported. Older native versions, Intel Macs and Windows ARM64 are unsupported by the current release. Restricted Microsoft Store packages may not allow direct launch.
+
+**Windows:** run the EXE installer for the current user; no separate .NET installation is needed. Includes English / Simplified Chinese, system tray controls and light / dark themes. The launcher searches installed packages; use **Choose app** to select a compatible `ChatGPT.exe` if needed. Windows ARM64 is not a supported or validated target.
+
+The installer is not Authenticode-signed and may trigger SmartScreen. Verify the release origin and SHA-256; do not disable security protections. Follow your administrator’s policy on managed devices.
 
 ## Quick start
 
@@ -64,7 +70,7 @@ Open the DMG and drag **Local Route Launcher** to **Applications**. The [release
 
 **Restart ChatGPT after changing settings, and use the launcher for future launches.** Opening ChatGPT directly from the Dock does not automatically apply the proxy settings saved here.
 
-Controls remain accessible from the menu bar after closing the main window. Quitting the launcher does not stop a running ChatGPT instance.
+Controls remain accessible from the macOS menu bar or Windows system tray after closing the main window. Quitting the launcher does not stop a running ChatGPT instance.
 
 ## FAQ
 
@@ -116,7 +122,7 @@ make dmg         # Create DMG, source ZIP, and checksums
 make verify      # Validate the package, signature, and icon
 ```
 
-The app is written to `build/release/`, and release files to `dist/1.1.0/`. [`VERSION`](VERSION) is the single build-version source.
+The app is written to `build/release/`, and release files to `dist/1.2.0/`. [`VERSION`](VERSION) is the single build-version source.
 
 `make integration` and `make ui` require a logged-in macOS graphical session and only operate dedicated test apps and windows. `make previews` renders previews using sample data.
 

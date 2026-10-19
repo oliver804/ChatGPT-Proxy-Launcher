@@ -40,3 +40,26 @@ jobs:
             dist/*/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7
+
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: '10.0.402'
+      - name: Build, install, test and uninstall Windows app
+        shell: pwsh
+        run: ./scripts/build-windows.ps1 -Test
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: windows-build-and-checks
+          path: |
+            dist/*/*-windows-x64-setup.exe
+            build/windows/test-results/*
+          if-no-files-found: warn
+          retention-days: 7

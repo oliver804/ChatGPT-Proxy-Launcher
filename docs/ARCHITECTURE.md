@@ -16,3 +16,13 @@ CI 执行源码检查、核心测试、构建和安装包结构校验。没有�
 ## 界面语言
 
 `Sources/Localization.swift` 维护中英文文案。首次启动跟随系统语言，非中文环境回退英文；明确选择后保存到 `interfaceLanguage`。SwiftUI 观察模型语言，后台检查接收不可变语言快照。操作期间禁用切换，切换后清空旧语言诊断文本，不保存网络编辑。系统对话框可能保持 macOS 语言。
+
+## Windows implementation / Windows 实现
+
+- `Windows/Core`: endpoint validation, case-insensitive child environment, atomic JSON preferences, proxy probe and process-family filtering. Tests run without WPF or a live account.
+- `Windows/App`: WPF interface, bilingual strings, WinForms notification-area icon, fixed PowerShell/CIM process queries and native PID-scoped TCP tables. Executable paths and user settings are never interpolated into shell scripts. Only the selected app is asked to close; production operations never force-kill ChatGPT.
+- `Windows/Fixture`: isolated test application named ChatGPT.exe, built only for validation and never bundled in release installers.
+- `scripts/build-windows.ps1`: generates the shared ICO, publishes self-contained .NET, includes runtime notices and builds a per-user Inno Setup installer.
+- `scripts/test-windows.ps1`: installs to a path containing spaces, tests the installed executable with the fixture, renders both languages/themes, checks close/reopen behavior and uninstalls.
+
+Windows 设置保存在用户本地应用数据目录；不需要管理员权限，不注册系统服务，不自动开机启动。安装包与应用图标均来自已审阅的原创品牌图。关闭窗口隐藏任务栏入口，托盘仍可恢复窗口；退出启动器不结束目标应用。当前测试不覆盖真实 ChatGPT 账号或所有商店安装版本。

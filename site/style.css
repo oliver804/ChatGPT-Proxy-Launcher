@@ -923,3 +923,8 @@ html[lang=en] .feature h3 {
     letter-spacing: -1.4px;
   }
 }
+
+/* Platform choices stay usable at narrow viewport widths. */
+.hero-actions { flex-wrap: wrap; }
+.button.secondary { background: var(--surface, #edf4ef); color: #087f67; border: 1px solid #b9d6c8; }
+.closing { flex-wrap: wrap; }

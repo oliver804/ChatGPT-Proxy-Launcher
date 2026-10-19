@@ -9,9 +9,9 @@ struct BrandMark: View {
     var size: CGFloat = 44
 
     var body: some View {
-        Image(systemName: BrandIdentity.symbolName)
-            .font(.system(size: size * 0.46, weight: .medium))
-            .foregroundStyle(.white)
+        RouteGlyph()
+            .stroke(.white, style: StrokeStyle(lineWidth: size * 0.052, lineCap: .round, lineJoin: .round))
+            .padding(size * 0.24)
             .frame(width: size, height: size)
             .background(
                 LinearGradient(
@@ -20,5 +20,23 @@ struct BrandMark: View {
                 ),
                 in: RoundedRectangle(cornerRadius: size * 0.28)
             )
+    }
+}
+
+// Original vector artwork shared across platforms; no system symbol is exported.
+private struct RouteGlyph: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: rect.minX + x * rect.width, y: rect.minY + y * rect.height)
+        }
+        path.move(to: p(0.48, 0.91))
+        path.addLine(to: p(0.48, 0.59))
+        path.addCurve(to: p(0.88, 0.16), control1: p(0.48, 0.35), control2: p(0.73, 0.32))
+        path.move(to: p(0.64, 0.16)); path.addLine(to: p(0.88, 0.16)); path.addLine(to: p(0.88, 0.40))
+        path.move(to: p(0.48, 0.59))
+        path.addCurve(to: p(0.12, 0.20), control1: p(0.45, 0.37), control2: p(0.27, 0.35))
+        path.move(to: p(0.12, 0.43)); path.addLine(to: p(0.12, 0.20)); path.addLine(to: p(0.35, 0.20))
+        return path
     }
 }

@@ -57,9 +57,14 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
-          name: windows-build-and-checks
-          path: |
-            dist/*/*-windows-x64-setup.exe
-            build/windows/test-results/*
+          name: windows-installer
+          path: dist/*/*-windows-x64-setup.exe
+          if-no-files-found: warn
+          retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: windows-validation
+          path: build/windows/test-results/*
           if-no-files-found: warn
           retention-days: 7

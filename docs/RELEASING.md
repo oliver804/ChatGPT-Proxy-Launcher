@@ -26,7 +26,7 @@ make dmg
 make verify
 ```
 
-只上传 `dist/1.2.0/` 中以下三个文件：
+只上传 `dist/1.2.0/` 中以下四个文件：
 
 - `Local-Route-Launcher-1.2.0-arm64.dmg`
 - `Local-Route-Launcher-1.2.0-windows-x64-setup.exe`
@@ -63,16 +63,16 @@ make verify
 
 项目子路径下的 `robots.txt` 不会控制抓取，因此不在此处生成。需要修改抓取规则时，应由站点所有者维护主机根路径 `/robots.txt`。网站地图不使用部署时间伪造 `lastmod`。提交后在各平台检查抓取与收录状态；成功提交不保证收录或排名。
 
-## Windows / 跨平台发布
+## Windows 构建与跨平台发布
 
-On Windows x64, install .NET SDK 10.0.402 and Inno Setup 6, then run:
+在 Windows x64 安装 .NET SDK 10.0.402 与 Inno Setup 6，然后执行：
 
 ```powershell
 ./scripts/build-windows.ps1 -Test
 ```
 
-The script creates a self-contained EXE installer and tests per-user installation, an isolated fixture, four localized theme renders, tray lifecycle and uninstall. It does not test a real signed-in ChatGPT account. CI uses Windows Server runners; release compatibility with Windows 10/11 target packages still depends on their installation and Electron support. Inno Setup's installer wizard uses English; the application itself supports Chinese and English.
+脚本构建自带运行环境的 EXE 安装包，检查当前用户安装、隔离测试应用的启动与连接、四种语言/外观组合、窗口隐藏/恢复及卸载。Windows CI 使用 Windows Server，不验证真实 ChatGPT 登录账号或全部应用安装版本。安装向导为英文，应用界面支持中英文。
 
-Windows 与 macOS 构建分别完成后，Release 工作流收集合格产物，生成覆盖两个平台和源码包的统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出系统托盘中的启动器后再升级或卸载。发布前核对三个构建任务和官网检查均通过。
+Windows 与 macOS 构建通过后，Release 工作流收集产物并生成统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出托盘中的启动器后再升级或卸载。发布前核对两个平台构建、发布及官网任务均通过。
 
-Do not claim Windows Authenticode signing or notarization: current Windows packages are unsigned. Bundled .NET notices must accompany the self-contained runtime. Source ZIPs exclude all .NET bin/obj output and local test results.
+Windows 安装包尚未进行 Authenticode 签名，不应宣称已签名。安装目录保留随运行库分发的 .NET 许可与第三方声明。源码包排除 bin/obj、测试日志及本地配置。

@@ -11,7 +11,7 @@
 5. Confirm GitHub Actions CI passes and review the release contents.
 6. Tag the reviewed commit `v1.2.0` and push that tag.
 
-A `v*` tag runs the release workflow: validate the tag against `VERSION`, run source and core checks, build and verify the DMG, export clean source, and create a **draft GitHub Release** with attachments. Review the draft and files before clicking Publish release. The workflow uses the repository's temporary `GITHUB_TOKEN`; never commit personal tokens.
+A `v*` tag runs the release workflow: validate the tag against `VERSION`, run source and core checks, build and verify both the macOS DMG and Windows installer, export clean source, and create a **draft GitHub Release** with attachments. Review the draft and files before clicking Publish release. The workflow uses the repository's temporary `GITHUB_TOKEN`; never commit personal tokens.
 
 To explicitly request public publication, use an annotated tag with a standalone `Publish-Release: true` line in its message. The workflow publishes only after every check passes and all assets are uploaded. Tags without that marker remain draft-only.
 
@@ -63,7 +63,7 @@ Create a URL-prefix property with the full website URL in Google Search Console,
 
 A `robots.txt` under the project path would not control crawling, so this build does not generate one. If crawl rules need changing, the site owner must maintain `/robots.txt` at the host root. The sitemap does not fabricate `lastmod` dates from deployment times. Check crawl and indexing status in each console after submission; successful submission guarantees neither indexing nor ranking.
 
-## Windows / 跨平台发布
+## Windows and cross-platform releases
 
 On Windows x64, install .NET SDK 10.0.402 and Inno Setup 6, then run:
 
@@ -73,6 +73,6 @@ On Windows x64, install .NET SDK 10.0.402 and Inno Setup 6, then run:
 
 The script creates a self-contained EXE installer and tests per-user installation, an isolated fixture, four localized theme renders, tray lifecycle and uninstall. It does not test a real signed-in ChatGPT account. CI uses Windows Server runners; release compatibility with Windows 10/11 target packages still depends on their installation and Electron support. Inno Setup's installer wizard uses English; the application itself supports Chinese and English.
 
-Windows 与 macOS 构建分别完成后，Release 工作流收集合格产物，生成覆盖两个平台和源码包的统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出系统托盘中的启动器后再升级或卸载。发布前核对三个构建任务和官网检查均通过。
+After both platform jobs pass, the release workflow assembles the reviewed assets, generates a combined checksum manifest and creates a draft. Only annotated tags containing `Publish-Release: true` trigger public publication. Previously published assets are retained. Windows uninstall preserves user settings. Quit the launcher from its tray before upgrading or uninstalling. Confirm both platform builds, release assembly and website checks before declaring a release complete.
 
 Do not claim Windows Authenticode signing or notarization: current Windows packages are unsigned. Bundled .NET notices must accompany the self-contained runtime. Source ZIPs exclude all .NET bin/obj output and local test results.

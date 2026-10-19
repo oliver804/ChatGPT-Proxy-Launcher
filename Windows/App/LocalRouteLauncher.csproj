@@ -9,6 +9,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>LocalRouteLauncher</AssemblyName>
+    <Authors>Oliver</Authors><Company>Oliver</Company><Product>Local Route Launcher</Product><Copyright>Copyright © 2026 Oliver</Copyright>
     <RootNamespace>LocalRouteLauncher</RootNamespace>
     <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../../VERSION').Trim())</Version>
     <ApplicationIcon Condition="Exists('../../build/windows/Launcher.ico')">../../build/windows/Launcher.ico</ApplicationIcon>

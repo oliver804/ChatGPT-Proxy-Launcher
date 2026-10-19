@@ -10,8 +10,6 @@ Compatibility is limited to detectable Electron-based ChatGPT installations on A
 
 ChatGPT and OpenAI are trademarks of OpenAI. Their names identify compatibility only. This project is not affiliated with, sponsored by, or endorsed by OpenAI. The historical repository URL and internal preferences identifier are retained for link continuity and upgrades; the application’s public name is Local Route Launcher.
 
-Release binaries are ad-hoc signed and are not Apple Developer ID signed or notarized. Review the source, release checksums, compatibility notes, and macOS prompts before installation. The [MIT license](../LICENSE) covers the project code and its warranty limitations; it does not grant rights to third-party trademarks or services. [Privacy](PRIVACY.en.md) · [Third-party notices](../THIRD_PARTY_NOTICES.md).
+macOS release binaries are ad-hoc signed and are not Apple Developer ID signed or notarized. Review the source, release checksums, compatibility notes, and macOS prompts before installation. The [MIT license](../LICENSE) covers the project code and its warranty limitations; it does not grant rights to third-party trademarks or services. [Privacy](PRIVACY.en.md) · [Third-party notices](../THIRD_PARTY_NOTICES.md).
 
 Windows: requires a directly launchable Electron-based ChatGPT.exe; restricted Microsoft Store packages may reject direct launch. Windows ARM64 is not supported. Windows installers are unsigned and may trigger SmartScreen. Do not disable security protections or bypass managed-device policies.
-
-Windows：需要能够直接启动的 Electron 版 ChatGPT.exe；受限制的商店安装包可能不兼容。暂不支持 ARM64。安装包未签名，可能出现 SmartScreen 提示，不应关闭系统安全功能或绕过设备管理策略。

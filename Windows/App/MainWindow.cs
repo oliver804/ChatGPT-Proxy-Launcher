@@ -60,9 +60,9 @@ public sealed class MainWindow : Window
         var options = new StackPanel { HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = !busy };
         DockPanel.SetDock(options, Dock.Right); header.Children.Add(options);
         var language = new ComboBox { Width = 126, Margin = new Thickness(0, 0, 0, 8), ItemsSource = new[] { "English", "简体中文" }, SelectedIndex = Zh ? 1 : 0 };
-        language.SelectionChanged += (_, _) => { if (rebuilding) return; settings = Draft() with { Language = language.SelectedIndex == 1 ? "zh-CN" : "en" }; SavePreferences(); };
+        language.SelectionChanged += (_, _) => { if (rebuilding) return; settings = settings with { Language = language.SelectedIndex == 1 ? "zh-CN" : "en" }; SavePreferences(); };
         var theme = new ComboBox { Width = 126, ItemsSource = new[] { T("System"), T("Light"), T("Dark") }, SelectedIndex = settings.Theme == "dark" ? 2 : settings.Theme == "light" ? 1 : 0 };
-        theme.SelectionChanged += (_, _) => { if (rebuilding) return; settings = Draft() with { Theme = theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system" }; SavePreferences(); };
+        theme.SelectionChanged += (_, _) => { if (rebuilding) return; settings = settings with { Theme = theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system" }; SavePreferences(); };
         options.Children.Add(language); options.Children.Add(theme);
         header.Children.Add(new Image { Source = Icon, Width = 58, Height = 58, Margin = new Thickness(0, 0, 16, 0) });
         var title = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
@@ -72,7 +72,7 @@ public sealed class MainWindow : Window
         route.Child = Text($"ChatGPT   →   {settings.Host}:{settings.Port}   HTTP", 17, true, accent); launchCard.Children.Add(route);
         var launchActions = new UniformGridCompat();
         launchActions.Children.Add(Button(T("Launch"), async () => await Work(async () => { SaveDraft(); await WindowsPlatform.Launch(settings.ApplicationPath, new(settings.Host, settings.Port)); }, "Launched"), true));
-        launchActions.Children.Add(Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); }, "Stopped")));
+        launchActions.Children.Add(Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); transport = arguments = connections = report = ""; }, "Stopped")));
         launchCard.Children.Add(launchActions);
         var proxyCard = Card(); proxyCard.Children.Add(Text(T("Settings"), 18, true)); proxyCard.Children.Add(Text(T("RestartHint"), 12, false, muted));
         var inputs = new Grid { Margin = new Thickness(0, 14, 0, 0) }; inputs.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) }); inputs.ColumnDefinitions.Add(new() { Width = new GridLength(120) });
@@ -108,12 +108,20 @@ public sealed class MainWindow : Window
         button.Click += (_, _) => action(); actions.Add(button); return button;
     }
     private Settings Draft() => settings with { Host = host.Text.Trim(), Port = port.Text.Trim() };
-    private void SaveDraft() { var draft = Draft(); _ = new ProxyEndpoint(draft.Host, draft.Port); if (!smoke) draft.Save(); settings = draft; }
+    private void SaveDraft()
+    {
+        var draft = Draft(); _ = new ProxyEndpoint(draft.Host, draft.Port);
+        if (!smoke) draft.Save();
+        settings = draft;
+        // Diagnostics describe a previous process/configuration snapshot, never a new launch.
+        transport = arguments = connections = report = "";
+    }
     private void SavePreferences()
     {
+        var draftHost = host.Text; var draftPort = port.Text;
         try { _ = new ProxyEndpoint(settings.Host, settings.Port); if (!smoke) settings.Save(); notice = "Saved"; }
         catch (Exception ex) { notice = ex.Message; }
-        transport = arguments = connections = report = ""; Build(); SetupTray();
+        transport = arguments = connections = report = ""; Build(); host.Text = draftHost; port.Text = draftPort; SetupTray();
     }
     private void RequireApp() { if (!WindowsPlatform.IsCompatible(settings.ApplicationPath)) throw new InvalidOperationException("InvalidApplication"); }
     private async Task Detect()
@@ -160,7 +168,7 @@ public sealed class MainWindow : Window
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add(T("Show"), null, (_, _) => Reveal());
         menu.Items.Add(T("Launch"), null, async (_, _) => { Reveal(); await Work(async () => { SaveDraft(); await WindowsPlatform.Launch(settings.ApplicationPath, new(settings.Host, settings.Port)); }, "Launched"); });
-        menu.Items.Add(T("Stop"), null, async (_, _) => { Reveal(); await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); }, "Stopped"); });
+        menu.Items.Add(T("Stop"), null, async (_, _) => { Reveal(); await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); transport = arguments = connections = report = ""; }, "Stopped"); });
         menu.Items.Add(T("Check"), null, (_, _) => { Reveal(); Check(); }); menu.Items.Add(new Forms.ToolStripSeparator()); menu.Items.Add(T("Quit"), null, (_, _) => Quit());
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Reveal();
     }

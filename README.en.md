@@ -32,6 +32,18 @@
 
 <sub>macOS v1.2.0 interface rendered with sample diagnostic data. Chinese and English are available in the app.</sub>
 
+
+<details>
+<summary><b>Windows preview</b></summary>
+
+<table>
+  <tr><th width="50%">Dark</th><th width="50%">Light</th></tr>
+  <tr><td><img src="docs/images/windows-dark.en.png" alt="Windows dark appearance" width="100%"></td><td><img src="docs/images/windows-light.en.png" alt="Windows light appearance" width="100%"></td></tr>
+</table>
+
+<sub>v1.2.0 WPF interface rendered on Windows with default settings; no account data.</sub>
+</details>
+
 ## About
 
 Local Route Launcher saves local HTTP proxy settings and passes them to compatible Electron-based ChatGPT installations at launch. It uses a proxy you already run and does not supply network access or a proxy service.
@@ -106,13 +118,15 @@ HTTP 403 indicates a response during the tunnel and TLS check, not working chat 
 <details>
 <summary><b>How do I update the app?</b></summary>
 
-Quit the old launcher from its menu bar panel, then install **Local Route Launcher.app**. If upgrading from v1.0.0, remove the old launcher app after verifying the new one; do not run both copies. The preferences identifier is retained, so saved settings carry over. ChatGPT can keep running. Language changes take effect immediately; macOS-owned menus and dialogs may follow the system language.
+**Windows:** quit the launcher from its tray, then run the new installer. Saved settings are preserved.
+
+**macOS:** quit the old launcher from its menu bar panel, then install **Local Route Launcher.app**. If upgrading from v1.0.0, remove the old launcher app after verifying the new one; do not run both copies. The preferences identifier is retained, so saved settings carry over. ChatGPT can keep running. Language changes take effect immediately; macOS-owned menus and dialogs may follow the system language.
 
 </details>
 
 ## Development
 
-Requires an Apple Silicon Mac, Xcode Command Line Tools (Swift 5.9+), and Python 3.
+**macOS development:** requires an Apple Silicon Mac, Xcode Command Line Tools (Swift 5.9+), and Python 3.
 
 ```sh
 make check       # Privacy and script checks
@@ -126,11 +140,19 @@ The app is written to `build/release/`, and release files to `dist/1.2.0/`. [`VE
 
 `make integration` and `make ui` require a logged-in macOS graphical session and only operate dedicated test apps and windows. `make previews` renders previews using sample data.
 
+**Windows development:** use Windows x64, .NET SDK 10.0.402 and Inno Setup 6.
+
+```powershell
+./scripts/build-windows.ps1 -Test
+```
+
+The installer is written to `dist/1.2.0/`. Tests use an isolated fixture, not a real ChatGPT account.
+
 [Issues](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) and PRs are welcome. See [Contributing](CONTRIBUTING.md), [Architecture](docs/ARCHITECTURE.en.md), and [Releasing](docs/RELEASING.en.md) for development details.
 
 ## Privacy and license
 
-No login, telemetry, or automatic uploads; settings stay on your Mac. Connection checks send a HEAD request to `chatgpt.com` through the configured proxy without account credentials. Reports are displayed locally; remove private paths, internal addresses, and other sensitive details before sharing. [Privacy](docs/PRIVACY.en.md) · [Security](SECURITY.md)
+No login, telemetry, or automatic uploads; settings stay on your device. Connection checks send a HEAD request to `chatgpt.com` through the configured proxy without account credentials. Reports are displayed locally; remove private paths, internal addresses, and other sensitive details before sharing. [Privacy](docs/PRIVACY.en.md) · [Security](SECURITY.md)
 
 **Author: Oliver** · [oliver804x@gmail.com](mailto:oliver804x@gmail.com)<br>
 **License: [MIT](LICENSE)** · [Changelog](CHANGELOG.md)

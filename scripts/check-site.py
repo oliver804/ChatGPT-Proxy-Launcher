@@ -111,10 +111,10 @@ def main():
         alternates = {link.attrib['hreflang']: link.attrib['href'] for link in entry.findall('x:link', ns)}
         assert alternates == LOCALES, 'Sitemap language links differ from pages'
     expected = {'index.html', 'en/index.html', 'style.css', 'app.js', '.nojekyll',
-                'sitemap.xml', 'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png', 'assets/preview-dark.en.png', 'assets/preview-light.en.png'}
+                'sitemap.xml', 'assets/icon.png', 'assets/preview-dark.png', 'assets/preview-light.png', 'assets/preview-dark.en.png', 'assets/preview-light.en.png', 'assets/windows-dark.png', 'assets/windows-light.png', 'assets/windows-dark.en.png', 'assets/windows-light.en.png'}
     actual = {str(p.relative_to(SITE)) for p in SITE.rglob('*') if p.is_file()}
     assert actual == expected, 'Unexpected or missing deployed files'
-    print('PASS: bilingual sitemap and deployment allowlist (eleven public files)')
+    print('PASS: bilingual sitemap and deployment allowlist (fifteen public files)')
 
 
 if __name__ == '__main__':

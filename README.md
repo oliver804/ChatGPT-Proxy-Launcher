@@ -32,6 +32,18 @@
 
 <sub>macOS v1.2.0 界面，使用示例诊断数据渲染。应用内可切换简体中文和 English。</sub>
 
+
+<details>
+<summary><b>Windows 界面预览</b></summary>
+
+<table>
+  <tr><th width="50%">Dark</th><th width="50%">Light</th></tr>
+  <tr><td><img src="docs/images/windows-dark.png" alt="Windows 深色模式" width="100%"></td><td><img src="docs/images/windows-light.png" alt="Windows 浅色模式" width="100%"></td></tr>
+</table>
+
+<sub>v1.2.0 WPF 界面，在 Windows 上使用默认设置渲染，不包含账号数据。</sub>
+</details>
+
 ## 简介
 
 Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Electron 版 ChatGPT 时传入配置。它使用你已运行的代理，不提供网络接入或代理服务。
@@ -106,13 +118,15 @@ HTTP 403 只能说明隧道与 TLS 检查取得了响应，不代表聊天或账
 <details>
 <summary><b>如何更新应用？</b></summary>
 
-从菜单栏退出旧启动器，再安装 **Local Route Launcher.app**。从 v1.0.0 升级时，确认新版本正常后移除旧启动器应用，避免同时运行两份。保留原偏好设置标识，因此原配置可继续使用，ChatGPT 无需停止。语言切换即时生效；macOS 自带菜单和系统对话框可能跟随系统语言。
+**Windows：**从托盘退出启动器，再运行新版安装包，原配置继续保留。
+
+**macOS：**从菜单栏退出旧启动器，再安装 **Local Route Launcher.app**。从 v1.0.0 升级时，确认新版本正常后移除旧启动器应用，避免同时运行两份。保留原偏好设置标识，因此原配置可继续使用，ChatGPT 无需停止。语言切换即时生效；macOS 自带菜单和系统对话框可能跟随系统语言。
 
 </details>
 
 ## 开发与构建
 
-需要 Apple Silicon Mac、Xcode Command Line Tools（Swift 5.9+）和 Python 3。
+**macOS 构建：**需要 Apple Silicon Mac、Xcode Command Line Tools（Swift 5.9+）和 Python 3。
 
 ```sh
 make check       # 隐私与脚本检查
@@ -125,6 +139,14 @@ make verify      # 验证安装包、签名与图标
 应用输出到 `build/release/`，发布文件输出到 `dist/1.2.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
 
 `make integration`、`make ui` 需要已登录的 macOS 图形会话，仅操作独立测试应用与窗口；`make previews` 可生成模拟数据界面预览。
+
+**Windows 构建：**需要 Windows x64、.NET SDK 10.0.402 和 Inno Setup 6。
+
+```powershell
+./scripts/build-windows.ps1 -Test
+```
+
+安装包输出到 `dist/1.2.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
 
 欢迎提交 [Issue](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) 或 PR。开发细节参见[贡献指南](CONTRIBUTING.md)、[架构说明](docs/ARCHITECTURE.md)和[发布指南](docs/RELEASING.md)。
 

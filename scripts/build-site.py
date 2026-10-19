@@ -43,6 +43,9 @@ def main():
     for theme in ('dark', 'light', 'dark.en', 'light.en'):
         shutil.copyfile(ROOT / 'docs' / 'images' / f'preview-{theme}.png',
                         OUTPUT / 'assets' / f'preview-{theme}.png')
+    for theme in ('dark', 'light', 'dark.en', 'light.en'):
+        shutil.copyfile(ROOT / 'docs' / 'images' / f'windows-{theme}.png',
+                        OUTPUT / 'assets' / f'windows-{theme}.png')
     (OUTPUT / '.nojekyll').touch()
     write_sitemap()
     print('Website built in build/site')

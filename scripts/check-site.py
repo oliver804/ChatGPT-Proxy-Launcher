@@ -65,7 +65,7 @@ class Page(HTMLParser):
                 assert 'async' in attrs, 'Analytics must load asynchronously'
                 self.analytics_count += 1
             else:
-                assert not urlsplit(target).netloc, 'Only the approved Google tag may load externally'
+                assert not urlsplit(target).netloc, 'Only the approved Google tag may use an external src; Clarity uses its inline loader'
 
     def handle_data(self, data):
         if self.in_title:
@@ -91,6 +91,9 @@ def main():
         assert page.h1_count == 1, 'Expected one primary heading'
         assert page.analytics_count == 1, 'Expected one Google tag per page'
         assert path.read_text().count("gtag('config', 'G-QVHYT7RFW9');") == 1, 'Missing or duplicate Analytics configuration'
+        assert 'clarity-tracking' in page.ids, 'Missing Clarity loader'
+        assert path.read_text().count('"https://www.clarity.ms/tag/"+i') == 1, 'Missing or duplicate Clarity script injection'
+        assert path.read_text().count('})(window, document, "clarity", "script", "z0krfkfwwu");') == 1, 'Incorrect Clarity project configuration'
         assert len(page.downloads) == 4 and set(page.downloads) == {release, windows_release}, 'Wrong release link'
         assert page.canonical == LOCALES[page.locale], 'Incorrect canonical URL'
         assert page.alternates == LOCALES, 'Incomplete reciprocal language links'

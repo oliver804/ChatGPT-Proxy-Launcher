@@ -11,6 +11,7 @@ SITE = ROOT / 'build' / 'site'
 VERSION = (ROOT / 'VERSION').read_text().strip()
 BASE_URL = 'https://oliver804.github.io/ChatGPT-Proxy-Launcher/'
 LOCALES = {'zh-CN': BASE_URL, 'en': BASE_URL + 'en/', 'x-default': BASE_URL}
+ANALYTICS_SCRIPT = 'https://www.googletagmanager.com/gtag/js?id=G-QVHYT7RFW9'
 
 
 class Page(HTMLParser):
@@ -29,6 +30,7 @@ class Page(HTMLParser):
         self.json_buffer = None
         self.title = ''
         self.in_title = False
+        self.analytics_count = 0
         self.feed(path.read_text())
 
     def handle_starttag(self, tag, attrs):
@@ -59,7 +61,11 @@ class Page(HTMLParser):
             self.downloads.append(attrs['href'])
         if tag in ('script', 'img') or (tag == 'link' and attrs.get('rel') == 'stylesheet'):
             target = attrs.get('src', attrs.get('href', ''))
-            assert not urlsplit(target).netloc, 'Assets must be self-hosted'
+            if tag == 'script' and target == ANALYTICS_SCRIPT:
+                assert 'async' in attrs, 'Analytics must load asynchronously'
+                self.analytics_count += 1
+            else:
+                assert not urlsplit(target).netloc, 'Only the approved Google tag may load externally'
 
     def handle_data(self, data):
         if self.in_title:
@@ -83,6 +89,8 @@ def main():
     windows_release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-windows-x64-setup.exe'
     for path, page in pages.items():
         assert page.h1_count == 1, 'Expected one primary heading'
+        assert page.analytics_count == 1, 'Expected one Google tag per page'
+        assert path.read_text().count("gtag('config', 'G-QVHYT7RFW9');") == 1, 'Missing or duplicate Analytics configuration'
         assert len(page.downloads) == 4 and set(page.downloads) == {release, windows_release}, 'Wrong release link'
         assert page.canonical == LOCALES[page.locale], 'Incorrect canonical URL'
         assert page.alternates == LOCALES, 'Incomplete reciprocal language links'

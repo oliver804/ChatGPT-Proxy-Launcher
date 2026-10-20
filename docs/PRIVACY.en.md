@@ -27,3 +27,9 @@ The historical preferences domain is retained across the 1.1.0 rename so existin
 ## Windows settings and checks
 
 Windows stores language, theme, host, port and selected executable in `%LOCALAPPDATA%\LocalRouteLauncher\settings.json`. Uninstall preserves this file; you may delete it separately. Launch only passes child-process settings; the proxy HEAD request occurs when you choose Check connection. Discovery queries current-user installed packages. Process inspection reads the Windows process list locally and filters reports to the selected app and descendants. TCP inspection uses the system API, without capturing traffic contents or uploading reports. Account data, cookies and chats are not read. System proxy, DNS and network registry settings are not changed.
+
+## Website analytics
+
+The Chinese and English project website pages use Google Analytics 4 (measurement ID: `G-QVHYT7RFW9`) to understand website visits. The website loads Google's `gtag.js` and sends visit data, such as page views, to Google. This may include page URLs, referring sources, browser and device information. Google Analytics uses first-party cookies to distinguish visitors and sessions. Enabled enhanced measurement events and data retention depend on the Analytics property's settings.
+
+Analytics applies only to the website. It is not included in the macOS or Windows launcher and does not read in-app proxy settings, account details or conversations. Browser restrictions, content blockers or network availability may prevent measurement. See [Google's Privacy Policy](https://policies.google.com/privacy) and [Google Analytics cookie usage](https://support.google.com/analytics/answer/11397207?hl=en) for Google's data handling.

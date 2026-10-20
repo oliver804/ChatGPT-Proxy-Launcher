@@ -27,3 +27,9 @@ ChatGPT 自身及代理服务的数据处理由对应软件决定。启动器不
 ## Windows 本地配置与检查
 
 Windows 将语言、外观、地址、端口及应用路径保存到 `%LOCALAPPDATA%\LocalRouteLauncher\settings.json`，不读取账号、Cookie 或聊天记录。卸载保留此文件，可自行删除。启动时仅向子进程传入配置；只有点击连接检查才发送经代理的 HEAD 请求。自动检测查询当前用户已安装的应用包，进程检查读取 Windows 进程列表并在本机筛选所选应用及子进程；报告不包含其他应用的进程清单。TCP 连接由系统 API 读取，不抓取通信内容，也不自动上传。系统代理、DNS、注册表网络配置均不修改。
+
+## 官网访问统计
+
+项目官网的中文和英文页面使用 Google Analytics 4（衡量 ID：`G-QVHYT7RFW9`）分析访问情况。官网加载 Google 提供的 `gtag.js`，向 Google 发送页面浏览等访问数据，可包含页面地址、来源、浏览器和设备信息；Google Analytics 使用第一方 Cookie 区分访客与会话。实际启用的增强型衡量事件和数据保留期限以该 Analytics 资源设置为准。
+
+这些统计仅用于官网，不集成到 macOS 或 Windows 启动器中，也不读取应用中的代理配置、账号或聊天记录。浏览器限制、内容拦截工具或网络不可达可能阻止统计。有关 Google 的数据处理，请参阅 [Google 隐私政策](https://policies.google.com/privacy) 和 [Google Analytics Cookie 说明](https://support.google.com/analytics/answer/11397207?hl=zh-Hans)。

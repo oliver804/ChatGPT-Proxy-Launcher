@@ -27,6 +27,8 @@ class Page(HTMLParser):
         self.canonical = None
         self.structured_data = []
         self.json_buffer = None
+        self.title = ''
+        self.in_title = False
         self.feed(path.read_text())
 
     def handle_starttag(self, tag, attrs):
@@ -38,6 +40,8 @@ class Page(HTMLParser):
             self.locale = attrs.get('lang')
         if tag == 'h1':
             self.h1_count += 1
+        if tag == 'title':
+            self.in_title = True
         if tag == 'meta':
             self.meta[attrs.get('name', attrs.get('property'))] = attrs.get('content', '')
         if tag == 'link' and attrs.get('rel') == 'canonical':
@@ -58,10 +62,14 @@ class Page(HTMLParser):
             assert not urlsplit(target).netloc, 'Assets must be self-hosted'
 
     def handle_data(self, data):
+        if self.in_title:
+            self.title += data
         if self.json_buffer is not None:
             self.json_buffer += data
 
     def handle_endtag(self, tag):
+        if tag == 'title':
+            self.in_title = False
         if tag == 'script' and self.json_buffer is not None:
             self.structured_data.append(json.loads(self.json_buffer))
             self.json_buffer = None
@@ -79,6 +87,11 @@ def main():
         assert page.canonical == LOCALES[page.locale], 'Incorrect canonical URL'
         assert page.alternates == LOCALES, 'Incomplete reciprocal language links'
         assert page.meta.get('description'), 'Missing search description'
+        assert all(term in page.title for term in ('ChatGPT', 'Windows', 'macOS', 'Local Route Launcher')), 'Search title does not identify the app and supported platforms'
+        assert page.meta.get('og:title') == page.title, 'Search and sharing titles differ'
+        assert page.meta.get('og:description') == page.meta['description'], 'Search and sharing descriptions differ'
+        for verification in ('google-site-verification', 'msvalidate.01', 'baidu-site-verification', 'sogou_site_verification'):
+            assert page.meta.get(verification), f'Missing ownership verification: {verification}'
         assert 'noindex' not in page.meta.get('robots', '').lower(), 'Page excludes search indexing'
         assert page.meta.get('og:url') == page.canonical, 'Share URL differs from canonical'
         assert page.meta.get('og:title') and page.meta.get('og:description'), 'Missing share metadata'
@@ -89,6 +102,12 @@ def main():
         assert app['@type'] == 'SoftwareApplication' and app['name'] == 'Local Route Launcher'
         assert app['softwareVersion'] == VERSION and set(app['downloadUrl']) == {release, windows_release}, 'Stale app schema'
         assert app['url'] == page.canonical and app['offers']['price'] == 0
+        assert app['description'] == page.meta['description'], 'App description differs from page metadata'
+        assert len(app['operatingSystem']) == 2 and app['featureList'] and app['softwareRequirements'], 'Missing app compatibility or features'
+        assert app['releaseNotes'].endswith(f'/releases/tag/v{VERSION}'), 'Stale release notes link'
+        assert len(app['screenshot']) == 2, 'Expected macOS and Windows screenshots'
+        for screenshot in app['screenshot']:
+            assert screenshot.startswith(BASE_URL) and (SITE / screenshot.removeprefix(BASE_URL)).is_file(), 'Missing app screenshot'
         assert 'aggregateRating' not in app and 'review' not in app, 'Do not invent ratings or reviews'
         for link in page.links:
             parsed = urlsplit(link)

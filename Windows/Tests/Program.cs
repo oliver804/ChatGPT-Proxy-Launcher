@@ -20,12 +20,24 @@ Check(new ProxyEndpoint("localhost", "7890").Matches(IPAddress.IPv6Loopback, 789
 ProcessRow[] rows = [new(10, 0, "target", ""), new(11, 10, "target", ""), new(13, 12, "helper", ""), new(12, 11, "helper", ""), new(20, 0, "other", ""), new(21, 20, "other", "")];
 Check(ProcessFamily.Collect([10], rows).SetEquals([10, 11, 12, 13]), "Process-family isolation");
 Check(ProcessFamily.Collect([], rows).Count == 0, "No root should not match PID 0 descendants");
+Check(AppLanguages.Codes.Length == 9 && AppLanguages.Codes.Distinct().Count() == 9, "Nine distinct interface languages");
+Check(AppLanguages.Resolve("zh-Hant-HK") == "zh-TW" && AppLanguages.Resolve("zh-CN") == "zh-CN", "Chinese script fallback");
+Check(AppLanguages.Resolve("zh-Hans-HK") == "zh-CN", "Explicit Simplified script overrides region");
+Check(AppLanguages.Resolve("zh-Hant-CN") == "zh-TW", "Explicit Traditional script overrides region");
+Check(AppLanguages.Resolve("zh_Hans_TW") == "zh-CN", "Underscore locale identifiers");
+Check(AppLanguages.Resolve("fa-IR") == "fa" && AppLanguages.Resolve("ar-SA") == "ar", "RTL system languages");
+Check(AppLanguages.IsRightToLeft("fa") && AppLanguages.IsRightToLeft("ar") && !AppLanguages.IsRightToLeft("en"), "RTL directions");
 var folder = Path.Combine(Path.GetTempPath(), "lrl-core-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(folder);
 try
 {
     var file = Path.Combine(folder, "settings.json"); var settings = new Settings { Language = "en", Theme = "dark", ApplicationPath = "C:\\Example Folder\\ChatGPT.exe" }; settings.Save(file);
     Check(Settings.Load(file) == settings, "Round-trip settings");
     settings = settings with { Language = "zh-CN" }; settings.Save(file); Check(Settings.Load(file).Language == "zh-CN", "Atomic replace");
+    foreach (var language in AppLanguages.Codes)
+    {
+        settings = settings with { Language = language }; settings.Save(file);
+        Check(Settings.Load(file).Language == language, "Language setting round trip: " + language);
+    }
     File.WriteAllText(file, "{\"Host\":null}"); Reject(() => Settings.Load(file), "Null host accepted");
     File.WriteAllText(file, "{broken"); Reject(() => Settings.Load(file), "Corrupt settings accepted");
     File.WriteAllText(file, "{\"Language\":\"unknown\"}"); Reject(() => Settings.Load(file), "Unknown language accepted");

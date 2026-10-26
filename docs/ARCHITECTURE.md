@@ -15,7 +15,7 @@ CI 执行源码检查、核心测试、构建和安装包结构校验。没有�
 
 ## 界面语言
 
-`Sources/Localization.swift` 维护中英文文案。首次启动跟随系统语言，非中文环境回退英文；明确选择后保存到 `interfaceLanguage`。SwiftUI 观察模型语言，后台检查接收不可变语言快照。操作期间禁用切换，切换后清空旧语言诊断文本，不保存网络编辑。系统对话框可能保持 macOS 语言。
+`Sources/Localization.swift` 维护简体中文和英文文案，新增语言由 `Resources/i18n/` 生成。首次启动跟随受支持的系统语言，其他环境回退英文；明确选择后保存到 `interfaceLanguage`。SwiftUI 观察模型语言，后台检查接收不可变语言快照。操作期间禁用切换，切换后清空旧语言诊断文本，不保存网络编辑。系统对话框可能保持 macOS 语言。
 
 ## Windows 实现
 

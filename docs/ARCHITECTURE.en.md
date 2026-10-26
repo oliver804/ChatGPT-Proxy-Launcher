@@ -15,12 +15,12 @@ CI runs source checks, core tests, builds, and package validation. Without a gra
 
 ## Interface language
 
-`Sources/Localization.swift` contains the Chinese / English catalog. First launch follows the system language (Chinese or English fallback), then saves an explicit choice in `interfaceLanguage`. SwiftUI observes the model language; background checks receive an immutable language snapshot. Switching is disabled while an operation runs and clears stale diagnostic text, without saving network edits. System-owned dialogs may retain the macOS language.
+`Sources/Localization.swift` contains the Simplified Chinese and English catalog; additional languages are generated from `Resources/i18n/`. First launch follows a supported system language (otherwise English), then saves an explicit choice in `interfaceLanguage`. SwiftUI observes the model language; background checks receive an immutable language snapshot. Switching is disabled while an operation runs and clears stale diagnostic text, without saving network edits. System-owned dialogs may retain the macOS language.
 
 ## Windows implementation / Windows 实现
 
 - `Windows/Core`: endpoint validation, case-insensitive child environment, atomic JSON preferences, proxy probe and process-family filtering. Tests run without WPF or a live account.
-- `Windows/App`: WPF interface, bilingual strings, WinForms notification-area icon, fixed PowerShell/CIM process queries and native PID-scoped TCP tables. Executable paths and user settings are never interpolated into shell scripts. Only the selected app is asked to close; production operations never force-kill ChatGPT.
+- `Windows/App`: WPF interface, nine-language strings, WinForms notification-area icon, fixed PowerShell/CIM process queries and native PID-scoped TCP tables. Executable paths and user settings are never interpolated into shell scripts. Only the selected app is asked to close; production operations never force-kill ChatGPT.
 - `Windows/Fixture`: isolated test application named ChatGPT.exe, built only for validation and never bundled in release installers.
 - `scripts/build-windows.ps1`: generates the shared ICO, publishes self-contained .NET, includes runtime notices and builds a per-user Inno Setup installer.
 - `scripts/test-windows.ps1`: installs to a path containing spaces, tests the installed executable with the fixture, renders both languages/themes, checks close/reopen behavior and uninstalls.

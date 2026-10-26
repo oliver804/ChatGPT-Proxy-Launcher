@@ -79,15 +79,15 @@ private struct StatusTile: View {
 private struct LanguagePicker: View {
     @ObservedObject var model: LauncherModel
     var body: some View {
-        Picker("中文 / English", selection: Binding(get: { model.language }, set: { model.setLanguage($0) })) {
+        Picker(model.text("界面语言"), selection: Binding(get: { model.language }, set: { model.setLanguage($0) })) {
             ForEach(AppLanguage.allCases) { language in
                 Text(language.label).tag(language)
             }
         }
         .labelsHidden()
-        .accessibilityLabel("中文 / English")
+        .accessibilityLabel(model.text("界面语言"))
         .help(model.text("界面语言"))
-        .frame(width: 135)
+        .frame(width: 145)
         .disabled(model.busy)
     }
 }
@@ -109,6 +109,7 @@ struct LauncherView: View {
         .background(MainWindowPresence())
         .tint(Palette.accent)
         .environment(\.locale, model.language.locale)
+        .environment(\.layoutDirection, model.language.isRightToLeft ? .rightToLeft : .leftToRight)
         .sheet(isPresented: $model.showDetails) { reportSheet }
     }
 
@@ -178,6 +179,7 @@ struct LauncherView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title).font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary)
             TextField(placeholder, text: text).textFieldStyle(.plain)
+                .environment(\.layoutDirection, .leftToRight)
                 .font(.system(size: 13, design: .monospaced))
                 .padding(.horizontal, 11).frame(height: 36)
                 .background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 8))
@@ -300,6 +302,7 @@ struct MenuPanel: View {
             }.font(.system(size: 12)).foregroundStyle(.secondary)
         }.padding(20).frame(width: 320).background(Palette.canvas).tint(Palette.accent)
             .environment(\.locale, model.language.locale)
+            .environment(\.layoutDirection, model.language.isRightToLeft ? .rightToLeft : .leftToRight)
             .onAppear { model.updateRunning() }
     }
 
@@ -394,9 +397,7 @@ struct LauncherApp: App {
         MenuBarExtra {
             MenuPanel(model: model)
         } label: {
-            RouteGlyph()
-                .stroke(.primary, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
-                .frame(width: 17, height: 17)
+            Image(systemName: BrandIdentity.menuSymbolName)
                 .accessibilityLabel(model.running ? model.text("Local Route Launcher：运行中") : model.text("Local Route Launcher：未运行"))
         }.menuBarExtraStyle(.window)
     }

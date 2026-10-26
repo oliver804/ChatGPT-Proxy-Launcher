@@ -3,12 +3,42 @@ import Foundation
 enum AppLanguage: String, CaseIterable, Identifiable {
     case chinese = "zh-Hans"
     case english = "en"
+    case traditionalChinese = "zh-Hant"
+    case russian = "ru"
+    case persian = "fa"
+    case belarusian = "be"
+    case spanish = "es"
+    case arabic = "ar"
+    case portuguese = "pt"
     var id: String { rawValue }
-    var label: String { self == .chinese ? "简体中文" : "English" }
+    var label: String {
+        switch self {
+        case .chinese: "简体中文"
+        case .english: "English"
+        case .traditionalChinese: "繁體中文"
+        case .russian: "Русский"
+        case .persian: "فارسی"
+        case .belarusian: "Беларуская"
+        case .spanish: "Español"
+        case .arabic: "العربية"
+        case .portuguese: "Português"
+        }
+    }
+    var isRightToLeft: Bool { self == .persian || self == .arabic }
     var locale: Locale { Locale(identifier: rawValue) }
     static func resolve(saved: String?, preferred: [String] = Locale.preferredLanguages) -> AppLanguage {
         if let saved, let language = AppLanguage(rawValue: saved) { return language }
-        return preferred.first?.lowercased().hasPrefix("zh") == true ? .chinese : .english
+        for preference in preferred {
+            let code = preference.lowercased().replacingOccurrences(of: "_", with: "-")
+            let subtags = code.split(separator: "-")
+            if subtags.first == "zh" {
+                if subtags.contains("hans") { return .chinese }
+                if subtags.contains("hant") { return .traditionalChinese }
+                return subtags.contains(where: { ["tw", "hk", "mo"].contains($0) }) ? .traditionalChinese : .chinese
+            }
+            if let language = AppLanguage.allCases.first(where: { code == $0.rawValue.lowercased() || code.hasPrefix($0.rawValue.lowercased() + "-") }) { return language }
+        }
+        return .english
     }
     static var current: AppLanguage { resolve(saved: UserDefaults.standard.string(forKey: "interfaceLanguage")) }
 }
@@ -121,7 +151,7 @@ enum L10n {
         "独立开源工具，与 OpenAI 无隶属或背书关系。": "Independent open-source tool. Not affiliated with or endorsed by OpenAI.",
     ]
     static func text(_ key: String, language: AppLanguage = .current, arguments: [String] = []) -> String {
-        let template = language == .chinese ? key : (english[key] ?? key)
+        let template = language == .chinese ? key : (AdditionalTranslations.values[language]?[key] ?? english[key] ?? key)
         let parts = template.components(separatedBy: "%@")
         guard parts.count == arguments.count + 1 else { return template }
         return zip(arguments, parts.dropFirst()).reduce(parts[0]) { $0 + $1.0 + $1.1 }

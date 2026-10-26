@@ -1,0 +1,51 @@
+Una ruta dedicada. Un inicio más sencillo.
+Tu aplicación. Tu conexión.
+Inicia ChatGPT con tu proxy HTTP actual.
+Iniciar ChatGPT
+Detener ChatGPT
+Configuración del proxy
+Dirección del proxy
+Puerto
+Guardar ajustes
+Elegir aplicación
+Buscar aplicación instalada
+Los cambios se aplicarán al iniciar ChatGPT de nuevo.
+Elige un ChatGPT.exe instalado basado en Electron.
+Comprobar conexión
+Comprobaciones de conexión
+Proxy y TLS
+Argumentos de inicio
+Conexiones activas
+Sin comprobar
+Se pasó el proxy actual
+Sin confirmar
+Al proxy: {0} / total: {1}
+Detalles
+La instantánea de conexiones no demuestra que todas las solicitudes usen el proxy. Los nombres de host no se pueden comparar por IP.
+Al cerrar la ventana, el iniciador permanece en la bandeja del sistema.
+Abrir iniciador
+Salir del iniciador
+Listo. El proxy y el DNS del sistema no han cambiado.
+Ajustes guardados. Reinicia ChatGPT para aplicarlos.
+Se solicitó el inicio con el proxy. Comprueba la conexión de la aplicación.
+ChatGPT se ha cerrado.
+Procesando…
+Introduce un host o una IP sin esquema, ruta ni credenciales.
+El puerto debe ser un número entre 1 y 65535.
+Elige un ChatGPT.exe compatible basado en Electron. Es posible que las versiones nativas antiguas o de Store restringidas no se inicien directamente.
+ChatGPT ya está abierto. Ciérralo para aplicar el nuevo proxy.
+Windows no pudo iniciar este paquete directamente. Revisa la aplicación y los permisos.
+Cierra ChatGPT desde su propio menú. El iniciador no lo forzará.
+La información de procesos de Windows no está disponible. Reintenta o revisa las políticas locales de seguridad.
+La información de conexiones de Windows no está disponible.
+Error de conexión
+Tiempo de espera agotado
+No se pudieron leer los ajustes. Se muestran los valores predeterminados; guárdalos para reemplazarlos.
+No se pudo completar la operación. Revisa el acceso a la aplicación, el proxy y los permisos locales.
+Primero comprueba la conexión.
+Herramienta independiente, sin afiliación con OpenAI. No incluye servicio de proxy. Cumple la legislación y los términos aplicables.
+Oscuro
+Claro
+Sistema
+Aplicación instalada seleccionada.
+Comprobación completa. El estado HTTP indica acceso al transporte, no a la cuenta.

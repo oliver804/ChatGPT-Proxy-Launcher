@@ -16,7 +16,7 @@ Local Route Launcher
 从 v1.0.0 升级时，安装 Local Route Launcher.app，确认正常后移除旧启动器应用，避免同时运行两份。
 
 适用于 Apple Silicon、macOS 13+ 和可识别的 Electron 版 ChatGPT。
-不支持旧版原生 ChatGPT。主窗口和菜单栏可选择简体中文或 English，选择会保存。
+不支持旧版原生 ChatGPT。主窗口和菜单栏可选择简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية或Português，选择会保存。
 应用文案即时切换；macOS 自带菜单和系统对话框可能跟随系统语言。
 本工具不修改系统代理或 DNS。以后请从启动器启动 ChatGPT。
 不保证语音、WebRTC、UDP 或所有子进程均经过代理。

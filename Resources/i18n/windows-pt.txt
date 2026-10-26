@@ -1,0 +1,51 @@
+Uma rota dedicada. Um início mais simples.
+A sua aplicação. A sua ligação.
+Inicie o ChatGPT com o seu proxy HTTP existente.
+Iniciar o ChatGPT
+Parar o ChatGPT
+Definições do proxy
+Endereço do proxy
+Porta
+Guardar definições
+Escolher aplicação
+Encontrar aplicação instalada
+As alterações aplicam-se no próximo arranque do ChatGPT.
+Escolha um ChatGPT.exe instalado baseado em Electron.
+Verificar ligação
+Verificações da ligação
+Proxy e TLS
+Argumentos de arranque
+Ligações ativas
+Não verificado
+Proxy atual transmitido
+Não confirmado
+Ao proxy: {0} / total: {1}
+Detalhes
+O instantâneo de ligações não prova que todos os pedidos usem o proxy. Os nomes de anfitrião não podem ser comparados por IP.
+Ao fechar a janela, o iniciador mantém-se na área de notificação.
+Abrir iniciador
+Sair do iniciador
+Pronto. O proxy e o DNS do sistema não foram alterados.
+Definições guardadas. Reinicie o ChatGPT para as aplicar.
+Foi pedido o arranque com o proxy. Verifique a ligação da aplicação em execução.
+O ChatGPT foi fechado.
+A processar…
+Introduza um anfitrião ou IP sem esquema, caminho ou credenciais.
+A porta tem de ser um número entre 1 e 65535.
+Escolha um ChatGPT.exe compatível baseado em Electron. Versões nativas antigas ou pacotes Store restritos podem não arrancar diretamente.
+O ChatGPT já está aberto. Feche-o para aplicar o novo proxy.
+O Windows não conseguiu iniciar este pacote diretamente. Verifique a aplicação e as permissões.
+Feche o ChatGPT no próprio menu. O iniciador não o força a parar.
+As informações dos processos do Windows não estão disponíveis. Tente novamente ou verifique as políticas locais de segurança.
+As informações das ligações do Windows não estão disponíveis.
+Falha na ligação
+Tempo de ligação esgotado
+Não foi possível ler as definições. São mostrados valores predefinidos; guarde-os para substituir os anteriores.
+Não foi possível concluir a operação. Verifique o acesso à aplicação, o proxy e as permissões locais.
+Verifique primeiro a ligação.
+Ferramenta independente, sem afiliação à OpenAI. Não inclui serviço de proxy. Respeite as leis e os termos aplicáveis.
+Escuro
+Claro
+Sistema
+Aplicação instalada selecionada.
+Verificações concluídas. O estado HTTP indica acesso ao transporte, não à conta.

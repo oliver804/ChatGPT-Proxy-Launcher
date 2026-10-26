@@ -16,7 +16,7 @@ Quit the old launcher before updating; saved settings are preserved.
 When upgrading from v1.0.0, install Local Route Launcher.app, verify it, then remove the old launcher app. Do not run both copies.
 
 Requires Apple Silicon, macOS 13+, and a detectable Electron version of ChatGPT.
-Older native ChatGPT versions are unsupported. Choose English or 简体中文 in the main window or menu panel. The choice is saved.
+Older native ChatGPT versions are unsupported. Choose among nine interface languages in the main window or menu panel. The choice is saved.
 Application text switches immediately; macOS-owned menus and dialogs may follow the system language.
 The launcher does not change system proxy or DNS. Start ChatGPT through it to apply settings.
 Voice, WebRTC, UDP, and all child processes are not guaranteed to use the proxy.

@@ -1,0 +1,102 @@
+ChatGPT em execução
+ChatGPT parado
+Definições de rede por aplicação
+A sua ligação num só lugar.
+Pronto para iniciar o ChatGPT.
+Definições de arranque para aplicações compatíveis. A rede do sistema não é alterada.
+Proxy HTTP
+Iniciar o ChatGPT
+Parar o ChatGPT
+Definições do proxy
+Reinicie o ChatGPT para aplicar as alterações
+Endereço do proxy
+Porta
+Guardar definições
+Versão do ChatGPT: %@
+Escolher aplicação
+Verificações da ligação
+Verificar ligação
+Conectividade do proxy
+Argumentos de arranque
+Ligações observadas
+Última verificação 
+Verificar conectividade, parâmetros de arranque e ligações TCP
+Relatório detalhado
+Disponível na barra de menus após fechar esta janela
+Relatório de ligação
+Concluído
+Copiar relatório
+Iniciar
+Parar
+A processar…
+Verificado às 
+Abrir janela
+Sair do iniciador; o ChatGPT continua em execução
+Sair do iniciador
+Mostrar janela principal
+Local Route Launcher: aplicação em execução
+Local Route Launcher: aplicação parada
+Idioma
+Idioma alterado. As definições de rede não foram alteradas.
+Mantenha um proxy local autorizado em execução e depois inicie uma aplicação compatível.
+Não verificado
+Escolha Verificar ligação para examinar conectividade, argumentos de arranque e ligações TCP.
+Não foi encontrada uma aplicação compatível
+Verifique as definições do proxy
+As definições ou os processos mudaram. Verifique novamente a ligação.
+Definições guardadas. Pare e reinicie o ChatGPT para as aplicar.
+Definições guardadas para o próximo arranque do ChatGPT.
+Escolha um ChatGPT.app instalado (versão Electron)
+Escolher
+Cancelar
+ChatGPT %@ selecionado.
+O ChatGPT já está em execução. Pare-o antes de o iniciar com esta ferramenta.
+O ChatGPT já está em execução. Reinicie-o para aplicar o novo proxy.
+O macOS não devolveu um resultado do arranque.
+A verificar a conectividade do proxy…
+O ChatGPT foi iniciado com as definições do proxy. Verifique as ligações observadas.
+O ChatGPT parou.
+Foi pedido um encerramento normal. A aguardar o ChatGPT…
+O ChatGPT ainda não terminou. Verifique o diálogo de confirmação ou feche-o manualmente.
+O ChatGPT não aceitou o pedido de saída. Escolha Sair no ChatGPT.
+A verificar o proxy, os argumentos de arranque e as ligações…
+Túnel e TLS acessíveis
+Falha na ligação
+Endereço atual transmitido
+Não confirmado / reinicie
+Foram observadas %@ ligações
+Ainda não foram observadas
+Verificação concluída. É um instantâneo; repita após efetuar um pedido no ChatGPT.
+Verificação concluída. Alguns dados de ligação não estão disponíveis; consulte o relatório.
+Teste do proxy: %@\nNão foi possível ler o estado: %@
+Introduza um endereço de proxy, como 127.0.0.1.
+Introduza apenas um IP ou nome de anfitrião, sem esquema, porta, caminho ou credenciais.
+A porta tem de ser um número inteiro entre 1 e 65535.
+Não foi encontrado um ChatGPT.app válido. Escolha novamente a aplicação.
+Não foi detetada uma versão Electron. Esta ferramenta não consegue impor um proxy a versões nativas antigas do ChatGPT.
+Escolha uma aplicação ChatGPT.
+Versão desconhecida
+Aviso da inspeção de ligações: 
+A inspeção de ligações não terminou (estado %@).
+O túnel HTTP através do proxy e o TLS funcionam; chatgpt.com devolveu HTTP %@. 
+O site rejeitou o pedido de teste. Isto não confirma acesso à conta ou ao chat.
+O proxy exige autenticação. Use uma porta local sem credenciais.
+O teste do proxy falhou. Confirme que o proxy local está ativo e que a porta e o serviço estão disponíveis.\n
+Não foi possível ler a lista de processos: %@
+Não foi possível ler os argumentos de arranque do PID %@.
+Verificado às: %@
+Destino: %@
+Parado
+Em execução (PID %@)
+Argumentos de arranque: %@
+Corresponde ao endereço atual do proxy
+Correspondência não confirmada
+Teste do proxy: %@
+Ligações observadas: %@
+Nenhuma ligação TCP ao proxy observada neste instantâneo
+Foram observadas %@ ligações TCP ao proxy
+Ligações TCP atuais do ChatGPT e dos seus processos secundários:
+Não há ligações estabelecidas visíveis
+Um instantâneo não prova que todo o tráfego use o proxy. Os nomes de anfitrião podem não corresponder a endereços IP numéricos. Outras ligações podem pertencer a ferramentas locais ou processos secundários.
+O iniciador testa o proxy separadamente; isso não prova que o ChatGPT o tenha usado. Não se garante que voz, WebRTC, UDP ou processos secundários que ignoram variáveis de ambiente usem o proxy.
+Ferramenta independente de código aberto. Não afiliada nem apoiada pela OpenAI.

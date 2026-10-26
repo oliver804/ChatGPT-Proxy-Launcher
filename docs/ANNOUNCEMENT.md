@@ -1,27 +1,13 @@
-# Local Route Launcher 新增 Windows 版：下载安装即可使用
+# 用 ChatGPT 桌面应用时想保留独立代理设置？Local Route Launcher 现支持九种语言
 
-之前做了一个 macOS 小工具 **Local Route Launcher**，为兼容的 ChatGPT 桌面应用保存独立的网络启动配置，减少反复修改系统设置的麻烦。现在，**v1.2.0 新增 Windows 版**。
+**Local Route Launcher v1.3.0** 已发布。它在启动兼容的 ChatGPT 桌面应用时传入你已有的本地 HTTP 代理配置，无需修改整台电脑的系统代理或 DNS。支持 Apple Silicon Mac 和 Windows x64。
 
-## 这次更新
+这次更新为 **macOS DMG** 和 **Windows EXE** 同时加入语言切换：简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية、Português。选择会保存，主窗口、菜单栏或托盘、错误提示与连接报告随之更新；阿拉伯语和波斯语界面采用从右向左布局。
 
-- **Windows 安装包**：运行 EXE 即可为当前用户安装，内置运行环境，无需开发工具。
-- **中英文切换**：支持简体中文、English，以及深浅外观。
-- **系统托盘**：启动、停止和检查连接，关闭主窗口后仍可访问。
-- **本地连接检查**：查看连通性、启动参数和应用 TCP 连接快照。
-- **继续支持 macOS**：保留 DMG 下载与菜单栏操作。
+使用时，先运行你有权使用的本地代理，保存地址和端口；完全退出 ChatGPT，再从启动器打开。你可以检查代理连通性、启动参数和当前 TCP 连接快照。
 
-安装后，填写已有本地服务的地址和端口，保存设置；完全退出 ChatGPT，再通过启动器打开。Windows 会尝试查找已安装的兼容应用，也可以手动选择 `ChatGPT.exe`。
+适用于 **macOS 13+ / Apple Silicon**，或 **Windows 10 22H2 / Windows 11 x64** 的可识别 Electron 版 ChatGPT。旧原生版本、Intel Mac、Windows ARM64 以及某些受限制的商店安装包不在支持范围。检查结果不保证全部流量经过代理，也不代表账号或服务可用。启动器不提供代理服务。
 
-## 使用前了解
+[下载 v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0) · [GitHub 源码](https://github.com/oliver804/ChatGPT-Proxy-Launcher) · [项目官网](https://oliver804.github.io/ChatGPT-Proxy-Launcher/)
 
-支持 **Windows 10 22H2 / Windows 11 x64** 与 **Apple Silicon、macOS 13+**。需要可识别的 Electron 版 ChatGPT；旧原生版本、Intel Mac、Windows ARM64 暂不支持。受限制的商店安装包可能无法直接启动。
-
-工具不提供网络接入服务，不修改系统 DNS，也不保证所有组件遵循启动配置。连接检查仅为快照。Windows 自动化验证使用隔离测试应用，不代表已验证全部 ChatGPT 版本与账号场景。
-
-Windows 安装包暂未签名，macOS 版本未公证。请核对官方发布来源及 SHA-256，保持系统安全功能开启。
-
-[下载 v1.2.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0) · [GitHub 源码](https://github.com/oliver804/ChatGPT-Proxy-Launcher) · [项目官网](https://oliver804.github.io/ChatGPT-Proxy-Launcher/)
-
-项目采用 MIT 许可证，欢迎提交兼容性反馈和改进建议。
-
-*作者：Oliver。独立项目，与 OpenAI 无隶属或背书关系。ChatGPT 商标仅用于说明兼容性。请仅用于有权访问的网络和服务，遵守适用法律与服务条款。本文使用 AI 辅助起草。*
+*作者：Oliver。独立开源项目，与 OpenAI 无隶属或背书关系。ChatGPT 商标仅用于说明兼容性。请遵守适用法律与服务条款，仅使用有权访问的网络和服务。本文使用 AI 辅助起草。*

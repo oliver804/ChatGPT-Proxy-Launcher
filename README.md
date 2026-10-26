@@ -2,7 +2,7 @@
 <p align="center">管理应用启动网络配置的 macOS / Windows 工具</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0"><img src="https://img.shields.io/badge/version-1.2.0-168570" alt="Version 1.2.0"></a>
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0"><img src="https://img.shields.io/badge/version-1.3.0-168570" alt="Version 1.3.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
   <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
@@ -11,7 +11,7 @@
 <p align="center">
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
   <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/">官网</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0">下载安装</a> ·
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0">下载安装</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
@@ -30,7 +30,7 @@
   </tr>
 </table>
 
-<sub>macOS v1.2.0 界面，使用示例诊断数据渲染。应用内可切换简体中文和 English。</sub>
+<sub>macOS v1.3.0 界面，使用示例诊断数据渲染。应用内支持九种语言切换。</sub>
 
 
 <details>
@@ -41,7 +41,7 @@
   <tr><td><img src="docs/images/windows-dark.png" alt="Windows 深色模式" width="100%"></td><td><img src="docs/images/windows-light.png" alt="Windows 浅色模式" width="100%"></td></tr>
 </table>
 
-<sub>v1.2.0 WPF 界面，在 Windows 上使用默认设置渲染，不包含账号数据。</sub>
+<sub>Windows WPF 界面预览，使用默认设置渲染，不包含账号数据。</sub>
 </details>
 
 ## 简介
@@ -56,26 +56,28 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 - **启动与停止**：携带代理配置启动 ChatGPT，也可请求其正常退出。
 - **连接检查**：查看代理连通性、实际启动参数和应用 TCP 连接。
 - **菜单栏 / 系统托盘**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 或任务栏入口。
-- **原生界面**：支持浅色、深色外观；中英文界面即时切换并记住选择，中英文项目文档。
+- **原生界面**：支持浅色、深色外观；九种语言界面即时切换并记住选择，项目文档提供中英文。
+
+界面语言：简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية、Português。
 
 ## 下载与安装
 
 | 版本 | 运行环境 | 下载 |
 | --- | --- | --- |
-| **v1.2.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-arm64.dmg) |
-| **v1.2.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.2.0/Local-Route-Launcher-1.2.0-windows-x64-setup.exe) |
+| **v1.3.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.3.0/Local-Route-Launcher-1.3.0-arm64.dmg) |
+| **v1.3.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.3.0/Local-Route-Launcher-1.3.0-windows-x64-setup.exe) |
 
-打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.2.0)同时提供源码包和 SHA-256 校验文件。
+打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0)同时提供源码包和 SHA-256 校验文件。
 
 > 仅支持可识别的 **Electron 版 ChatGPT**，不支持旧版原生应用；当前安装包不支持 Intel Mac。
 
-**Windows：**运行 EXE 安装包，按提示安装到当前用户，无需另装 .NET。应用支持简体中文 / English、系统托盘和深浅外观。自动查找已安装的兼容应用；找不到时使用「选择应用」指定 `ChatGPT.exe`。Windows ARM64 尚未验证，不作为支持平台。
+**Windows：**运行 EXE 安装包，按提示安装到当前用户，无需另装 .NET。应用支持九种语言、系统托盘和深浅外观。自动查找已安装的兼容应用；找不到时使用「选择应用」指定 `ChatGPT.exe`。Windows ARM64 尚未验证，不作为支持平台。
 
 安装包暂未进行 Authenticode 签名，可能显示 SmartScreen 提示。请核对官方 Release 来源与 SHA-256；不要关闭系统安全功能。若组织策略禁止安装，请联系管理员。
 
 ## 快速开始
 
-1. 保持你有权使用的本地 HTTP 代理运行；在启动器语言菜单中选择 **简体中文** 或 **English**。
+1. 保持你有权使用的本地 HTTP 代理运行；在启动器语言菜单中选择所需语言。
 2. 在启动器填写代理地址与端口，例如 `127.0.0.1` 和 `7890`，点击 **保存设置**。
 3. 完全退出已经运行的 ChatGPT，再点击 **启动 ChatGPT**。
 4. 点击 **查看代理情况** 检查连接，按需打开详细报告。
@@ -136,7 +138,7 @@ make dmg         # 生成 DMG、源码 ZIP 和校验文件
 make verify      # 验证安装包、签名与图标
 ```
 
-应用输出到 `build/release/`，发布文件输出到 `dist/1.2.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
+应用输出到 `build/release/`，发布文件输出到 `dist/1.3.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
 
 `make integration`、`make ui` 需要已登录的 macOS 图形会话，仅操作独立测试应用与窗口；`make previews` 可生成模拟数据界面预览。
 
@@ -146,7 +148,7 @@ make verify      # 验证安装包、签名与图标
 ./scripts/build-windows.ps1 -Test
 ```
 
-安装包输出到 `dist/1.2.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
+安装包输出到 `dist/1.3.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
 
 欢迎提交 [Issue](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) 或 PR。开发细节参见[贡献指南](CONTRIBUTING.md)、[架构说明](docs/ARCHITECTURE.md)和[发布指南](docs/RELEASING.md)。
 

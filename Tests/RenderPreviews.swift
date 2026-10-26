@@ -25,7 +25,7 @@ enum RenderPreviews {
                 try render(MenuPanel(model: model), name: "menu-" + suffix, dark: dark)
             }
         }
-        print("PASS: rendered Chinese/English windows and menus in light/dark modes")
+        print("PASS: rendered nine language options in light/dark windows and menus")
     }
 
     @MainActor

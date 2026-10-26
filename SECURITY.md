@@ -2,7 +2,7 @@
 
 ## Supported version / 支持版本
 
-The current public release, 1.2.0, receives fixes. / 当前公开版本 1.2.0 接收修复。
+The latest published release receives fixes. / 最新公开版本接收修复。
 
 ## Reporting / 报告问题
 

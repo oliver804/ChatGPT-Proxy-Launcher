@@ -1,4 +1,19 @@
+import AppKit
 import SwiftUI
+
+enum BrandIdentity {
+    // Restore the native menu bar symbol used in 1.0.0. Its aspect ratio and
+    // optical sizing are managed by macOS, including dark and highlighted bars.
+    static let menuSymbolName = "arrow.triangle.branch"
+}
+
+enum MenuBarIcon {
+    static let image: NSImage = {
+        let image = NSImage(systemSymbolName: BrandIdentity.menuSymbolName, accessibilityDescription: nil)!
+        image.isTemplate = true
+        return image
+    }()
+}
 
 // The window, menu panel and generated Finder / Dock icon all use this artwork.
 struct BrandMark: View {

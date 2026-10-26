@@ -16,6 +16,6 @@ with open(sys.argv[1], 'wb') as f:
 PY
 codesign --force --sign - --timestamp=none "$FIXTURE"
 swiftc "${SWIFT_FLAGS[@]}" -parse-as-library \
-  Sources/Localization.swift Sources/ProxyCore.swift Sources/LauncherModel.swift Tests/LaunchIntegration.swift \
+  Sources/Localization.swift Sources/AdditionalTranslations.swift Sources/ProxyCore.swift Sources/LauncherModel.swift Tests/LaunchIntegration.swift \
   -framework SwiftUI -framework AppKit -o build/launch-integration
 build/launch-integration "$FIXTURE"

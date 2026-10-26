@@ -9,7 +9,7 @@
 3. 原作者的公开提交身份使用 `Oliver <oliver804x@gmail.com>`。其他贡献者使用各自愿意公开的姓名和邮箱；不复用 Oliver 身份。
 4. 将本地仓库关联到你实际创建的远端，再推送 `main`。
 5. 在 GitHub Actions 中确认 CI 成功，手动检查发布内容。
-6. 给经审核的提交打标签 `v1.2.0`，然后将该标签推送到远端。
+6. 给经审核的提交打标签 `v1.3.0`，然后将该标签推送到远端。
 
 `v*` 标签会运行 Release 工作流：检查标签与 `VERSION` 一致、执行源码与核心检查、构建并验证 DMG、导出纯净源码包，最后创建带附件的 **草稿 Release**。在 GitHub 检查草稿说明和文件后，再手动点击 Publish release。工作流使用当前仓库的临时 `GITHUB_TOKEN`，无需把个人令牌写入项目。
 
@@ -26,18 +26,18 @@ make dmg
 make verify
 ```
 
-只上传 `dist/1.2.0/` 中以下四个文件：
+只上传 `dist/1.3.0/` 中以下四个文件：
 
-- `Local-Route-Launcher-1.2.0-arm64.dmg`
-- `Local-Route-Launcher-1.2.0-windows-x64-setup.exe`
-- `Local-Route-Launcher-1.2.0-source.zip`
+- `Local-Route-Launcher-1.3.0-arm64.dmg`
+- `Local-Route-Launcher-1.3.0-windows-x64-setup.exe`
+- `Local-Route-Launcher-1.3.0-source.zip`
 - `SHA256SUMS.txt`
 
 校验文件使用相对文件名。在产物目录运行 `shasum -a 256 -c SHA256SUMS.txt` 可验证完整性。应用内包含作者信息与许可证；默认签名为 ad-hoc，未公证。
 
 ## 后续版本
 
-修改 `VERSION`，同步 README 中的版本/下载示例、`CHANGELOG.md` 和安全支持版本。安装包名称、应用版本和校验文件由脚本自动生成。不要使用旧工作目录中的历史 DMG，也不要手动更改已发布版本的二进制文件。
+修改 `VERSION`，同步 README 中的版本/下载示例与 `CHANGELOG.md`，并检查安全支持政策。安装包名称、应用版本和校验文件由脚本自动生成。不要使用旧工作目录中的历史 DMG，也不要手动更改已发布版本的二进制文件。
 
 ## 隐私复核
 
@@ -71,7 +71,7 @@ make verify
 ./scripts/build-windows.ps1 -Test
 ```
 
-脚本构建自带运行环境的 EXE 安装包，检查当前用户安装、隔离测试应用的启动与连接、四种语言/外观组合、窗口隐藏/恢复及卸载。Windows CI 使用 Windows Server，不验证真实 ChatGPT 登录账号或全部应用安装版本。安装向导为英文，应用界面支持中英文。
+脚本构建自带运行环境的 EXE 安装包，检查当前用户安装、隔离测试应用的启动与连接、十八种语言/外观组合、窗口隐藏/恢复及卸载。Windows CI 使用 Windows Server，不验证真实 ChatGPT 登录账号或全部应用安装版本。安装向导为英文，应用界面支持九种语言。
 
 Windows 与 macOS 构建通过后，Release 工作流收集产物并生成统一校验清单，再创建草稿。只有带 `Publish-Release: true` 标记的注解 tag 才会自动公开发布。旧版本附件保持不变。Windows 本地配置在卸载后保留；退出托盘中的启动器后再升级或卸载。发布前核对两个平台构建、发布及官网任务均通过。
 

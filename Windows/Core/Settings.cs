@@ -8,7 +8,7 @@ public sealed record Settings
     public string Host { get; init; } = "127.0.0.1";
     public string Port { get; init; } = "7890";
     public string ApplicationPath { get; init; } = "";
-    public string Language { get; init; } = CultureInfo.CurrentUICulture.Name.StartsWith("zh", StringComparison.OrdinalIgnoreCase) ? "zh-CN" : "en";
+    public string Language { get; init; } = AppLanguages.Resolve(CultureInfo.CurrentUICulture.Name);
     public string Theme { get; init; } = "system";
     public static string DefaultPath => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "LocalRouteLauncher", "settings.json");
     public static Settings Load() => Load(DefaultPath);
@@ -19,7 +19,7 @@ public sealed record Settings
         var result = JsonSerializer.Deserialize<Settings>(File.ReadAllText(path)) ?? throw new InvalidDataException("InvalidSettings");
         if (result.Host is null || result.Port is null) throw new InvalidDataException("InvalidSettings");
         _ = new ProxyEndpoint(result.Host, result.Port);
-        if (result.Language is not ("en" or "zh-CN") || result.Theme is not ("system" or "light" or "dark") || result.ApplicationPath is null)
+        if (!AppLanguages.Codes.Contains(result.Language) || result.Theme is not ("system" or "light" or "dark") || result.ApplicationPath is null)
             throw new InvalidDataException("InvalidSettings");
         return result;
     }

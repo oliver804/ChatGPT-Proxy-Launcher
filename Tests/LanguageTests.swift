@@ -8,7 +8,15 @@ enum LanguageTests {
         func check(_ value: @autoclosure () -> Bool, _ message: String) {
             precondition(value(), message); count += 1
         }
-        check(AppLanguage.resolve(saved: nil, preferred: ["zh-Hant-TW"]) == .chinese, "Chinese system fallback")
+        check(AppLanguage.resolve(saved: nil, preferred: ["zh-Hant-TW"]) == .traditionalChinese, "Traditional Chinese system language")
+        check(AppLanguage.resolve(saved: nil, preferred: ["zh-TW"]) == .traditionalChinese, "Traditional Chinese region")
+        check(AppLanguage.resolve(saved: nil, preferred: ["zh-Hans-HK"]) == .chinese, "Explicit Simplified script overrides region")
+        check(AppLanguage.resolve(saved: nil, preferred: ["zh-Hant-CN"]) == .traditionalChinese, "Explicit Traditional script overrides region")
+        check(AppLanguage.resolve(saved: nil, preferred: ["zh_Hans_TW"]) == .chinese, "Underscore locale identifiers")
+        let bundle = try PropertyListSerialization.propertyList(from: Data(contentsOf: URL(fileURLWithPath: "Resources/Info.plist")), format: nil) as! [String: Any]
+        check(Set(bundle["CFBundleLocalizations"] as! [String]) == Set(AppLanguage.allCases.map(\.rawValue)), "Bundle declares every supported language")
+        check(AppLanguage.resolve(saved: nil, preferred: ["fa-IR"]) == .persian, "Persian system language")
+        check(AppLanguage.resolve(saved: nil, preferred: ["ru-RU"]) == .russian, "Russian system language")
         check(AppLanguage.resolve(saved: nil, preferred: ["fr-FR"]) == .english, "Other systems use English")
         check(AppLanguage.resolve(saved: "en", preferred: ["zh-Hans"]) == .english, "Saved choice wins")
         check(AppLanguage.resolve(saved: "invalid", preferred: ["en"]) == .english, "Invalid preference falls back")
@@ -47,7 +55,9 @@ enum LanguageTests {
             if language == .english {
                 check(report.range(of: "[\\p{Han}]", options: .regularExpression) == nil, "No Chinese in English report")
                 check(report.contains("does not prove") && report.contains("not guaranteed"), "Preserve diagnostic limits")
-            } else { check(report.contains("不证明全部流量"), "Chinese diagnostic limits") }
+            } else {
+                check(report.contains(L10n.text("连接快照不证明全部流量均经过代理；域名代理地址与数字 IP 可能无法直接匹配。其他连接也可能来自本地工具或子进程。", language: language)), "Localized diagnostic limits")
+            }
         }
         let failed = ProxyProbe.interpret(CommandResult(status: 7, output: "refused"), language: .english)
         check(failed.description.hasPrefix("Proxy check failed"), "English failed probe")
@@ -56,6 +66,14 @@ enum LanguageTests {
         for (key, value) in L10n.english {
             check(key.components(separatedBy: "%@").count == value.components(separatedBy: "%@").count, "Translation argument parity")
             check(!value.isEmpty && value.range(of: "[\\p{Han}]", options: .regularExpression) == nil, "English catalog completeness")
+        }
+        for language in AppLanguage.allCases where language != .chinese && language != .english {
+            let catalog = AdditionalTranslations.values[language]!
+            check(catalog.count == L10n.english.count, "Complete \(language.rawValue) catalog")
+            for (key, value) in catalog {
+                check(value.components(separatedBy: "%@").count == key.components(separatedBy: "%@").count, "Placeholder parity in \(language.rawValue)")
+                check(!value.isEmpty && value != L10n.english[key], "Translated \(language.rawValue) message")
+            }
         }
         print("PASS: \(count) language and preference checks")
     }

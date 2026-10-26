@@ -1,5 +1,13 @@
 # Changelog / 更新日志
 
+## 1.3.0 — 2026-10-26
+
+- Add seven interface languages to macOS and Windows: Traditional Chinese, Russian, Persian, Belarusian, Spanish, Arabic and Portuguese, alongside English and Simplified Chinese.
+- Persist language preferences, respect explicit Chinese scripts, and support right-to-left layouts for Arabic and Persian. Declare all nine languages in the macOS bundle.
+- Restore the native macOS menu bar symbol used in 1.0.0, with automatic light, dark and highlighted appearance handling.
+- Protect Windows settings during operations and preserve unsaved input after success or failure.
+- Expand localization, menu icon, window lifecycle and installer checks; update website and bilingual documentation. Installer wizards retain their existing language.
+
 ## 1.2.0 — 2026-10-19
 
 - Windows x64 self-contained installer with bilingual WPF interface, themes, system tray, app discovery, process-scoped proxy launch, graceful stop and local diagnostics.

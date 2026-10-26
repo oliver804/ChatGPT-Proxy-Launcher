@@ -2,7 +2,13 @@ namespace LocalRouteLauncher;
 
 public static class Strings
 {
-    public static string Get(string key, bool zh) => Items.TryGetValue(key, out var value) ? (zh ? value.Zh : value.En) : Get("OperationFailed", zh);
+    public static string Get(string key, string language)
+    {
+        if (language == "zh-CN") return Items.TryGetValue(key, out var chinese) ? chinese.Zh : Items["OperationFailed"].Zh;
+        if (language != "en" && AdditionalStrings.Values.TryGetValue(language, out var translated) && translated.TryGetValue(key, out var value)) return value;
+        return Items.TryGetValue(key, out var english) ? english.En : Items["OperationFailed"].En;
+    }
+    public static IReadOnlyCollection<string> Keys => Items.Keys;
     private static readonly Dictionary<string, (string En, string Zh)> Items = new()
     {
         ["Tagline"] = ("A dedicated route. A simpler start.", "独立连接，轻松启动"),

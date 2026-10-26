@@ -17,12 +17,11 @@ public sealed class MainWindow : Window
     private string notice = "Ready", report = "", transport = "", arguments = "", connections = "";
     private TextBox host = null!, port = null!;
     private TextBlock status = null!, appPath = null!;
-    private StackPanel panel = null!;
+    private StackPanel panel = null!, options = null!;
     private readonly List<Button> actions = [];
     private Forms.NotifyIcon? tray;
     private Brush background = null!, card = null!, ink = null!, muted = null!, accent = null!, field = null!;
-    private bool Zh => settings.Language == "zh-CN";
-    private string T(string key) => Strings.Get(key, Zh);
+    private string T(string key) => Strings.Get(key, settings.Language);
     private static SolidColorBrush Color(string hex) => new((System.Windows.Media.Color)ColorConverter.ConvertFromString(hex));
     public MainWindow(bool smokeMode = false)
     {
@@ -40,6 +39,28 @@ public sealed class MainWindow : Window
         if (!smoke) Loaded += async (_, _) => { if (string.IsNullOrEmpty(settings.ApplicationPath)) await Work(Detect, "Detected"); };
     }
     public void Preview(string language, string theme) { settings = settings with { Language = language, Theme = theme }; notice = "Ready"; Build(); }
+    internal async Task VerifyBusyControls()
+    {
+        if (!smoke) throw new InvalidOperationException("Smoke mode required.");
+        host.Text = "draft.local"; port.Text = "8080";
+        var original = settings;
+        var completion = new TaskCompletionSource();
+        var operation = Work(() => completion.Task, "Ready");
+        try
+        {
+            if (host.IsEnabled || port.IsEnabled || options.IsEnabled || actions.Any(button => button.IsEnabled))
+                throw new InvalidOperationException("Controls remained editable during an operation.");
+            ((ComboBox)options.Children[0]).SelectedIndex = settings.Language == "en" ? 1 : 0;
+            ((ComboBox)options.Children[1]).SelectedIndex = settings.Theme == "dark" ? 1 : 2;
+            if (settings != original) throw new InvalidOperationException("Preferences changed during an operation.");
+        }
+        finally { completion.SetResult(); await operation; }
+        if (!host.IsEnabled || !port.IsEnabled || !options.IsEnabled || actions.Any(button => !button.IsEnabled) || host.Text != "draft.local" || port.Text != "8080")
+            throw new InvalidOperationException("Controls or unsaved input were not restored.");
+        await Work(() => throw new InvalidOperationException("Test failure"), "Ready");
+        if (!host.IsEnabled || !options.IsEnabled || host.Text != "draft.local")
+            throw new InvalidOperationException("Failed operation lost input or left controls disabled.");
+    }
     private bool IsDark()
     {
         if (settings.Theme != "system") return settings.Theme == "dark";
@@ -56,20 +77,23 @@ public sealed class MainWindow : Window
         Background = background; Foreground = ink;
         panel = new StackPanel { Margin = new Thickness(28) };
         Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        FlowDirection = AppLanguages.IsRightToLeft(settings.Language) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         var header = new DockPanel { Margin = new Thickness(0, 0, 0, 24) };
-        var options = new StackPanel { HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = !busy };
+        options = new StackPanel { HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = !busy };
         DockPanel.SetDock(options, Dock.Right); header.Children.Add(options);
-        var language = new ComboBox { Width = 126, Margin = new Thickness(0, 0, 0, 8), ItemsSource = new[] { "English", "简体中文" }, SelectedIndex = Zh ? 1 : 0 };
-        language.SelectionChanged += (_, _) => { if (rebuilding) return; settings = settings with { Language = language.SelectedIndex == 1 ? "zh-CN" : "en" }; SavePreferences(); };
+        var language = new ComboBox { Width = 154, Margin = new Thickness(0, 0, 0, 8), ItemsSource = AppLanguages.Labels, SelectedIndex = Array.IndexOf(AppLanguages.Codes, settings.Language) };
+        language.SelectionChanged += (_, _) => { if (rebuilding || busy || language.SelectedIndex < 0) return; settings = settings with { Language = AppLanguages.Codes[language.SelectedIndex] }; SavePreferences(); };
         var theme = new ComboBox { Width = 126, ItemsSource = new[] { T("System"), T("Light"), T("Dark") }, SelectedIndex = settings.Theme == "dark" ? 2 : settings.Theme == "light" ? 1 : 0 };
-        theme.SelectionChanged += (_, _) => { if (rebuilding) return; settings = settings with { Theme = theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system" }; SavePreferences(); };
+        theme.SelectionChanged += (_, _) => { if (rebuilding || busy) return; settings = settings with { Theme = theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system" }; SavePreferences(); };
         options.Children.Add(language); options.Children.Add(theme);
         header.Children.Add(new Image { Source = Icon, Width = 58, Height = 58, Margin = new Thickness(0, 0, 16, 0) });
         var title = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
         title.Children.Add(Text("Local Route Launcher", 23, true)); title.Children.Add(Text(T("Tagline"), 13, false, muted)); header.Children.Add(title); panel.Children.Add(header);
         var launchCard = Card(); launchCard.Children.Add(Text(T("Heading"), 26, true)); launchCard.Children.Add(Text(T("Subtitle"), 14, false, muted));
         var route = new Border { Background = field, CornerRadius = new CornerRadius(12), Padding = new Thickness(15), Margin = new Thickness(0, 18, 0, 16) };
-        route.Child = Text($"ChatGPT   →   {settings.Host}:{settings.Port}   HTTP", 17, true, accent); launchCard.Children.Add(route);
+        var routeLabel = Text($"ChatGPT   →   {settings.Host}:{settings.Port}   HTTP", 17, true, accent);
+        routeLabel.FlowDirection = FlowDirection.LeftToRight;
+        route.Child = routeLabel; launchCard.Children.Add(route);
         var launchActions = new UniformGridCompat();
         launchActions.Children.Add(Button(T("Launch"), async () => await Work(async () => { SaveDraft(); await WindowsPlatform.Launch(settings.ApplicationPath, new(settings.Host, settings.Port)); }, "Launched"), true));
         launchActions.Children.Add(Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); transport = arguments = connections = report = ""; }, "Stopped")));
@@ -97,7 +121,7 @@ public sealed class MainWindow : Window
         rebuilding = false;
     }
     private TextBlock Text(string text, double size = 14, bool bold = false, Brush? color = null) => new() { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal, Foreground = color ?? ink, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 3), VerticalAlignment = VerticalAlignment.Center };
-    private TextBox Input(string text) => new() { Text = text, Background = field, Foreground = ink, BorderThickness = new Thickness(0), Padding = new Thickness(12), FontSize = 17 };
+    private TextBox Input(string text) => new() { Text = text, Background = field, Foreground = ink, BorderThickness = new Thickness(0), Padding = new Thickness(12), FontSize = 17, FlowDirection = FlowDirection.LeftToRight };
     private StackPanel Card()
     {
         var body = new StackPanel(); panel.Children.Add(new Border { Background = card, CornerRadius = new CornerRadius(20), Padding = new Thickness(22), Margin = new Thickness(0, 0, 0, 18), Child = body }); return body;
@@ -136,10 +160,13 @@ public sealed class MainWindow : Window
     }
     private async Task Work(Func<Task> action, string success)
     {
-        if (busy) return; busy = true; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
+        if (busy) return;
+        var draftHost = host.Text; var draftPort = port.Text;
+        busy = true; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
+        options.IsEnabled = host.IsEnabled = port.IsEnabled = false;
         try { await action(); notice = success; }
         catch (Exception ex) { notice = ex is Win32Exception ? "LaunchFailed" : ex.Message; }
-        finally { busy = false; Build(); }
+        finally { busy = false; Build(); host.Text = draftHost; port.Text = draftPort; }
     }
     private async void Check() => await Work(async () =>
     {

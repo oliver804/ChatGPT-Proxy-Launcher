@@ -38,7 +38,7 @@ public static class Program
                 try
                 {
                     Directory.CreateDirectory(args[1]);
-                    foreach (var language in new[] { "en", "zh-CN" })
+                    foreach (var language in AppLanguages.Codes)
                     foreach (var theme in new[] { "light", "dark" })
                     {
                         windowApp.Preview(language, theme);
@@ -59,11 +59,12 @@ public static class Program
                         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
                         using var file = File.Create(Path.Combine(args[1], $"windows-{language}-{theme}.png")); encoder.Save(file);
                     }
+                    await windowApp.VerifyBusyControls();
                     windowApp.Close();
                     if (windowApp.IsVisible || windowApp.ShowInTaskbar) throw new InvalidOperationException("Close did not hide the window from the taskbar.");
                     windowApp.Reveal();
                     if (!windowApp.IsVisible || !windowApp.ShowInTaskbar) throw new InvalidOperationException("Reopen failed.");
-                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: four localized theme renders; close-to-tray; reopen.");
+                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: eighteen localized theme renders; busy controls; preference guards; draft preservation; close-to-tray; reopen.");
                     windowApp.Quit();
                 }
                 catch (Exception ex) { File.WriteAllText(Path.Combine(args[1], "ui-failure.txt"), ex.ToString()); app.Shutdown(1); }
@@ -71,5 +72,5 @@ public static class Program
         }
         return app.Run();
     }
-    public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.2.0";
+    public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.3.0";
 }

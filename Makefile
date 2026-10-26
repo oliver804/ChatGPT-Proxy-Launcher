@@ -1,6 +1,7 @@
 .PHONY: check test build dmg verify source integration ui previews site
 check:
 	python3 scripts/privacy-check.py
+	python3 scripts/generate-localizations.py --check
 	for script in scripts/*.sh; do bash -n "$$script" || exit; done
 
 test:

@@ -12,7 +12,7 @@ Accepted by Oliver on 2026-10-30. This is the implementation baseline, not a fut
 
 ## Menu / tray panel / 菜单栏与托盘
 
-- Fixed 380-point panel width, horizontal padding 20, top 18, bottom 14. Compact brand at top left; language, appearance and GitHub icons at top right.
+- macOS menu width: 340 points (narrowed from 380 at the user’s request); Windows tray remains 380 points. Keep horizontal padding 20, top 18, bottom 14. Compact brand at top left; language, appearance and GitHub icons at top right.
 - Three compact app rows: app name, saved/active endpoint, running status and start/stop action.
 - Footer: version/update entry, open main window and “退出” / “Quit” (localized in all nine languages). Windows also keeps the native right-click tray menu as an accessible fallback.
 - Language and appearance preferences are global and persistent, shared with the main window. Retain nine languages, system language selection, RTL layout for Persian/Arabic, and LTR network addresses and paths.

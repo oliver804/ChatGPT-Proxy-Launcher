@@ -340,7 +340,10 @@ private struct SharedThemePicker: View {
 
 private struct RepositoryLink: View {
     var body: some View {
-        Link(destination: BrandIdentity.repositoryURL) { GitHubMark().fill(Palette.tool).frame(width: 17, height: 17).frame(width: 32, height: 32) }
+        Button { NSWorkspace.shared.open(BrandIdentity.repositoryURL) } label: {
+            GitHubMark().fill(Palette.tool).frame(width: 17, height: 17)
+                .frame(width: 32, height: 32).contentShape(Rectangle())
+        }
             .buttonStyle(.plain).help("GitHub").accessibilityLabel("GitHub")
     }
 }
@@ -471,7 +474,7 @@ struct MenuPanel: View {
                 Button(store.current.text("打开主窗口"), action: showMain)
                 Button(store.current.text("退出")) { NSApp.terminate(nil) }.disabled(store.busy)
             }.buttonStyle(.plain).font(.system(size: 12))
-        }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 14).frame(width: 380).background(Palette.canvas).tint(Palette.accent)
+        }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 14).frame(width: 340).background(Palette.canvas).tint(Palette.accent)
             .environment(\.locale, store.current.language.locale)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
             .onAppear { store.models.values.forEach { $0.updateRunning() } }

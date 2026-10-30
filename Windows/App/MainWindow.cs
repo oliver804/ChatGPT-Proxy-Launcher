@@ -113,9 +113,18 @@ public sealed class MainWindow : Window
         settings = settings with { Language = "ar" }; SavePreferences();
         if (port.Text != "7892" || FlowDirection != FlowDirection.RightToLeft) throw new Exception("Global language change lost draft or RTL");
         if (host.FlowDirection != FlowDirection.LeftToRight || port.FlowDirection != FlowDirection.LeftToRight) throw new Exception("Endpoint direction changed");
+        var languageMenu = tray?.ContextMenuStrip?.Items.OfType<Forms.ToolStripMenuItem>().FirstOrDefault(item => item.Text?.EndsWith(" / Language", StringComparison.Ordinal) == true);
+        if (languageMenu == null || languageMenu.DropDownItems.Count != 10 || languageMenu.DropDownItems.OfType<Forms.ToolStripMenuItem>().Count(item => item.Checked) != 1)
+            throw new Exception("Tray language options do not match the global preference");
         SelectApp("chatgpt");
         if (port.Text != "8080") throw new Exception("Legacy app profile lost");
         settings = settings with { Language = "en" }; SavePreferences();
+        var saved = settings;
+        host.Text = "http://invalid";
+        try { SaveDraft("unexpected.exe"); throw new Exception("Invalid draft accepted"); }
+        catch (ArgumentException) { }
+        if (settings != saved) throw new Exception("Failed validation changed the saved profile");
+        host.Text = saved.Host;
     }
     internal async Task VerifyBusyControls()
     {
@@ -162,7 +171,7 @@ public sealed class MainWindow : Window
         {
             var selector = Button(target.Name + "\n" + T(Running(target.Id) ? "Running" : "NotRunning"), () => SelectApp(target.Id));
             selector.HorizontalContentAlignment = HorizontalAlignment.Left;
-            if (target.Id == settings.SelectedApplication) selector.Background = field;
+            if (target.Id == settings.SelectedApplication) { selector.Background = Color(dark ? "#28473B" : "#DCEEE5"); selector.Foreground = accent; }
             sidebar.Children.Add(selector);
         }
         Content = new ScrollViewer { Content = shell, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
@@ -222,9 +231,11 @@ public sealed class MainWindow : Window
     }
     private void ClearResults() { transport = arguments = connections = report = ""; translateReport = null; }
     private Settings Draft() => settings with { Host = host.Text.Trim(), Port = port.Text.Trim() };
-    private void SaveDraft()
+    private void SaveDraft(string? applicationPath = null)
     {
-        var draft = Draft(); _ = new ProxyEndpoint(draft.Host, draft.Port);
+        var draft = Draft();
+        var endpoint = new ProxyEndpoint(draft.Host, draft.Port);
+        draft = draft with { Host = endpoint.Host, Port = endpoint.Port.ToString(), ApplicationPath = applicationPath ?? draft.ApplicationPath };
         if (!smoke) draft.Save();
         settings = draft;
         drafts[settings.SelectedApplication] = (draft.Host, draft.Port);
@@ -242,12 +253,12 @@ public sealed class MainWindow : Window
     private async Task Detect()
     {
         var found = await WindowsPlatform.Discover(settings.SelectedApplication); if (found.Length == 0) throw new InvalidOperationException("InvalidApplication");
-        settings = Draft() with { ApplicationPath = found[0] }; SaveDraft();
+        SaveDraft(found[0]);
     }
     private async void Choose()
     {
         var picker = new Microsoft.Win32.OpenFileDialog { Filter = Target.Name + " (*.exe)|*.exe", CheckFileExists = true, Title = T("Choose") };
-        if (picker.ShowDialog(this) == true) await Work(() => { if (!WindowsPlatform.IsCompatible(picker.FileName, settings.SelectedApplication)) throw new InvalidOperationException("InvalidApplication"); settings = Draft() with { ApplicationPath = picker.FileName }; SaveDraft(); return Task.CompletedTask; }, "Saved");
+        if (picker.ShowDialog(this) == true) await Work(() => { if (!WindowsPlatform.IsCompatible(picker.FileName, settings.SelectedApplication)) throw new InvalidOperationException("InvalidApplication"); SaveDraft(picker.FileName); return Task.CompletedTask; }, "Saved");
     }
     private async Task Work(Func<Task> action, string success)
     {

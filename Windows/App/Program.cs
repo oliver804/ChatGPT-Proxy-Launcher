@@ -44,24 +44,8 @@ public static class Program
                         windowApp.Preview(language, theme);
                         await Task.Delay(150);
                         windowApp.UpdateLayout();
-                        // Capture the actual scroll content, including controls below small runner displays.
-                        var content = (FrameworkElement)((System.Windows.Controls.ScrollViewer)windowApp.Content).Content;
-                        var width = (int)Math.Ceiling(content.ActualWidth) + 56;
-                        var height = (int)Math.Ceiling(content.ActualHeight) + 56;
-                        var visual = new System.Windows.Media.DrawingVisual();
-                        using (var drawing = visual.RenderOpen())
-                        {
-                            // The detached VisualBrush retains the RTL ancestor mirror.
-                            // Restore the window's coordinate system so text and LTR fields
-                            // in Arabic/Persian screenshots are not mirrored a second time.
-                            if (AppLanguages.IsRightToLeft(language)) drawing.PushTransform(new System.Windows.Media.ScaleTransform(-1, 1, width / 2.0, 0));
-                            drawing.DrawRectangle(windowApp.Background, null, new Rect(0, 0, width, height));
-                            drawing.DrawRectangle(new System.Windows.Media.VisualBrush(content), null, new Rect(28, 28, content.ActualWidth, content.ActualHeight));
-                        }
-                        var bitmap = new RenderTargetBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
-                        bitmap.Render(visual);
-                        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                        using var file = File.Create(Path.Combine(args[1], $"windows-{language}-{theme}.png")); encoder.Save(file);
+                        Capture(windowApp, Path.Combine(args[1], $"windows-{language}-{theme}.png"), AppLanguages.IsRightToLeft(language));
+                        windowApp.VerifyAuxiliaryPanels(args[1], language, theme);
                     }
                     windowApp.VerifyProfiles();
                     await windowApp.VerifyBusyControls();
@@ -69,13 +53,31 @@ public static class Program
                     if (windowApp.IsVisible || windowApp.ShowInTaskbar) throw new InvalidOperationException("Close did not hide the window from the taskbar.");
                     windowApp.Reveal();
                     if (!windowApp.IsVisible || !windowApp.ShowInTaskbar) throw new InvalidOperationException("Reopen failed.");
-                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: eighteen localized theme renders; busy controls; preference guards; draft preservation; close-to-tray; reopen.");
+                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: localized main/tray/update renders; update panel states; busy controls; preference guards; draft preservation; close-to-tray; reopen.");
                     windowApp.Quit();
                 }
                 catch (Exception ex) { File.WriteAllText(Path.Combine(args[1], "ui-failure.txt"), ex.ToString()); app.Shutdown(1); }
             });
         }
         return app.Run();
+    }
+    internal static void Capture(Window window, string path, bool rtl)
+    {
+        var content = (FrameworkElement)window.Content;
+        content.Measure(new Size(window.ActualWidth, double.PositiveInfinity));
+        content.Arrange(new Rect(content.DesiredSize)); content.UpdateLayout();
+        var width = (int)Math.Ceiling(content.ActualWidth) + 40;
+        var height = (int)Math.Ceiling(content.ActualHeight) + 40;
+        var visual = new System.Windows.Media.DrawingVisual();
+        using (var drawing = visual.RenderOpen()) {
+            if (rtl) drawing.PushTransform(new System.Windows.Media.ScaleTransform(-1, 1, width / 2.0, 0));
+            drawing.DrawRectangle(window.Background, null, new Rect(0, 0, width, height));
+            drawing.DrawRectangle(new System.Windows.Media.VisualBrush(content), null, new Rect(20, 20, content.ActualWidth, content.ActualHeight));
+        }
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32); bitmap.Render(visual);
+        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var file = File.Create(path); encoder.Save(file);
+        content.InvalidateMeasure();
     }
     public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.4.0";
 }

@@ -10,7 +10,7 @@ The interface language, proxy host, port, and selected application path are stor
 
 Before launch or when a user requests a check, the launcher sends a HEAD request to `https://chatgpt.com/` through the configured proxy to verify CONNECT and TLS. It sends no ChatGPT account credentials. The website still receives ordinary request information such as the proxy's exit IP address.
 
-ChatGPT and the proxy service handle their own data. The launcher has no telemetry, analytics SDK, automatic upload, or update service.
+ChatGPT and the proxy service handle their own data. The launcher has no telemetry, analytics SDK, automatic upload, download, or installation service.
 
 ## Diagnostics
 
@@ -41,3 +41,8 @@ The website also loads Microsoft Clarity (project ID: `z0krfkfwwu`) independentl
 Session replay reconstructs interactions with the website rather than recording the computer screen. It does not access launcher proxy settings or ChatGPT conversations. This integration adds no custom user identifiers and does not override Clarity's default masking settings. See the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement) and [Clarity privacy information](https://clarity.microsoft.com/privacy) for Microsoft's data handling and use.
 
 v1.4.0: Antigravity App / IDE use a credential-free HEAD probe to `https://antigravity.google/`. Each app profile stays local. The launcher does not edit target-app settings or submit AI prompts.
+
+
+## Launcher update checks (1.4.0)
+
+By default, the launcher checks GitHub for a stable release once at startup. Disable this in the version-adjacent update panel or check manually. Requests go to `api.github.com/repos/oliver804/Local-Route-Launcher/releases/latest` using the system network route, not a selected target app’s proxy profile. GitHub receives ordinary request metadata such as the exit IP and launcher User-Agent, but no proxy address, application path, diagnostic report, account or chat data. Offline checks do not block app launching. Nothing is automatically downloaded or installed. Opening a release page uses your browser and its settings.

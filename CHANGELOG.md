@@ -2,9 +2,11 @@
 
 ## 1.4.0 — In development / 开发测试中
 
-- Restore macOS appearance controls in both the main window and menu panel, with persistent System/Light/Dark settings; add the same theme selector to the Windows tray.
-- Enable macOS window resizing and full screen, make the route icon symmetric, and add GitHub links beside the version and in menu/tray controls.
-- 补齐主窗口与菜单栏/托盘的主题切换；修复图标对称性与 macOS 缩放/全屏按钮，增加版本号旁的 GitHub 入口。
+- Apply the accepted compact layout: shared language/appearance/GitHub icons at the top right, original three-card content, two-line idle footer, and a compact menu/tray panel.
+- Add optional startup and manual stable-release checks for the launcher, with a quiet new-version indicator, offline retry and browser download links; no automatic downloads or installation.
+- Preserve symmetric artwork, native macOS menu icon appearance, zoom/fullscreen and close-to-menu behavior.
+- Record the UI baseline and icon constraints; migrate project links to `oliver804/Local-Route-Launcher` while retaining existing app settings.
+- 按已确认设计收紧主窗口及菜单栏/托盘布局，保留三张卡片与两行底部说明；新增启动器稳定版检查与静默提示，无自动下载安装。
 
 - Added separate ChatGPT, Antigravity App and Antigravity IDE profiles and launch controls on macOS / Windows; existing ChatGPT preferences are retained.
 - Added a multi-app sidebar and menu bar / tray controls, global nine-language selection and Follow system.

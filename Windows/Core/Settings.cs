@@ -20,6 +20,7 @@ public sealed record Settings
         return this with { SelectedApplication = id, Profiles = profiles, Host = next.Host, Port = next.Port, ApplicationPath = next.ApplicationPath };
     }
     public string ResolvedLanguage => Language == "system" ? AppLanguages.Resolve(CultureInfo.CurrentUICulture.Name) : Language;
+    public bool CheckUpdatesAtStartup { get; init; } = true;
     public string Theme { get; init; } = "system";
     public static string DefaultPath => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "LocalRouteLauncher", "settings.json");
     public static Settings Load() => Load(DefaultPath);

@@ -1,3 +1,19 @@
+Verificar atualizações
+Atualização disponível
+Uma nova versão está disponível
+Você está usando a versão mais recente
+Não foi possível verificar atualizações
+Verificando atualizações…
+Verificar ao iniciar
+Consulta versões estáveis no GitHub Releases. Sem download ou instalação automática.
+Notas da versão e download
+Abrir versões
+Tentar novamente
+Você pode continuar usando esta versão e tentar novamente mais tarde.
+Versão instalada
+Última versão estável
+Projeto independente, sem afiliação ou endosso da OpenAI. Marcas pertencem aos seus titulares.
+Passa configurações a aplicativos compatíveis sem alterar a rede do sistema.
 Aparência
 Idioma
 Meus aplicativos

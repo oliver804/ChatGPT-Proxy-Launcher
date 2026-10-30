@@ -13,3 +13,9 @@ ChatGPT and OpenAI are trademarks of OpenAI. Their names identify compatibility 
 macOS release binaries are ad-hoc signed and are not Apple Developer ID signed or notarized. Review the source, release checksums, compatibility notes, and macOS prompts before installation. The [MIT license](../LICENSE) covers the project code and its warranty limitations; it does not grant rights to third-party trademarks or services. [Privacy](PRIVACY.en.md) · [Third-party notices](../THIRD_PARTY_NOTICES.md).
 
 Windows: requires a directly launchable Electron-based ChatGPT.exe; restricted Microsoft Store packages may reject direct launch. Windows ARM64 is not supported. Windows installers are unsigned and may trigger SmartScreen. Do not disable security protections or bypass managed-device policies.
+
+## Interface and updates in 1.4.0
+
+Select an app in the sidebar and save its host, port and path independently. Language, appearance and GitHub controls live at the upper right and are also available in the menu/tray panel. Closing the main window keeps the launcher accessible there.
+
+The version-adjacent update entry opens a manual check and the automatic startup-check preference. An available update refers only to Local Route Launcher, not the target apps. Open the release page to download it yourself; nothing is automatically downloaded or installed. A failed check can be retried without interrupting current use.

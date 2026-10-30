@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / 'build' / 'site'
 SITE_FILES = ('index.html', 'en/index.html', 'style.css', 'app.js', 'assets/icon.png')
-BASE_URL = 'https://oliver804.github.io/ChatGPT-Proxy-Launcher/'
+BASE_URL = 'https://oliver804.github.io/Local-Route-Launcher/'
 
 
 def write_sitemap():

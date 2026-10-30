@@ -31,8 +31,9 @@ enum DockLifecycleTests {
         guard app.appearance?.name == .aqua else { fatalError("Light preference did not reach native windows") }
         store.theme = .system
         guard app.appearance == nil else { fatalError("System appearance remains overridden") }
-        main.orderFront(nil)
-        try await Task.sleep(nanoseconds: 200_000_000)
+        main.makeKeyAndOrderFront(nil)
+        app.activate(ignoringOtherApps: true)
+        try await Task.sleep(nanoseconds: 500_000_000)
         guard app.activationPolicy() == .regular else { fatalError("Main window must show Dock icon") }
 
         let originalFrame = main.frame
@@ -40,6 +41,7 @@ enum DockLifecycleTests {
         try await Task.sleep(nanoseconds: 350_000_000)
         guard main.frame != originalFrame else { fatalError("Zoom button action must change the window frame") }
         main.zoom(nil)
+        try await Task.sleep(nanoseconds: 500_000_000)
         let fullScreenObserver = FullScreenObserver()
         main.delegate = fullScreenObserver
         main.toggleFullScreen(nil)

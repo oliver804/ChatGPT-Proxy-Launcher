@@ -286,6 +286,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
 /// asynchronous results never move to another app when the selection changes.
 @MainActor
 final class LauncherStore: ObservableObject {
+    let updates: UpdateModel
     @Published var theme: AppTheme {
         didSet {
             defaults.set(theme.rawValue, forKey: "interfaceTheme")
@@ -302,11 +303,14 @@ final class LauncherStore: ObservableObject {
 
     init(defaults: UserDefaults = .standard, monitor: Bool = true, previewVersion: String? = nil) {
         self.defaults = defaults
+        updates = UpdateModel(defaults: defaults, version: previewVersion ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.4.0")
         theme = AppTheme(rawValue: defaults.string(forKey: "interfaceTheme") ?? "") ?? .system
         selected = ApplicationKind(rawValue: defaults.string(forKey: "selectedApplication") ?? "") ?? .chatgpt
         models = Dictionary(uniqueKeysWithValues: ApplicationKind.allCases.map {
             ($0, LauncherModel(defaults: defaults, monitor: monitor, previewVersion: previewVersion, kind: $0))
         })
+        updates.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
+        if monitor && updates.automatic { Task { await updates.check() } }
         for model in models.values {
             model.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
         }
@@ -316,5 +320,26 @@ final class LauncherStore: ObservableObject {
         for model in models.values {
             if let language { model.setLanguage(language) } else { model.followSystemLanguage() }
         }
+    }
+}
+
+@MainActor
+final class UpdateModel: ObservableObject {
+    @Published var automatic: Bool { didSet { defaults.set(automatic, forKey: "checkUpdatesAtStartup") } }
+    @Published private(set) var checking = false
+    @Published private(set) var failed = false
+    @Published private(set) var release: ReleaseUpdate?
+    let version: String
+    private let defaults: UserDefaults
+    init(defaults: UserDefaults, version: String) {
+        self.defaults = defaults; self.version = version
+        automatic = defaults.object(forKey: "checkUpdatesAtStartup") as? Bool ?? true
+    }
+    func check(fetch: (String) async throws -> ReleaseUpdate = ReleaseUpdate.fetch) async {
+        guard !checking else { return }
+        checking = true; failed = false
+        defer { checking = false }
+        do { release = try await fetch(version) }
+        catch { failed = true; release = nil }
     }
 }

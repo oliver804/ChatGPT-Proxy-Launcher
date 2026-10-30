@@ -4,6 +4,15 @@ using System.Net;
 int assertions = 0;
 void Check(bool ok, string message) { assertions++; if (!ok) throw new Exception(message); }
 void Reject(Action action, string message) { try { action(); } catch (Exception e) when (e is ArgumentException or System.Text.Json.JsonException or InvalidDataException) { assertions++; return; } throw new Exception(message); }
+string ReleaseJson(string tag, bool draft = false, bool prerelease = false, string? url = null) => System.Text.Json.JsonSerializer.Serialize(new { tag_name = tag, draft, prerelease, html_url = url ?? ReleaseUpdate.Repository + "/releases/tag/" + tag });
+Check(ReleaseUpdate.Parse(ReleaseJson("v1.10.0"), "1.9.9").IsNewer, "Numeric version ordering");
+Check(!ReleaseUpdate.Parse(ReleaseJson("v1.4.0"), "1.4.0").IsNewer, "Equal version");
+Check(!ReleaseUpdate.Parse(ReleaseJson("v1.3.0"), "1.4.0").IsNewer, "Do not offer downgrade");
+foreach (var tag in new[] { "1.4", "1.04.0", "1.4.1-beta", "1.4.1+build", "１.4.1", "1.2.3.4", "1.2.999999999999999999" }) Reject(() => ReleaseUpdate.StableVersion(tag), "Invalid stable version accepted");
+Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", draft: true), "1.4.0"), "Draft accepted");
+Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", prerelease: true), "1.4.0"), "Prerelease accepted");
+Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", url: "https://example.com"), "1.4.0"), "External download accepted");
+Check(new Settings().CheckUpdatesAtStartup, "Startup check default");
 var endpoint = new ProxyEndpoint(" 127.0.0.1 ", " 7890 ");
 Check(endpoint.Url == "http://127.0.0.1:7890", "IPv4 normalization");
 Check(new ProxyEndpoint("[::1]", "1").Url == "http://[::1]:1", "IPv6 brackets");
@@ -32,6 +41,7 @@ try
 {
     var file = Path.Combine(folder, "settings.json"); var settings = new Settings { Language = "en", Theme = "dark", ApplicationPath = "C:\\Example Folder\\ChatGPT.exe" }; settings.Save(file);
     Check(Settings.Load(file) == settings, "Round-trip settings");
+    settings = settings with { CheckUpdatesAtStartup = false }; settings.Save(file); Check(!Settings.Load(file).CheckUpdatesAtStartup, "Persist update opt-out");
     settings = settings with { Language = "zh-CN" }; settings.Save(file); Check(Settings.Load(file).Language == "zh-CN", "Atomic replace");
     foreach (var language in AppLanguages.Codes)
     {

@@ -2,7 +2,7 @@
 <p align="center">App-specific launch settings for macOS and Windows</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-1.4.0-168570" alt="Version 1.4.0"></a>
+  <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-1.4.0-168570" alt="Version 1.4.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
   <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
@@ -10,14 +10,14 @@
 </p>
 <p align="center">
   <a href="README.md">简体中文</a> · <b>English</b><br>
-  <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/en/">Website</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0">Download</a> ·
+  <a href="https://oliver804.github.io/Local-Route-Launcher/en/">Website</a> ·
+  <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0">Download</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#faq">FAQ</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">Report an issue</a>
+  <a href="https://github.com/oliver804/Local-Route-Launcher/issues">Report an issue</a>
 </p>
 
-> v1.4.0 is under development and testing, not yet publicly released. The current stable release is [v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0).
+> v1.4.0 is under development and testing, not yet publicly released. The current stable release is [v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0).
 
 ## Preview
 
@@ -67,10 +67,10 @@ Interface languages: English, Simplified Chinese, Traditional Chinese, Russian, 
 
 | Version | Requirements | Download |
 | --- | --- | --- |
-| **v1.4.0** | Apple Silicon · macOS 13+ | [Download DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg) |
-| **v1.4.0** | Windows 10 22H2 / Windows 11 · x64 | [Download EXE installer](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe) |
+| **v1.4.0** | Apple Silicon · macOS 13+ | [Download DMG](https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg) |
+| **v1.4.0** | Windows 10 22H2 / Windows 11 · x64 | [Download EXE installer](https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe) |
 
-Open the DMG and drag **Local Route Launcher** to **Applications**. The [release page](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0) also provides a source archive and SHA-256 checksums.
+Open the DMG and drag **Local Route Launcher** to **Applications**. The [release page](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0) also provides a source archive and SHA-256 checksums.
 
 > Detectable **Electron versions of ChatGPT, Antigravity App and Antigravity IDE** are supported. Older native versions, Intel Macs and Windows ARM64 are unsupported by the current release. Restricted Microsoft Store packages may not allow direct launch.
 
@@ -153,7 +153,7 @@ The app is written to `build/release/`, and release files to `dist/1.4.0/`. [`VE
 
 The installer is written to `dist/1.4.0/`. Tests use an isolated fixture, not a real ChatGPT account.
 
-[Issues](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) and PRs are welcome. See [Contributing](CONTRIBUTING.md), [Architecture](docs/ARCHITECTURE.en.md), and [Releasing](docs/RELEASING.en.md) for development details.
+[Issues](https://github.com/oliver804/Local-Route-Launcher/issues) and PRs are welcome. See [Contributing](CONTRIBUTING.md), [Architecture](docs/ARCHITECTURE.en.md), and [Releasing](docs/RELEASING.en.md) for development details.
 
 ## Privacy and license
 
@@ -173,3 +173,5 @@ Select ChatGPT, Antigravity App, or Antigravity IDE in the sidebar. Each app has
 Antigravity probes use `https://antigravity.google/`; ChatGPT probes use `https://chatgpt.com/`. Neither carries account credentials. Reports distinguish recognized `language_server` descendants from the rest of the process family. No observed connection is not proof of direct access; detached or remote services may be outside the snapshot.
 
 Local macOS checks covered App 2.28.1 and IDE 2.6.0 identification, launch arguments, and observed proxy TCP connections. No authenticated AI prompt was sent. Windows fixtures verify launch mechanics, not real Antigravity account or model access. This independent project is not affiliated with or endorsed by OpenAI or Google; product names identify compatibility only.
+
+The compact main/menu/tray layout shares language, appearance and GitHub controls at the upper right. The version-adjacent update panel checks stable launcher releases and lets you disable startup checks; no automatic downloads or installation. See the [UI baseline](docs/UI-DESIGN-1.4.md).

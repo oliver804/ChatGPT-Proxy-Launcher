@@ -8,7 +8,7 @@ To use it, keep a proxy you are authorized to use running, save its host and por
 
 The release targets **macOS 13+ on Apple Silicon** and **Windows 10 22H2 / Windows 11 x64** with a detectable Electron-based ChatGPT installation. Older native builds, Intel Macs, Windows ARM64, and some restricted Store packages are not supported. A successful check does not prove every request uses the proxy or that account access works. No proxy service is included.
 
-[Download v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0) · [Source code](https://github.com/oliver804/ChatGPT-Proxy-Launcher) · [Website](https://oliver804.github.io/ChatGPT-Proxy-Launcher/en/)
+[Download v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0) · [Source code](https://github.com/oliver804/Local-Route-Launcher) · [Website](https://oliver804.github.io/Local-Route-Launcher/en/)
 
 Independent open-source project by Oliver, not affiliated with or endorsed by OpenAI. ChatGPT is a trademark of OpenAI, used here only to identify compatibility. Use authorized networks and services under applicable laws and terms.
 

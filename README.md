@@ -2,7 +2,7 @@
 <p align="center">管理应用启动网络配置的 macOS / Windows 工具</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-1.4.0-168570" alt="Version 1.4.0"></a>
+  <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-1.4.0-168570" alt="Version 1.4.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
   <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
@@ -10,14 +10,14 @@
 </p>
 <p align="center">
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
-  <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/">官网</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0">下载安装</a> ·
+  <a href="https://oliver804.github.io/Local-Route-Launcher/">官网</a> ·
+  <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0">下载安装</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
+  <a href="https://github.com/oliver804/Local-Route-Launcher/issues">反馈问题</a>
 </p>
 
-> v1.4.0 开发测试版本，尚未正式发布。当前稳定版见 [v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0)。
+> v1.4.0 开发测试版本，尚未正式发布。当前稳定版见 [v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0)。
 
 ## Preview
 
@@ -67,10 +67,10 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 
 | 版本 | 运行环境 | 下载 |
 | --- | --- | --- |
-| **v1.4.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg) |
-| **v1.4.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe) |
+| **v1.4.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg) |
+| **v1.4.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe) |
 
-打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0)同时提供源码包和 SHA-256 校验文件。
+打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0)同时提供源码包和 SHA-256 校验文件。
 
 > 支持可识别的 **Electron 版 ChatGPT、Antigravity App 和 Antigravity IDE**，不支持旧版原生 ChatGPT；当前安装包不支持 Intel Mac。
 
@@ -154,7 +154,7 @@ make verify      # 验证安装包、签名与图标
 
 安装包输出到 `dist/1.4.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
 
-欢迎提交 [Issue](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) 或 PR。开发细节参见[贡献指南](CONTRIBUTING.md)、[架构说明](docs/ARCHITECTURE.md)和[发布指南](docs/RELEASING.md)。
+欢迎提交 [Issue](https://github.com/oliver804/Local-Route-Launcher/issues) 或 PR。开发细节参见[贡献指南](CONTRIBUTING.md)、[架构说明](docs/ARCHITECTURE.md)和[发布指南](docs/RELEASING.md)。
 
 ## 隐私与许可证
 
@@ -170,3 +170,5 @@ make verify      # 验证安装包、签名与图标
 ### v1.4.0 验证范围
 
 本机 macOS 已验证 Antigravity App 2.28.1、IDE 2.6.0 的识别、携带代理参数启动及代理 TCP 连接。启动器不提交 AI 提示词，不声称已验证账号权限、所有模型请求、远程开发或所有后台进程。Windows 使用隔离夹具验证启动与连接机制，真实安装包仍需目标机器验收。
+
+新增紧凑主窗口及菜单栏/托盘布局，右上角统一提供语言、外观与 GitHub 入口。版本旁可检查启动器稳定版，并关闭启动时自动检查；不会自动下载安装。设计约定见 [UI 设计记忆](docs/UI-DESIGN-1.4.md)。

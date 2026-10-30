@@ -80,15 +80,17 @@ struct LauncherView: View {
     @ObservedObject var model: LauncherModel
 
     var body: some View {
+        VStack(spacing: 0) {
         ScrollView {
         VStack(alignment: .leading, spacing: 14) {
             header
             controlCard
             settingsCard
             diagnosticsCard
-            footer
         }
-        .padding(.horizontal, 24).padding(.top, 24).padding(.bottom, 20)
+        .padding(.horizontal, 24).padding(.top, 24).padding(.bottom, 14)
+        }
+        footer.padding(.horizontal, 24).padding(.top, 8).padding(.bottom, 14)
         }
         .frame(minWidth: 660, maxWidth: .infinity, maxHeight: .infinity)
         .background(Palette.canvas)
@@ -114,7 +116,7 @@ struct LauncherView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(model.running ? model.text("连接，从这里开始。") : model.text("为 ChatGPT 准备就绪。"))
+                    Text(model.text("连接，从这里开始。"))
                         .font(.system(size: 20, weight: .semibold))
                     Text(model.text("仅为兼容应用传入设置，不修改系统网络。"))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
@@ -204,19 +206,21 @@ struct LauncherView: View {
     }
 
     private var footer: some View {
-        VStack(alignment: .leading, spacing: 13) {
+        VStack(alignment: .leading, spacing: 6) {
+            if model.busy || model.isError || model.message != model.text("保持你有权使用的本地代理运行，再启动兼容应用。") {
             HStack(alignment: .top, spacing: 8) {
                 if model.busy { ProgressView().controlSize(.small) }
                 else { Image(systemName: model.isError ? "exclamationmark.circle.fill" : "info.circle").font(.system(size: 12)) }
                 Text(model.message).font(.system(size: 11)).fixedSize(horizontal: false, vertical: true)
             }.foregroundStyle(model.isError ? Color.orange : Color.secondary)
-                .frame(minHeight: 27, alignment: .topLeading)
+                .padding(.bottom, 4)
+            }
             HStack(spacing: 5) {
                 Image(systemName: "menubar.rectangle")
                 Text(model.text("关闭窗口后，仍可从菜单栏访问"))
                 Spacer()
             }.font(.system(size: 10)).foregroundStyle(.secondary)
-            Text(model.text("独立开源工具，与 OpenAI 无隶属或背书关系。"))
+            Text(model.text("独立项目，与 OpenAI 无隶属或背书关系；商标归各自权利人所有。"))
                 .font(.system(size: 10)).foregroundStyle(.secondary)
         }.padding(.horizontal, 3)
     }
@@ -253,7 +257,9 @@ private struct SharedLanguagePicker: View {
                     else { Text(language.label) }
                 }
             }
-        } label: { Label(store.current.followsSystem ? store.current.text("跟随系统") : store.current.language.label, systemImage: "globe") }
+        } label: { Image(systemName: "character.bubble").frame(width: 24, height: 24) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        .help(store.current.text("界面语言") + " · " + (store.current.followsSystem ? store.current.text("跟随系统") : store.current.language.label))
         .accessibilityLabel(store.current.text("界面语言"))
         .disabled(store.busy)
     }
@@ -269,7 +275,9 @@ private struct SharedThemePicker: View {
                     else { Text(store.current.text(theme.label)) }
                 }
             }
-        } label: { Label(store.current.text("外观") + " · " + store.current.text(store.theme.label), systemImage: store.theme.symbol) }
+        } label: { Image(systemName: store.theme.symbol).frame(width: 24, height: 24) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        .help(store.current.text("外观") + " · " + store.current.text(store.theme.label))
         .accessibilityLabel(store.current.text("外观"))
     }
 }
@@ -281,9 +289,88 @@ private struct RepositoryLink: View {
     }
 }
 
+private struct WindowTools: View {
+    @ObservedObject var store: LauncherStore
+    var body: some View {
+        HStack(spacing: 10) {
+            SharedLanguagePicker(store: store)
+            SharedThemePicker(store: store)
+            RepositoryLink()
+        }.foregroundStyle(.secondary)
+    }
+}
+
+@MainActor private final class UpdatePresentation: ObservableObject { @Published var show = false }
+
+private struct UpdateIndicator: View {
+    @ObservedObject var store: LauncherStore
+    var compact = false
+    @StateObject private var presentation = UpdatePresentation()
+    private var update: UpdateModel { store.updates }
+    private var label: String {
+        if update.checking { return "正在检查更新…" }
+        if update.failed { return "暂时无法检查更新" }
+        return update.release?.isNewer == true ? "有更新" : "检查更新"
+    }
+    var body: some View {
+        HStack(spacing: 7) {
+            Text("v\(update.version)").font(.system(size: 10)).foregroundStyle(.secondary)
+            Button { presentation.show.toggle() } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: update.release?.isNewer == true ? "arrow.up.circle" : "arrow.clockwise")
+                    if !compact || update.release?.isNewer == true { Text(store.current.text(label)).lineLimit(1) }
+                }.font(.system(size: 10)).padding(.horizontal, 6).padding(.vertical, 4)
+                    .background(Palette.accent.opacity(0.09), in: Capsule())
+            }.buttonStyle(.plain).foregroundStyle(Palette.accent)
+                .help(store.current.text(label)).accessibilityLabel(store.current.text(label))
+                .popover(isPresented: $presentation.show, arrowEdge: .bottom) { UpdatePanel(store: store) }
+        }
+    }
+}
+
+struct UpdatePanel: View {
+    @ObservedObject var store: LauncherStore
+    private var update: UpdateModel { store.updates }
+    private func t(_ key: String) -> String { store.current.text(key) }
+    private var title: String {
+        if update.checking { return "正在检查更新…" }
+        if update.failed { return "暂时无法检查更新" }
+        if let release = update.release { return release.isNewer ? "发现新版本" : "已是最新版本" }
+        return "检查更新"
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(t(title)).font(.system(size: 16, weight: .semibold))
+            Text("Local Route Launcher").font(.system(size: 12)).foregroundStyle(.secondary)
+            HStack { Text(t("当前版本")); Spacer(); Text("v" + update.version) }
+            if let release = update.release {
+                HStack { Text(t("最新稳定版")); Spacer(); Text(release.version).foregroundStyle(Palette.accent) }
+            }
+            Divider()
+            Toggle(t("启动时自动检查"), isOn: Binding(get: { update.automatic }, set: { update.automatic = $0 }))
+            Text(t("从 GitHub Releases 检查稳定版本，不自动下载或安装。")).foregroundStyle(.secondary)
+            if update.failed { Text(t("可继续使用当前版本，稍后重试。")).foregroundStyle(.secondary) }
+            HStack {
+                Button(t(update.failed ? "重试" : "检查更新")) { Task { await update.check() } }.disabled(update.checking)
+                Spacer()
+                Link(t(update.release?.isNewer == true ? "查看发布说明与下载" : "打开发布页面"), destination: update.release?.url ?? ReleaseUpdate.releasesURL)
+            }
+        }.font(.system(size: 11)).padding(20).frame(width: 330)
+            .tint(Palette.accent).environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
+    }
+}
+
 struct LauncherWindow: View {
     @ObservedObject var store: LauncherStore
     var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                Text("Local Route Launcher").font(.system(size: 11)).foregroundStyle(.secondary)
+                Spacer()
+                WindowTools(store: store)
+            }.padding(.leading, 110).padding(.trailing, 18).frame(height: 38)
+            Divider()
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 24) {
                 HStack(spacing: 10) {
@@ -309,18 +396,12 @@ struct LauncherWindow: View {
                     }
                 }
                 Spacer()
-                VStack(alignment: .leading, spacing: 10) {
-                    SharedLanguagePicker(store: store)
-                    SharedThemePicker(store: store)
-                }
-                HStack(spacing: 8) {
-                    Text("v\(store.current.launcherVersion)").font(.system(size: 11)).foregroundStyle(.secondary)
-                    RepositoryLink()
-                }
+                UpdateIndicator(store: store)
             }.padding(16).padding(.top, 22).frame(width: 204)
             Divider()
             LauncherView(model: store.current).id(store.selected)
-        }.frame(minWidth: 865, minHeight: 560)
+        }
+        }.frame(minWidth: 865, minHeight: 600)
             .background(Palette.canvas).tint(Palette.accent)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
     }
@@ -329,17 +410,23 @@ struct LauncherWindow: View {
 private struct MenuApplicationRow: View {
     @ObservedObject var model: LauncherModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack { Text(model.kind.name).font(.system(size: 13, weight: .semibold)); Spacer(); Text(model.text(model.running ? "运行中" : "未运行")).foregroundStyle(model.running ? Palette.accent : .secondary) }
-            HStack {
-                Text(model.endpointLabel).font(.system(size: 11, design: .monospaced)).environment(\.layoutDirection, .leftToRight)
-                Spacer()
-                Button(model.text(model.running ? "停止" : "启动")) { model.running ? model.stop() : model.start() }.disabled(model.busy)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Image(systemName: model.kind.symbol).foregroundStyle(.secondary).frame(width: 22)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(model.kind.name).font(.system(size: 12, weight: .semibold))
+                    Text(model.endpointLabel).font(.system(size: 10, design: .monospaced)).foregroundStyle(.secondary).environment(\.layoutDirection, .leftToRight)
+                }
+                Spacer(minLength: 6)
+                VStack(alignment: .trailing, spacing: 5) {
+                    Text(model.text(model.running ? "运行中" : "未运行")).font(.system(size: 10)).foregroundStyle(model.running ? Palette.accent : .secondary)
+                    Button(model.text(model.running ? "停止" : "启动")) { model.running ? model.stop() : model.start() }.disabled(model.busy).controlSize(.small)
+                }
             }
             if model.busy || model.isError {
                 Text(model.message).font(.system(size: 11)).foregroundStyle(model.isError ? .orange : .secondary).fixedSize(horizontal: false, vertical: true)
             }
-        }.font(.system(size: 11))
+        }
     }
 }
 
@@ -353,25 +440,24 @@ struct MenuPanel: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack { BrandMark(size: 30); Text("Local Route Launcher").font(.system(size: 14, weight: .semibold)) }
+            HStack(spacing: 9) {
+                BrandMark(size: 30)
+                Text("Local Route\nLauncher").font(.system(size: 12, weight: .semibold)).fixedSize(horizontal: true, vertical: true)
+                Spacer()
+                WindowTools(store: store)
+            }
             ForEach(ApplicationKind.allCases) { kind in
                 Divider()
                 MenuApplicationRow(model: store.models[kind]!)
             }
             Divider()
-            SharedLanguagePicker(store: store)
-            SharedThemePicker(store: store)
-            HStack {
-                Text("v\(store.current.launcherVersion)").font(.system(size: 11)).foregroundStyle(.secondary)
-                RepositoryLink()
-                Spacer()
-            }
-            HStack {
+            HStack(spacing: 8) {
+                UpdateIndicator(store: store, compact: true)
+                Spacer(minLength: 4)
                 Button(store.current.text("打开主窗口"), action: showMain)
-                Spacer()
                 Button(store.current.text("退出启动器")) { NSApp.terminate(nil) }.disabled(store.busy)
             }.buttonStyle(.plain).font(.system(size: 12))
-        }.padding(20).frame(width: 350).background(Palette.canvas).tint(Palette.accent)
+        }.padding(18).frame(width: 400).background(Palette.canvas).tint(Palette.accent)
             .environment(\.locale, store.current.language.locale)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
             .onAppear { store.models.values.forEach { $0.updateRunning() } }
@@ -460,7 +546,7 @@ struct LauncherApp: App {
         }
             .windowStyle(.hiddenTitleBar)
             .windowResizability(.contentMinSize)
-            .defaultSize(width: 865, height: min(780, max(560, (NSScreen.main?.visibleFrame.height ?? 880) - 100)))
+            .defaultSize(width: 1024, height: min(860, max(600, (NSScreen.main?.visibleFrame.height ?? 880) - 100)))
             .defaultPosition(.center)
             .commands { LauncherCommands(model: store.current) }
         MenuBarExtra {

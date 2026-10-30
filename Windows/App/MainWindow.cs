@@ -9,7 +9,7 @@ using Forms = System.Windows.Forms;
 
 namespace LocalRouteLauncher;
 
-public sealed class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     private Settings settings;
     private readonly bool smoke;
@@ -20,6 +20,7 @@ public sealed class MainWindow : Window
     private TextBlock status = null!, appPath = null!;
     private StackPanel panel = null!, options = null!;
     private readonly List<Button> actions = [];
+    private Button? startButton, stopButton;
     private Forms.NotifyIcon? tray;
     private Brush background = null!, card = null!, ink = null!, muted = null!, accent = null!, field = null!;
     private readonly Dictionary<string, (string Host, string Port)> drafts = [];
@@ -92,9 +93,9 @@ public sealed class MainWindow : Window
         Build(); SetupTray();
         SourceInitialized += (_, _) => System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle)?.AddHook((IntPtr h, int m, IntPtr w, IntPtr l, ref bool handled) => { if (m == 0x8001) { Reveal(); handled = true; } return IntPtr.Zero; });
         Closing += OnClosing;
-        Closed += (_, _) => { monitor.Stop(); tray?.Dispose(); };
+        Closed += (_, _) => { updateCancellation.Cancel(); updateWindow?.Close(); trayWindow?.Close(); monitor.Stop(); tray?.Dispose(); };
         monitor.Tick += async (_, _) => await Poll();
-        if (!smoke) monitor.Start();
+        if (!smoke) { monitor.Start(); Loaded += async (_, _) => { if (settings.CheckUpdatesAtStartup) await CheckUpdates(); }; }
         if (!smoke) Loaded += async (_, _) => { if (string.IsNullOrEmpty(settings.ApplicationPath)) await Work(Detect, "Detected"); };
     }
     public void Preview(string language, string theme) { settings = settings with { Language = language, Theme = theme }; notice = "Ready"; Build(); }
@@ -147,12 +148,12 @@ public sealed class MainWindow : Window
         {
             if (host.IsEnabled || port.IsEnabled || options.IsEnabled || actions.Any(button => button.IsEnabled))
                 throw new InvalidOperationException("Controls remained editable during an operation.");
-            ((ComboBox)options.Children[0]).SelectedIndex = settings.Language == "en" ? 1 : 0;
-            ((ComboBox)options.Children[1]).SelectedIndex = settings.Theme == "dark" ? 1 : 2;
+            SetLanguage(settings.Language == "en" ? "zh-CN" : "en");
+            SetTheme(settings.Theme == "dark" ? "light" : "dark");
             if (settings != original) throw new InvalidOperationException("Preferences changed during an operation.");
         }
         finally { completion.SetResult(); await operation; }
-        if (!host.IsEnabled || !port.IsEnabled || !options.IsEnabled || actions.Any(button => !button.IsEnabled) || host.Text != "draft.local" || port.Text != "8080")
+        if (!host.IsEnabled || !port.IsEnabled || !options.IsEnabled || actions.Any(button => button != startButton && button != stopButton && !button.IsEnabled) || host.Text != "draft.local" || port.Text != "8080")
             throw new InvalidOperationException("Controls or unsaved input were not restored.");
         await Work(() => throw new InvalidOperationException("Test failure"), "Ready");
         if (!host.IsEnabled || !options.IsEnabled || host.Text != "draft.local")
@@ -179,6 +180,9 @@ public sealed class MainWindow : Window
         sidebar.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var sidebarItems = new StackPanel(); sidebar.Children.Add(sidebarItems);
         DockPanel.SetDock(sidebar, Dock.Left); shell.Children.Add(sidebar); shell.Children.Add(panel);
+        var brand = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 12, 0, 28) };
+        brand.Children.Add(new Image { Source = Icon, Width = 32, Height = 32, Margin = new Thickness(0, 0, 10, 0) });
+        brand.Children.Add(Text("Local Route\nLauncher", 14, true)); sidebarItems.Children.Add(brand);
         sidebarItems.Children.Add(Text(T("Apps"), 12, false, muted));
         foreach (var target in TargetApp.All)
         {
@@ -188,29 +192,25 @@ public sealed class MainWindow : Window
             sidebarItems.Children.Add(selector);
         }
         var sidebarFooter = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 24, 0, 0) };
-        sidebarFooter.Children.Add(Text($"v{Program.Version}", 12, false, muted)); sidebarFooter.Children.Add(RepositoryButton());
+        sidebarFooter.Children.Add(Text($"v{Program.Version}", 11, false, muted)); sidebarFooter.Children.Add(UpdateButton());
         Grid.SetRow(sidebarFooter, 1); sidebar.Children.Add(sidebarFooter);
-        Content = new ScrollViewer { Content = shell, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var root = new DockPanel();
+        var toolbar = new DockPanel { Margin = new Thickness(16, 4, 18, 4) };
+        options = Toolbar(); DockPanel.SetDock(options, Dock.Right); toolbar.Children.Add(options);
+        DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
+        root.Children.Add(new ScrollViewer { Content = shell, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
+        Content = root;
         FlowDirection = AppLanguages.IsRightToLeft(settings.ResolvedLanguage) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-        var header = new DockPanel { Margin = new Thickness(0, 0, 0, 24) };
-        options = new StackPanel { HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = !busy };
-        DockPanel.SetDock(options, Dock.Right); header.Children.Add(options);
-        var language = new ComboBox { Width = 154, Margin = new Thickness(0, 0, 0, 8), ItemsSource = new[] { T("System") }.Concat(AppLanguages.Labels).ToArray(), SelectedIndex = settings.Language == "system" ? 0 : Array.IndexOf(AppLanguages.Codes, settings.Language) + 1 };
-        language.SelectionChanged += (_, _) => { if (rebuilding || busy || language.SelectedIndex < 0) return; settings = settings with { Language = language.SelectedIndex == 0 ? "system" : AppLanguages.Codes[language.SelectedIndex - 1] }; SavePreferences(); };
-        var theme = new ComboBox { Width = 126, ItemsSource = new[] { T("System"), T("Light"), T("Dark") }, SelectedIndex = settings.Theme == "dark" ? 2 : settings.Theme == "light" ? 1 : 0 };
-        theme.SelectionChanged += (_, _) => { if (rebuilding || busy) return; settings = settings with { Theme = theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system" }; SavePreferences(); };
-        options.Children.Add(language); options.Children.Add(theme);
-        header.Children.Add(new Image { Source = Icon, Width = 58, Height = 58, Margin = new Thickness(0, 0, 16, 0) });
-        var title = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-        title.Children.Add(Text("Local Route Launcher", 23, true)); title.Children.Add(Text(T("Tagline"), 13, false, muted)); header.Children.Add(title); panel.Children.Add(header);
-        var launchCard = Card(); launchCard.Children.Add(Text(Target.Name, 26, true)); launchCard.Children.Add(Text(T(Running(settings.SelectedApplication) ? "Running" : "NotRunning"), 12, false, accent)); launchCard.Children.Add(Text(T("Subtitle"), 14, false, muted));
+        var header = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+        header.Children.Add(Text(Target.Name, 23, true)); header.Children.Add(Text(T("Tagline"), 12, false, muted)); panel.Children.Add(header);
+        var launchCard = Card(); launchCard.Children.Add(Text(T("Heading"), 22, true)); launchCard.Children.Add(Text(T(Running(settings.SelectedApplication) ? "Running" : "NotRunning"), 12, false, accent)); launchCard.Children.Add(Text(T("ScopedSettings"), 12, false, muted));
         var route = new Border { Background = field, CornerRadius = new CornerRadius(12), Padding = new Thickness(15), Margin = new Thickness(0, 18, 0, 16) };
         var routeLabel = Text($"{Target.Name}   →   {Route(settings.SelectedApplication, Profile(settings.SelectedApplication))}   HTTP", 17, true, accent);
         routeLabel.FlowDirection = FlowDirection.LeftToRight;
         route.Child = routeLabel; launchCard.Children.Add(route);
         var launchActions = new UniformGridCompat();
-        launchActions.Children.Add(Button(T("Launch"), async () => await Work(LaunchCurrent, "Launched"), true));
-        launchActions.Children.Add(Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); ClearResults(); }, "Stopped")));
+        startButton = Button(T("Launch"), async () => await Work(LaunchCurrent, "Launched"), true); launchActions.Children.Add(startButton);
+        stopButton = Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); ClearResults(); }, "Stopped")); launchActions.Children.Add(stopButton);
         launchCard.Children.Add(launchActions);
         var proxyCard = Card(); proxyCard.Children.Add(Text(T("Settings"), 18, true)); proxyCard.Children.Add(Text(T("RestartHint"), 12, false, muted));
         var inputs = new Grid { Margin = new Thickness(0, 14, 0, 0) }; inputs.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) }); inputs.ColumnDefinitions.Add(new() { Width = new GridLength(120) });
@@ -228,10 +228,11 @@ public sealed class MainWindow : Window
         }
         checkCard.Children.Add(results); checkCard.Children.Add(Text(T("Snapshot"), 12, false, muted));
         checkCard.Children.Add(Button(T("Report"), () => MessageBox.Show(this, report.Length == 0 ? T("NoReport") : report, T("Report"), MessageBoxButton.OK, MessageBoxImage.Information)));
-        status = Text(T(notice), 13, false, accent); status.Margin = new Thickness(0, 4, 0, 14); panel.Children.Add(status);
-        panel.Children.Add(Text(T("Footer") + $"    v{Program.Version}", 12, false, muted));
-        var legal = Text(T("Legal"), 11, false, muted); legal.Margin = new Thickness(0, 12, 0, 0); panel.Children.Add(legal);
+        status = Text(T(notice), 12, false, accent); status.Margin = new Thickness(0, 4, 0, 8); status.Visibility = notice == "Ready" ? Visibility.Collapsed : Visibility.Visible; panel.Children.Add(status);
+        panel.Children.Add(Text(T("Footer"), 12, false, muted));
+        var legal = Text(T("CompactLegal"), 11, false, muted); legal.Margin = new Thickness(0, 6, 0, 0); panel.Children.Add(legal);
         foreach (var button in actions) button.IsEnabled = !busy;
+        startButton.IsEnabled = !busy && !Running(settings.SelectedApplication); stopButton.IsEnabled = !busy && Running(settings.SelectedApplication);
         rebuilding = false;
     }
     private TextBlock Text(string text, double size = 14, bool bold = false, Brush? color = null) => new() { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal, Foreground = color ?? ink, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 3), VerticalAlignment = VerticalAlignment.Center };
@@ -280,11 +281,12 @@ public sealed class MainWindow : Window
     {
         if (busy) return;
         var draftHost = host.Text; var draftPort = port.Text;
-        busy = true; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
+        busy = true; status.Visibility = Visibility.Visible; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
         options.IsEnabled = host.IsEnabled = port.IsEnabled = false;
+        RefreshAuxiliaryWindows();
         try { await action(); notice = success; }
         catch (Exception ex) { notice = ex is Win32Exception ? "LaunchFailed" : ex.Message; }
-        finally { busy = false; Build(); host.Text = draftHost; port.Text = draftPort; SetupTray(); await Poll(); }
+        finally { busy = false; Build(); host.Text = draftHost; port.Text = draftPort; SetupTray(); await Poll(); RefreshAuxiliaryWindows(); }
     }
     private async void Check() => await Work(async () =>
     {
@@ -309,7 +311,7 @@ public sealed class MainWindow : Window
         };
         translateReport();
     }, "CheckDone");
-    private const string RepositoryUrl = "https://github.com/oliver804/ChatGPT-Proxy-Launcher";
+    private const string RepositoryUrl = "https://github.com/oliver804/Local-Route-Launcher";
     // GitHub mark from Primer Octicons (MIT); see THIRD_PARTY_NOTICES.md.
     private const string GitHubPath = "M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656";
     private void OpenRepository()
@@ -365,7 +367,9 @@ public sealed class MainWindow : Window
         menu.Items.Add("GitHub", null, (_, _) => OpenRepository());
         menu.Items.Add(T("Check"), null, (_, _) => { Reveal(); Check(); });
         menu.Items.Add(T("Quit"), null, (_, _) => { if (!busy) Quit(); });
+        menu.Items.Add(T(updateRelease?.IsNewer == true ? "UpdateAvailable" : "CheckUpdates"), null, (_, _) => ShowUpdates());
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Reveal();
+        tray.MouseClick += (_, e) => { if (e.Button == Forms.MouseButtons.Left) ShowTrayPanel(); };
     }
     private void OnClosing(object? sender, CancelEventArgs e) { if (quitting) return; e.Cancel = true; ShowInTaskbar = false; Hide(); }
     public void Reveal() { ShowInTaskbar = true; Show(); WindowState = WindowState.Normal; Activate(); }

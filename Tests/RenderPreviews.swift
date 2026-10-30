@@ -25,6 +25,7 @@ enum RenderPreviews {
                 let suffix = "\(language.rawValue)-\(dark ? "dark" : "light")"
                 try render(LauncherWindow(store: store).frame(width: 865, height: 780), name: "window-" + suffix, dark: dark)
                 try render(MenuPanel(store: store), name: "menu-" + suffix, dark: dark)
+                try render(UpdatePanel(store: store), name: "updates-" + suffix, dark: dark)
             }
         }
         print("PASS: rendered nine language options in light/dark windows and menus")

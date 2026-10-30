@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / 'build' / 'site'
 VERSION = (ROOT / 'VERSION').read_text().strip()
-BASE_URL = 'https://oliver804.github.io/ChatGPT-Proxy-Launcher/'
+BASE_URL = 'https://oliver804.github.io/Local-Route-Launcher/'
 LOCALES = {'zh-CN': BASE_URL, 'en': BASE_URL + 'en/', 'x-default': BASE_URL}
 ANALYTICS_SCRIPT = 'https://www.googletagmanager.com/gtag/js?id=G-QVHYT7RFW9'
 
@@ -85,8 +85,8 @@ def main():
     pages = {path.resolve(): Page(path) for path in SITE.rglob('*.html')}
     assert len(pages) == 2, 'Expected Chinese and English pages'
     assert {p.locale for p in pages.values()} == {'zh-CN', 'en'}
-    release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-arm64.dmg'
-    windows_release = f'https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-windows-x64-setup.exe'
+    release = f'https://github.com/oliver804/Local-Route-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-arm64.dmg'
+    windows_release = f'https://github.com/oliver804/Local-Route-Launcher/releases/download/v{VERSION}/Local-Route-Launcher-{VERSION}-windows-x64-setup.exe'
     for path, page in pages.items():
         assert page.h1_count == 1, 'Expected one primary heading'
         assert page.analytics_count == 1, 'Expected one Google tag per page'

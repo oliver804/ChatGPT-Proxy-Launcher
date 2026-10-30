@@ -12,7 +12,7 @@ APP_PATH="$PROJECT_ROOT/build/release/Local Route Launcher.app"
 RELEASE_DIR="$PROJECT_ROOT/dist/$PROJECT_VERSION"
 DMG_NAME="Local-Route-Launcher-$PROJECT_VERSION-arm64.dmg"
 SOURCE_NAME="Local-Route-Launcher-$PROJECT_VERSION-source.zip"
-APP_SOURCES=(Sources/Localization.swift Sources/AdditionalTranslations.swift Sources/BrandMark.swift Sources/ProxyCore.swift Sources/LauncherModel.swift Sources/LauncherApp.swift)
+APP_SOURCES=(Sources/Localization.swift Sources/AdditionalTranslations.swift Sources/BrandMark.swift Sources/ProxyCore.swift Sources/ReleaseUpdate.swift Sources/LauncherModel.swift Sources/LauncherApp.swift)
 SWIFT_FLAGS=(-swift-version 5 -target arm64-apple-macosx13.0
   -module-cache-path build/module-cache -file-compilation-dir .
   -debug-prefix-map "$PROJECT_ROOT=." -file-prefix-map "$PROJECT_ROOT=.")

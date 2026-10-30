@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum BrandIdentity {
-    static let repositoryURL = URL(string: "https://github.com/oliver804/ChatGPT-Proxy-Launcher")!
+    static let repositoryURL = URL(string: "https://github.com/oliver804/Local-Route-Launcher")!
     // Restore the native menu bar symbol used in 1.0.0. Its aspect ratio and
     // optical sizing are managed by macOS, including dark and highlighted bars.
     static let menuSymbolName = "arrow.triangle.branch"

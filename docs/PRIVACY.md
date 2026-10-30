@@ -10,7 +10,7 @@
 
 启动器在启动前或用户点击检查时，通过配置的代理向 `https://chatgpt.com/` 发起 HEAD 请求，以检查 CONNECT 隧道和 TLS。该请求不附带 ChatGPT 账号凭据，网站仍会看到代理出口 IP 等正常网络请求信息。
 
-ChatGPT 自身及代理服务的数据处理由对应软件决定。启动器不包含遥测、分析 SDK、自动上传或自动更新服务。
+ChatGPT 自身及代理服务的数据处理由对应软件决定。启动器不包含遥测、分析 SDK、自动上传、自动下载安装服务。
 
 ## 诊断报告
 
@@ -41,3 +41,8 @@ Windows 将语言、外观、地址、端口及应用路径保存到 `%LOCALAPPD
 会话回放重建的是官网页面交互，不是录制电脑屏幕；不会访问启动器内的代理配置或 ChatGPT 对话。本次接入未添加自定义用户身份标识，也未覆盖 Clarity 的默认遮罩设置。Microsoft 的数据处理和使用方式见 [Microsoft 隐私声明](https://privacy.microsoft.com/privacystatement)，另见 [Clarity 隐私信息](https://clarity.microsoft.com/privacy)。
 
 v1.4.0：Antigravity App / IDE 的无凭据 HEAD 探测目标为 `https://antigravity.google/`。每个应用配置独立保存在本机；不修改目标应用配置、不提交 AI 提示词。
+
+
+## 启动器更新检查（1.4.0）
+
+默认在启动时检查一次 GitHub 稳定版本，可在版本旁的更新面板关闭“启动时自动检查”，也可手动检查。请求发送到 `api.github.com/repos/oliver804/Local-Route-Launcher/releases/latest`，使用当前系统网络路径，不使用某个目标应用的代理配置。GitHub 会收到正常的网络请求信息（例如出口 IP 和启动器 User-Agent）；不发送代理地址、应用路径、诊断报告、账号或聊天数据。网络不可用不影响启动功能；不自动下载或安装。点击发布页按钮时，浏览器按自身设置访问 GitHub。

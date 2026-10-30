@@ -11,6 +11,22 @@ public static class Strings
     public static IReadOnlyCollection<string> Keys => Items.Keys;
     private static readonly Dictionary<string, (string En, string Zh)> Items = new()
     {
+        ["CheckUpdates"] = ("Check for updates", "检查更新"),
+        ["UpdateAvailable"] = ("Update available", "有更新"),
+        ["UpdateFound"] = ("A new version is available", "发现新版本"),
+        ["UpdateLatest"] = ("You are up to date", "已是最新版本"),
+        ["UpdateFailed"] = ("Unable to check for updates", "暂时无法检查更新"),
+        ["UpdateChecking"] = ("Checking for updates…", "正在检查更新…"),
+        ["UpdateAutomatic"] = ("Check automatically at startup", "启动时自动检查"),
+        ["UpdatePrivacy"] = ("Checks stable GitHub Releases. No automatic download or installation.", "从 GitHub Releases 检查稳定版本，不自动下载或安装。"),
+        ["UpdateDownload"] = ("Release notes & download", "查看发布说明与下载"),
+        ["UpdatePage"] = ("Open releases", "打开发布页面"),
+        ["UpdateRetry"] = ("Retry", "重试"),
+        ["UpdateOffline"] = ("You can keep using this version and try again later.", "可继续使用当前版本，稍后重试。"),
+        ["UpdateCurrent"] = ("Installed version", "当前版本"),
+        ["UpdateStable"] = ("Latest stable version", "最新稳定版"),
+        ["CompactLegal"] = ("Independent project; not affiliated with or endorsed by OpenAI. Trademarks belong to their owners.", "独立项目，与 OpenAI 无隶属或背书关系；商标归各自权利人所有。"),
+        ["ScopedSettings"] = ("Passes settings to compatible apps without changing system networking.", "仅为兼容应用传入设置，不修改系统网络。"),
         ["Appearance"] = ("Appearance", "外观"),
         ["Language"] = ("Language", "界面语言"),
         ["Apps"] = ("My apps", "我的应用"),

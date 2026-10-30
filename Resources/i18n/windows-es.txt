@@ -1,3 +1,19 @@
+Buscar actualizaciones
+Actualización disponible
+Hay una nueva versión
+Ya tienes la última versión
+No se pudieron buscar actualizaciones
+Buscando actualizaciones…
+Buscar al iniciar
+Busca versiones estables en GitHub Releases. No descarga ni instala automáticamente.
+Notas de versión y descarga
+Abrir versiones
+Reintentar
+Puedes seguir usando esta versión e intentarlo más tarde.
+Versión instalada
+Última versión estable
+Proyecto independiente, sin afiliación ni respaldo de OpenAI. Las marcas pertenecen a sus titulares.
+Pasa ajustes a aplicaciones compatibles sin cambiar la red del sistema.
 Apariencia
 Idioma
 Mis aplicaciones

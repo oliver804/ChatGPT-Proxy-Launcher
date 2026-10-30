@@ -8,6 +8,6 @@
 
 适用于 **macOS 13+ / Apple Silicon**，或 **Windows 10 22H2 / Windows 11 x64** 的可识别 Electron 版 ChatGPT。旧原生版本、Intel Mac、Windows ARM64 以及某些受限制的商店安装包不在支持范围。检查结果不保证全部流量经过代理，也不代表账号或服务可用。启动器不提供代理服务。
 
-[下载 v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0) · [GitHub 源码](https://github.com/oliver804/ChatGPT-Proxy-Launcher) · [项目官网](https://oliver804.github.io/ChatGPT-Proxy-Launcher/)
+[下载 v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0) · [GitHub 源码](https://github.com/oliver804/Local-Route-Launcher) · [项目官网](https://oliver804.github.io/Local-Route-Launcher/)
 
 *作者：Oliver。独立开源项目，与 OpenAI 无隶属或背书关系。ChatGPT 商标仅用于说明兼容性。请遵守适用法律与服务条款，仅使用有权访问的网络和服务。本文使用 AI 辅助起草。*

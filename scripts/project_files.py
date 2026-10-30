@@ -4,7 +4,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent.parent
 ROOT_FILES = {
-    '.editorconfig', '.gitattributes', '.gitignore', 'VERSION', 'LICENSE', 'Makefile',
+    'AGENTS.md', '.editorconfig', '.gitattributes', '.gitignore', 'VERSION', 'LICENSE', 'Makefile',
     'THIRD_PARTY_NOTICES.md', 'README.md', 'README.en.md', 'AUTHORS.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md',
 }
 # Only reviewed documentation and brand images are included in source exports.

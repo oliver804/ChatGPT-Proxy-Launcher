@@ -382,7 +382,7 @@ struct LauncherWindow: View {
             ZStack {
                 Text("Local Route Launcher").font(.system(size: 12)).foregroundStyle(.secondary)
                 HStack { Spacer(); WindowTools(store: store) }.padding(.trailing, 16)
-            }.frame(height: 48)
+            }.frame(height: 48).environment(\.layoutDirection, .leftToRight)
             Divider()
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 24) {

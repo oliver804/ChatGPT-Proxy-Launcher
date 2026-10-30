@@ -47,7 +47,7 @@ Detalles
 La instantánea de conexiones no demuestra que todas las solicitudes usen el proxy. Los nombres de host no se pueden comparar por IP.
 Al cerrar la ventana, el iniciador permanece en la bandeja del sistema.
 Abrir iniciador
-Salir del iniciador
+Salir
 Listo. El proxy y el DNS del sistema no han cambiado.
 Ajustes guardados. Reinicia ChatGPT para aplicarlos.
 Se solicitó el inicio con el proxy. Comprueba la conexión de la aplicación.

@@ -55,7 +55,7 @@ Procesando…
 Comprobado a las 
 Abrir ventana
 Salir del iniciador; ChatGPT seguirá funcionando
-Salir del iniciador
+Salir
 Mostrar ventana principal
 Local Route Launcher: aplicación en ejecución
 Local Route Launcher: aplicación detenida

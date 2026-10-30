@@ -45,4 +45,4 @@ v1.4.0：Antigravity App / IDE 的无凭据 HEAD 探测目标为 `https://antigr
 
 ## 启动器更新检查（1.4.0）
 
-默认在启动时检查一次 GitHub 稳定版本，可在版本旁的更新面板关闭“启动时自动检查”，也可手动检查。请求发送到 `api.github.com/repos/oliver804/Local-Route-Launcher/releases/latest`，使用当前系统网络路径，不使用某个目标应用的代理配置。GitHub 会收到正常的网络请求信息（例如出口 IP 和启动器 User-Agent）；不发送代理地址、应用路径、诊断报告、账号或聊天数据。网络不可用不影响启动功能；不自动下载或安装。点击发布页按钮时，浏览器按自身设置访问 GitHub。
+默认在启动时检查一次 GitHub 稳定版本，保留已有的启动检查偏好设置。请求发送到 `api.github.com/repos/oliver804/Local-Route-Launcher/releases/latest`，使用当前系统网络路径，不使用某个目标应用的代理配置。GitHub 会收到正常的网络请求信息（例如出口 IP 和启动器 User-Agent）；不发送代理地址、应用路径、诊断报告、账号或聊天数据。网络不可用不影响启动功能；不自动下载或安装。仅在用户点击“有更新”时，浏览器按自身设置下载 GitHub 上当前平台的安装包；安装仍由用户执行。

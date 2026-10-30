@@ -105,7 +105,7 @@ enum L10n {
         "检查于 ": "Checked at ",
         "打开主窗口": "Open window",
         "退出启动器，ChatGPT 继续运行": "Quit launcher; ChatGPT keeps running",
-        "退出启动器": "Quit launcher",
+        "退出": "Quit",
         "显示主窗口": "Show main window",
         "Local Route Launcher：运行中": "Local Route Launcher: target running",
         "Local Route Launcher：未运行": "Local Route Launcher: target stopped",

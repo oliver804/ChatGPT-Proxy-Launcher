@@ -47,7 +47,7 @@ Detalhes
 O instantâneo de ligações não prova que todos os pedidos usem o proxy. Os nomes de anfitrião não podem ser comparados por IP.
 Ao fechar a janela, o iniciador mantém-se na área de notificação.
 Abrir iniciador
-Sair do iniciador
+Sair
 Pronto. O proxy e o DNS do sistema não foram alterados.
 Definições guardadas. Reinicie o ChatGPT para as aplicar.
 Foi pedido o arranque com o proxy. Verifique a ligação da aplicação em execução.

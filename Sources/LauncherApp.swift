@@ -13,6 +13,11 @@ private enum Palette {
             ? NSColor(calibratedRed: 0.095, green: 0.11, blue: 0.105, alpha: 1)
             : NSColor(calibratedRed: 0.956, green: 0.963, blue: 0.95, alpha: 1)
     })
+    static let tool = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(calibratedRed: 161/255, green: 177/255, blue: 168/255, alpha: 1)
+            : NSColor(calibratedRed: 93/255, green: 112/255, blue: 102/255, alpha: 1)
+    })
     static let surface = Color(nsColor: .controlBackgroundColor)
     static let border = Color.primary.opacity(0.065)
 }
@@ -99,6 +104,7 @@ struct LauncherView: View {
         .environment(\.locale, model.language.locale)
         .environment(\.layoutDirection, model.language.isRightToLeft ? .rightToLeft : .leftToRight)
         .sheet(isPresented: $model.showDetails) { reportSheet }
+        .alert(model.message, isPresented: $model.isError) { Button(model.text("完成"), role: .cancel) {} }
     }
 
     private var header: some View {
@@ -207,14 +213,6 @@ struct LauncherView: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 6) {
-            if model.busy || model.isError || model.message != model.text("保持你有权使用的本地代理运行，再启动兼容应用。") {
-            HStack(alignment: .top, spacing: 8) {
-                if model.busy { ProgressView().controlSize(.small) }
-                else { Image(systemName: model.isError ? "exclamationmark.circle.fill" : "info.circle").font(.system(size: 12)) }
-                Text(model.message).font(.system(size: 11)).fixedSize(horizontal: false, vertical: true)
-            }.foregroundStyle(model.isError ? Color.orange : Color.secondary)
-                .padding(.bottom, 4)
-            }
             HStack(spacing: 5) {
                 Image(systemName: "menubar.rectangle")
                 Text(model.text("关闭窗口后，仍可从菜单栏访问"))
@@ -242,6 +240,64 @@ struct LauncherView: View {
     }
 }
 
+// Lucide languages / sun-moon, ISC. Exact 24-unit vectors from the approved mockup.
+private enum HeaderIconKind { case languages, sunMoon }
+private struct HeaderIcon: View {
+    let kind: HeaderIconKind
+    @Environment(\.colorScheme) private var scheme
+    var body: some View {
+        // Native macOS Menu labels accept images, not an arbitrary Shape hierarchy.
+        Image(nsImage: artwork).renderingMode(.original).frame(width: 32, height: 32)
+    }
+    private var artwork: NSImage {
+        let ink = scheme == .dark ? NSColor(calibratedRed: 161/255, green: 177/255, blue: 168/255, alpha: 1)
+            : NSColor(calibratedRed: 93/255, green: 112/255, blue: 102/255, alpha: 1)
+        return NSImage(size: NSSize(width: 17, height: 17), flipped: true) { rect in
+            guard let context = NSGraphicsContext.current?.cgContext else { return false }
+            context.addPath(HeaderGlyph(kind: kind).path(in: rect).cgPath)
+            context.setStrokeColor(ink.cgColor)
+            context.setLineWidth(17 * 2 / 24); context.setLineCap(.round); context.setLineJoin(.round)
+            context.strokePath()
+            return true
+        }
+    }
+}
+private struct HeaderGlyph: Shape {
+    let kind: HeaderIconKind
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        switch kind {
+        case .languages:
+            for points: [CGPoint] in [
+                [CGPoint(x: 5, y: 8), CGPoint(x: 11, y: 14)],
+                [CGPoint(x: 4, y: 14), CGPoint(x: 10, y: 8), CGPoint(x: 12, y: 5)],
+                [CGPoint(x: 2, y: 5), CGPoint(x: 14, y: 5)],
+                [CGPoint(x: 7, y: 2), CGPoint(x: 8, y: 2)],
+                [CGPoint(x: 22, y: 22), CGPoint(x: 17, y: 12), CGPoint(x: 12, y: 22)],
+                [CGPoint(x: 14, y: 18), CGPoint(x: 20, y: 18)]
+            ] { path.move(to: points[0]); points.dropFirst().forEach { path.addLine(to: $0) } }
+        case .sunMoon:
+            path.move(to: CGPoint(x: 12, y: 2))
+            path.addLine(to: CGPoint(x: 12, y: 4))
+            path.move(to: CGPoint(x: 14.837, y: 16.385))
+            path.addCurve(to: CGPoint(x: 8.534021207, y: 20.982978148), control1: CGPoint(x: 14.155249457, y: 19.260877945), control2: CGPoint(x: 11.480721058, y: 21.211927368))
+            path.addCurve(to: CGPoint(x: 3.016894582, y: 15.466615351), control1: CGPoint(x: 5.587321357, y: 20.754028929), control2: CGPoint(x: 3.246251788, y: 18.413283474))
+            path.addCurve(to: CGPoint(x: 7.614000000, y: 9.163000000), control1: CGPoint(x: 2.787537376, y: 12.519947228), control2: CGPoint(x: 4.738216476, y: 9.845148719))
+            path.addCurve(to: CGPoint(x: 8.329000000, y: 10.411000000), control1: CGPoint(x: 8.238000000, y: 9.016000000), control2: CGPoint(x: 8.584000000, y: 9.823000000))
+            path.addCurve(to: CGPoint(x: 9.172095199, y: 14.827744581), control1: CGPoint(x: 7.677633904, y: 11.916829253), control2: CGPoint(x: 8.011855714, y: 13.667725673))
+            path.addCurve(to: CGPoint(x: 13.589000000, y: 15.670000000), control1: CGPoint(x: 10.332334685, y: 15.987763489), control2: CGPoint(x: 12.083294620, y: 16.321652391))
+            path.addCurve(to: CGPoint(x: 14.837000000, y: 16.385000000), control1: CGPoint(x: 14.178000000, y: 15.415000000), control2: CGPoint(x: 14.985000000, y: 15.760000000))
+            path.move(to: CGPoint(x: 16, y: 12))
+            path.addCurve(to: CGPoint(x: 12.000000000, y: 8.000000000), control1: CGPoint(x: 16.000000000, y: 9.790861001), control2: CGPoint(x: 14.209138999, y: 8.000000000))
+            path.move(to: CGPoint(x: 19, y: 5))
+            path.addLine(to: CGPoint(x: 17.744, y: 6.256))
+            path.move(to: CGPoint(x: 20, y: 12))
+            path.addLine(to: CGPoint(x: 22, y: 12))
+        }
+        return path.applying(CGAffineTransform(scaleX: rect.width / 24, y: rect.height / 24).concatenating(CGAffineTransform(translationX: rect.minX, y: rect.minY)))
+    }
+}
+
 private struct SharedLanguagePicker: View {
     @ObservedObject var store: LauncherStore
     var body: some View {
@@ -257,8 +313,8 @@ private struct SharedLanguagePicker: View {
                     else { Text(language.label) }
                 }
             }
-        } label: { Image(systemName: "character.bubble").frame(width: 24, height: 24) }
-        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        } label: { HeaderIcon(kind: .languages) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 32, height: 32)
         .help(store.current.text("界面语言") + " · " + (store.current.followsSystem ? store.current.text("跟随系统") : store.current.language.label))
         .accessibilityLabel(store.current.text("界面语言"))
         .disabled(store.busy)
@@ -275,8 +331,8 @@ private struct SharedThemePicker: View {
                     else { Text(store.current.text(theme.label)) }
                 }
             }
-        } label: { Image(systemName: store.theme.symbol).frame(width: 24, height: 24) }
-        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        } label: { HeaderIcon(kind: .sunMoon) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 32, height: 32)
         .help(store.current.text("外观") + " · " + store.current.text(store.theme.label))
         .accessibilityLabel(store.current.text("外观"))
     }
@@ -284,7 +340,7 @@ private struct SharedThemePicker: View {
 
 private struct RepositoryLink: View {
     var body: some View {
-        Link(destination: BrandIdentity.repositoryURL) { GitHubMark().fill(Color.primary).frame(width: 16, height: 16).padding(4) }
+        Link(destination: BrandIdentity.repositoryURL) { GitHubMark().fill(Palette.tool).frame(width: 17, height: 17).frame(width: 32, height: 32) }
             .buttonStyle(.plain).help("GitHub").accessibilityLabel("GitHub")
     }
 }
@@ -292,71 +348,30 @@ private struct RepositoryLink: View {
 private struct WindowTools: View {
     @ObservedObject var store: LauncherStore
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 4) {
             SharedLanguagePicker(store: store)
             SharedThemePicker(store: store)
             RepositoryLink()
-        }.foregroundStyle(.secondary)
+        }.foregroundStyle(Palette.tool).tint(Palette.tool)
     }
 }
-
-@MainActor private final class UpdatePresentation: ObservableObject { @Published var show = false }
 
 private struct UpdateIndicator: View {
     @ObservedObject var store: LauncherStore
     var compact = false
-    @StateObject private var presentation = UpdatePresentation()
-    private var update: UpdateModel { store.updates }
-    private var label: String {
-        if update.checking { return "正在检查更新…" }
-        if update.failed { return "暂时无法检查更新" }
-        return update.release?.isNewer == true ? "有更新" : "检查更新"
-    }
     var body: some View {
         HStack(spacing: 7) {
-            Text("v\(update.version)").font(.system(size: 10)).foregroundStyle(.secondary)
-            Button { presentation.show.toggle() } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: update.release?.isNewer == true ? "arrow.up.circle" : "arrow.clockwise")
-                    if !compact || update.release?.isNewer == true { Text(store.current.text(label)).lineLimit(1) }
-                }.font(.system(size: 10)).padding(.horizontal, 6).padding(.vertical, 4)
-                    .background(Palette.accent.opacity(0.09), in: Capsule())
-            }.buttonStyle(.plain).foregroundStyle(Palette.accent)
-                .help(store.current.text(label)).accessibilityLabel(store.current.text(label))
-                .popover(isPresented: $presentation.show, arrowEdge: .bottom) { UpdatePanel(store: store) }
+            Text("v\(store.updates.version)").font(.system(size: 10)).foregroundStyle(.secondary)
+            if let release = store.updates.release, let download = release.availableDownload {
+                Button { NSWorkspace.shared.open(download) } label: {
+                    Label(store.current.text("有更新"), systemImage: "arrow.up.circle")
+                        .font(.system(size: 10)).padding(.horizontal, 6).padding(.vertical, 4)
+                        .background(Palette.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 6))
+                }.buttonStyle(.plain).foregroundStyle(Palette.accent)
+                    .help(store.current.text("有更新") + " · " + release.version)
+                    .accessibilityLabel(store.current.text("有更新"))
+            }
         }
-    }
-}
-
-struct UpdatePanel: View {
-    @ObservedObject var store: LauncherStore
-    private var update: UpdateModel { store.updates }
-    private func t(_ key: String) -> String { store.current.text(key) }
-    private var title: String {
-        if update.checking { return "正在检查更新…" }
-        if update.failed { return "暂时无法检查更新" }
-        if let release = update.release { return release.isNewer ? "发现新版本" : "已是最新版本" }
-        return "检查更新"
-    }
-    var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(t(title)).font(.system(size: 16, weight: .semibold))
-            Text("Local Route Launcher").font(.system(size: 12)).foregroundStyle(.secondary)
-            HStack { Text(t("当前版本")); Spacer(); Text("v" + update.version) }
-            if let release = update.release {
-                HStack { Text(t("最新稳定版")); Spacer(); Text(release.version).foregroundStyle(Palette.accent) }
-            }
-            Divider()
-            Toggle(t("启动时自动检查"), isOn: Binding(get: { update.automatic }, set: { update.automatic = $0 }))
-            Text(t("从 GitHub Releases 检查稳定版本，不自动下载或安装。")).foregroundStyle(.secondary)
-            if update.failed { Text(t("可继续使用当前版本，稍后重试。")).foregroundStyle(.secondary) }
-            HStack {
-                Button(t(update.failed ? "重试" : "检查更新")) { Task { await update.check() } }.disabled(update.checking)
-                Spacer()
-                Link(t(update.release?.isNewer == true ? "查看发布说明与下载" : "打开发布页面"), destination: update.release?.url ?? ReleaseUpdate.releasesURL)
-            }
-        }.font(.system(size: 11)).padding(20).frame(width: 330).background(Palette.canvas)
-            .tint(Palette.accent).environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
     }
 }
 
@@ -364,12 +379,10 @@ struct LauncherWindow: View {
     @ObservedObject var store: LauncherStore
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                Text("Local Route Launcher").font(.system(size: 11)).foregroundStyle(.secondary)
-                Spacer()
-                WindowTools(store: store)
-            }.padding(.leading, 110).padding(.trailing, 18).frame(height: 38)
+            ZStack {
+                Text("Local Route Launcher").font(.system(size: 12)).foregroundStyle(.secondary)
+                HStack { Spacer(); WindowTools(store: store) }.padding(.trailing, 16)
+            }.frame(height: 48)
             Divider()
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 24) {
@@ -402,6 +415,7 @@ struct LauncherWindow: View {
             LauncherView(model: store.current).id(store.selected)
         }
         }.frame(minWidth: 865, minHeight: 600)
+            .ignoresSafeArea(.container, edges: .top)
             .background(Palette.canvas).tint(Palette.accent)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
     }
@@ -455,9 +469,9 @@ struct MenuPanel: View {
                 UpdateIndicator(store: store, compact: true)
                 Spacer(minLength: 4)
                 Button(store.current.text("打开主窗口"), action: showMain)
-                Button(store.current.text("退出启动器")) { NSApp.terminate(nil) }.disabled(store.busy)
+                Button(store.current.text("退出")) { NSApp.terminate(nil) }.disabled(store.busy)
             }.buttonStyle(.plain).font(.system(size: 12))
-        }.padding(18).frame(width: 400).background(Palette.canvas).tint(Palette.accent)
+        }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 14).frame(width: 380).background(Palette.canvas).tint(Palette.accent)
             .environment(\.locale, store.current.language.locale)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
             .onAppear { store.models.values.forEach { $0.updateRunning() } }
@@ -475,10 +489,18 @@ final class DockPresence {
         observers.forEach(NotificationCenter.default.removeObserver)
         observers.removeAll()
         mainWindow = window
-        window.styleMask.insert(.resizable)
+        window.styleMask.formUnion([.resizable, .fullSizeContentView])
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
         window.collectionBehavior.insert(.fullScreenPrimary)
         window.standardWindowButton(.zoomButton)?.isEnabled = true
         prepareToShow()
+        alignWindowControls(window)
+        for name in [NSWindow.didResizeNotification, NSWindow.didExitFullScreenNotification, NSWindow.didBecomeKeyNotification] {
+            observers.append(NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) { [weak self, weak window] _ in
+                DispatchQueue.main.async { if let window { self?.alignWindowControls(window) } }
+            })
+        }
         // Observe only the main window: dismissing the menu panel or a sheet must not hide the Dock icon.
         observers.append(NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in
             DispatchQueue.main.async {
@@ -492,6 +514,17 @@ final class DockPresence {
                 self.prepareToShow()
             }
         })
+    }
+
+    private func alignWindowControls(_ window: NSWindow) {
+        guard !window.styleMask.contains(.fullScreen) else { return }
+        for type in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
+            guard let button = window.standardWindowButton(type), let parent = button.superview else { continue }
+            // Keep the native controls/actions, centered in the single 48-point header.
+            let center = parent.convert(NSPoint(x: 0, y: window.frame.height - 24), from: nil)
+            let origin = NSPoint(x: button.frame.minX, y: center.y - button.frame.height / 2)
+            if button.frame.origin != origin { button.setFrameOrigin(origin) }
+        }
     }
 
     func prepareToShow() {

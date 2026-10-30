@@ -20,13 +20,20 @@ struct ReleaseUpdate: Equatable {
     let version: String
     let url: URL
     let isNewer: Bool
-    private struct Payload: Decodable { let tag_name: String; let draft: Bool; let prerelease: Bool; let html_url: String }
+    let downloadURL: URL?
+    var availableDownload: URL? { isNewer ? downloadURL : nil }
+    private struct Asset: Decodable { let name: String; let browser_download_url: String }
+    private struct Payload: Decodable { let tag_name: String; let draft: Bool; let prerelease: Bool; let html_url: String; let assets: [Asset]? }
     static func parse(_ data: Data, current: String) throws -> Self {
         let payload = try JSONDecoder().decode(Payload.self, from: data)
         guard !payload.draft, !payload.prerelease, let latest = ReleaseVersion(payload.tag_name), let installed = ReleaseVersion(current),
               payload.html_url == repository + "/releases/tag/" + payload.tag_name,
               let url = URL(string: payload.html_url) else { throw URLError(.cannotParseResponse) }
-        return Self(version: payload.tag_name, url: url, isNewer: latest > installed)
+        let version = payload.tag_name.hasPrefix("v") ? String(payload.tag_name.dropFirst()) : payload.tag_name
+        let name = "Local-Route-Launcher-\(version)-arm64.dmg"
+        let expected = repository + "/releases/download/" + payload.tag_name + "/" + name
+        let asset = payload.assets?.first { $0.name == name && $0.browser_download_url == expected }
+        return Self(version: payload.tag_name, url: url, isNewer: latest > installed, downloadURL: asset.flatMap { URL(string: $0.browser_download_url) })
     }
     static func fetch(current: String) async throws -> Self {
         let configuration = URLSessionConfiguration.ephemeral

@@ -95,7 +95,7 @@ public sealed partial class MainWindow : Window
         SourceInitialized += (_, _) => System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle)?.AddHook((IntPtr h, int m, IntPtr w, IntPtr l, ref bool handled) => { if (m == 0x8001) { Reveal(); handled = true; } return IntPtr.Zero; });
         Closing += OnClosing;
         if (!smoke) SystemEvents.UserPreferenceChanged += SystemAppearanceChanged;
-        Closed += (_, _) => { SystemEvents.UserPreferenceChanged -= SystemAppearanceChanged; updateCancellation.Cancel(); updateWindow?.Close(); trayWindow?.Close(); monitor.Stop(); tray?.Dispose(); };
+        Closed += (_, _) => { SystemEvents.UserPreferenceChanged -= SystemAppearanceChanged; updateCancellation.Cancel(); trayWindow?.Close(); monitor.Stop(); tray?.Dispose(); };
         monitor.Tick += async (_, _) => await Poll();
         if (!smoke) { monitor.Start(); Loaded += async (_, _) => { if (settings.CheckUpdatesAtStartup) await CheckUpdates(); }; }
         if (!smoke) Loaded += async (_, _) => { if (string.IsNullOrEmpty(settings.ApplicationPath)) await Work(Detect, "Detected"); };
@@ -247,7 +247,7 @@ public sealed partial class MainWindow : Window
         }
         checkCard.Children.Add(results); checkCard.Children.Add(Text(T("Snapshot"), 11, false, muted));
         var details = Button(T("Report"), () => MessageBox.Show(this, report.Length == 0 ? T("NoReport") : report, T("Report"), MessageBoxButton.OK, MessageBoxImage.Information)); details.HorizontalAlignment = HorizontalAlignment.Right; details.FontSize = 11; details.Background = Brushes.Transparent; checkCard.Children.Add(details);
-        status = Text(T(notice), 12, false, accent); status.Margin = new Thickness(0, 4, 0, 8); status.Visibility = notice == "Ready" ? Visibility.Collapsed : Visibility.Visible; footer.Children.Add(status);
+        status = Text(T(notice), 12, false, accent); status.Margin = new Thickness(0, 4, 0, 8); status.Visibility = Visibility.Collapsed;
         footer.Children.Add(Text(T("Footer"), 11, false, muted));
         var legal = Text(T("CompactLegal"), 11, false, muted); legal.Margin = new Thickness(0, 6, 0, 0); footer.Children.Add(legal);
         foreach (var button in actions) button.IsEnabled = !busy;
@@ -318,11 +318,11 @@ public sealed partial class MainWindow : Window
     {
         if (busy) return;
         var draftHost = host.Text; var draftPort = port.Text;
-        busy = true; status.Visibility = Visibility.Visible; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
+        busy = true; status.Text = T("Working"); foreach (var button in actions) button.IsEnabled = false;
         options.IsEnabled = host.IsEnabled = port.IsEnabled = false;
         RefreshAuxiliaryWindows();
         try { await action(); notice = success; }
-        catch (Exception ex) { notice = ex is Win32Exception ? "LaunchFailed" : ex.Message; }
+        catch (Exception ex) { notice = ex is Win32Exception ? "LaunchFailed" : ex.Message; if (!smoke) MessageBox.Show(this, T(notice), "Local Route Launcher"); }
         finally { busy = false; Build(); host.Text = draftHost; port.Text = draftPort; SetupTray(); await Poll(); RefreshAuxiliaryWindows(); }
     }
     private async void Check() => await Work(async () =>
@@ -359,8 +359,8 @@ public sealed partial class MainWindow : Window
     private Button RepositoryButton()
     {
         var button = new Button {
-            Style = roundedButtonStyle, Content = new System.Windows.Shapes.Path { Data = Geometry.Parse(GitHubPath), Fill = ink, Width = 16, Height = 16, Stretch = Stretch.Uniform },
-            Padding = new Thickness(6), Margin = new Thickness(8, 0, 0, 0), Background = Brushes.Transparent,
+            Style = roundedButtonStyle, Content = new System.Windows.Shapes.Path { Data = Geometry.Parse(GitHubPath), Fill = muted, Width = 17, Height = 17, Stretch = Stretch.Uniform },
+            Padding = new Thickness(0), Width = 32, Height = 32, Background = Brushes.Transparent,
             BorderThickness = new Thickness(0), ToolTip = "GitHub"
         };
         System.Windows.Automation.AutomationProperties.SetName(button, "GitHub");
@@ -404,7 +404,7 @@ public sealed partial class MainWindow : Window
         menu.Items.Add("GitHub", null, (_, _) => OpenRepository());
         menu.Items.Add(T("Check"), null, (_, _) => { Reveal(); Check(); });
         menu.Items.Add(T("Quit"), null, (_, _) => { if (!busy) Quit(); });
-        menu.Items.Add(T(updateRelease?.IsNewer == true ? "UpdateAvailable" : "CheckUpdates"), null, (_, _) => ShowUpdates());
+        if (UpdateAvailable) menu.Items.Add(T("UpdateAvailable"), null, (_, _) => DownloadUpdate());
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Reveal();
         tray.MouseClick += (_, e) => { if (e.Button == Forms.MouseButtons.Left) ShowTrayPanel(); };
     }

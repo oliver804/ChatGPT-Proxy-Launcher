@@ -53,7 +53,7 @@ public static class Program
                     if (windowApp.IsVisible || windowApp.ShowInTaskbar) throw new InvalidOperationException("Close did not hide the window from the taskbar.");
                     windowApp.Reveal();
                     if (!windowApp.IsVisible || !windowApp.ShowInTaskbar) throw new InvalidOperationException("Reopen failed.");
-                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: localized main/tray/update renders; update panel states; busy controls; preference guards; draft preservation; close-to-tray; reopen.");
+                    File.WriteAllText(Path.Combine(args[1], "ui-result.txt"), "PASS: localized main/tray renders; update badge visibility and installer selection; busy controls; preference guards; draft preservation; close-to-tray; reopen.");
                     windowApp.Quit();
                 }
                 catch (Exception ex) { File.WriteAllText(Path.Combine(args[1], "ui-failure.txt"), ex.ToString()); app.Shutdown(1); }

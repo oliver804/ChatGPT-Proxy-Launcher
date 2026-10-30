@@ -55,7 +55,7 @@ ChatGPT 版本：%@
 檢查於 
 開啟視窗
 結束啟動器，ChatGPT 繼續執行
-結束啟動器
+退出
 顯示主視窗
 Local Route Launcher：目標程式執行中
 Local Route Launcher：目標程式已停止

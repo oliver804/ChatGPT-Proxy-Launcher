@@ -12,6 +12,19 @@ foreach (var tag in new[] { "1.4", "1.04.0", "1.4.1-beta", "1.4.1+build", "１.4
 Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", draft: true), "1.4.0"), "Draft accepted");
 Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", prerelease: true), "1.4.0"), "Prerelease accepted");
 Reject(() => ReleaseUpdate.Parse(ReleaseJson("v1.4.1", url: "https://example.com"), "1.4.0"), "External download accepted");
+string InstallerJson(string tag, string? name = null, string? download = null) {
+    var filename = name ?? $"Local-Route-Launcher-{tag.TrimStart('v')}-windows-x64-setup.exe";
+    return System.Text.Json.JsonSerializer.Serialize(new { tag_name = tag, draft = false, prerelease = false, html_url = ReleaseUpdate.Repository + "/releases/tag/" + tag,
+        assets = new[] { new { name = filename, browser_download_url = download ?? ReleaseUpdate.Repository + "/releases/download/" + tag + "/" + filename } } });
+}
+var expectedDownload = ReleaseUpdate.Repository + "/releases/download/v1.4.1/Local-Route-Launcher-1.4.1-windows-x64-setup.exe";
+Check(ReleaseUpdate.Parse(InstallerJson("v1.4.1"), "1.4.0").AvailableDownload == expectedDownload, "Direct Windows installer URL");
+Check(ReleaseUpdate.Parse(ReleaseJson("v1.4.1"), "1.4.0").AvailableDownload == null, "Hide release without installer");
+Check(ReleaseUpdate.Parse(InstallerJson("v1.4.0"), "1.4.0").AvailableDownload == null, "Hide current installer");
+Check(ReleaseUpdate.Parse(InstallerJson("v1.3.0"), "1.4.0").AvailableDownload == null, "Hide older installer");
+Check(ReleaseUpdate.Parse(InstallerJson("v1.4.1", name: "Local-Route-Launcher-1.4.1-arm64.dmg"), "1.4.0").AvailableDownload == null, "Reject other platform");
+foreach (var badUrl in new[] { "https://example.com/setup.exe", expectedDownload + "?redirect=elsewhere", expectedDownload.Replace("v1.4.1/", "v1.3.0/") })
+    Check(ReleaseUpdate.Parse(InstallerJson("v1.4.1", download: badUrl), "1.4.0").AvailableDownload == null, "Reject mismatched installer");
 Check(new Settings().CheckUpdatesAtStartup, "Startup check default");
 var endpoint = new ProxyEndpoint(" 127.0.0.1 ", " 7890 ");
 Check(endpoint.Url == "http://127.0.0.1:7890", "IPv4 normalization");

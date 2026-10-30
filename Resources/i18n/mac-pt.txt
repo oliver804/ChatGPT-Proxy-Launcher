@@ -55,7 +55,7 @@ A processar…
 Verificado às 
 Abrir janela
 Sair do iniciador; o ChatGPT continua em execução
-Sair do iniciador
+Sair
 Mostrar janela principal
 Local Route Launcher: aplicação em execução
 Local Route Launcher: aplicação parada

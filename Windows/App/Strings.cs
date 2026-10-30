@@ -48,7 +48,7 @@ public static class Strings
         ["Observed"] = ("{0} to proxy / {1} total", "代理 {0} 条 / 共 {1} 条"),
         ["Report"] = ("Details", "详细报告"), ["Snapshot"] = ("A connection snapshot, not proof that every request uses the proxy. Hostname endpoints cannot be matched by IP.", "连接结果仅为此刻快照，不代表全部流量均通过代理。域名代理地址无法按 IP 匹配。"),
         ["Footer"] = ("Closing this window keeps the launcher in the system tray.", "关闭窗口后，仍可从系统托盘访问。"),
-        ["Show"] = ("Open launcher", "打开启动器"), ["Quit"] = ("Quit launcher", "退出启动器"),
+        ["Show"] = ("Open launcher", "打开启动器"), ["Quit"] = ("Quit", "退出"),
         ["Ready"] = ("Ready. Your system proxy and DNS stay unchanged.", "已就绪。不会修改系统代理或 DNS。"),
         ["Saved"] = ("Settings saved. Restart ChatGPT to apply them.", "设置已保存，重新启动 ChatGPT 后生效。"),
         ["Launched"] = ("Launch requested with proxy settings. Use Check connection to inspect the running app.", "已携带代理设置请求启动，请查看代理情况确认运行状态。"),

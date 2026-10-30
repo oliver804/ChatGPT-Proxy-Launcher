@@ -20,6 +20,21 @@ enum UpdateTests {
             do { _ = try ReleaseUpdate.parse(data, current: "1.4.0"); preconditionFailure("Accepted untrusted release") }
             catch { count += 1 }
         }
+        func installer(_ tag: String, name: String? = nil, url: String? = nil) throws -> Data {
+            let filename = name ?? "Local-Route-Launcher-\(tag.dropFirst())-arm64.dmg"
+            var object = try JSONSerialization.jsonObject(with: payload(tag)) as! [String: Any]
+            object["assets"] = [["name": filename, "browser_download_url": url ?? ReleaseUpdate.repository + "/releases/download/" + tag + "/" + filename]]
+            return try JSONSerialization.data(withJSONObject: object)
+        }
+        let expectedDownload = ReleaseUpdate.repository + "/releases/download/v1.4.1/Local-Route-Launcher-1.4.1-arm64.dmg"
+        check(try ReleaseUpdate.parse(installer("v1.4.1"), current: "1.4.0").availableDownload?.absoluteString == expectedDownload, "Direct macOS installer URL")
+        check(try ReleaseUpdate.parse(payload("v1.4.1"), current: "1.4.0").availableDownload == nil, "Hide release without installer")
+        check(try ReleaseUpdate.parse(installer("v1.4.0"), current: "1.4.0").availableDownload == nil, "Hide current version")
+        check(try ReleaseUpdate.parse(installer("v1.3.0"), current: "1.4.0").availableDownload == nil, "Hide older installer")
+        check(try ReleaseUpdate.parse(installer("v1.4.1", name: "Local-Route-Launcher-1.4.1-windows-x64-setup.exe"), current: "1.4.0").availableDownload == nil, "Reject other platform")
+        for badURL in ["https://example.com/setup.dmg", expectedDownload + "?redirect=elsewhere", expectedDownload.replacingOccurrences(of: "v1.4.1/", with: "v1.3.0/")] {
+            check(try ReleaseUpdate.parse(installer("v1.4.1", url: badURL), current: "1.4.0").availableDownload == nil, "Reject mismatched installer")
+        }
         let domain = "local.route.update-tests." + UUID().uuidString
         let defaults = UserDefaults(suiteName: domain)!
         defer { defaults.removePersistentDomain(forName: domain) }

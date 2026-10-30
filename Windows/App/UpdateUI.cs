@@ -9,26 +9,26 @@ namespace LocalRouteLauncher;
 public sealed partial class MainWindow
 {
     private ReleaseUpdate? updateRelease;
-    private bool updateChecking, updateFailed;
+    private bool updateChecking;
     private readonly CancellationTokenSource updateCancellation = new();
-    private Window? updateWindow, trayWindow;
+    private Window? trayWindow;
     private readonly List<Button> updateButtons = [];
     private void SetLanguage(string value) { if (busy || rebuilding) return; settings = settings with { Language = value }; SavePreferences(); }
     private void SetTheme(string value) { if (busy || rebuilding) return; settings = settings with { Theme = value }; SavePreferences(); }
     private StackPanel Toolbar()
     {
         var bar = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = !busy };
-        bar.Children.Add(IconMenu("\uE774", T("Language"), () => new[] { "system" }.Concat(AppLanguages.Codes).Select(code =>
+        bar.Children.Add(IconMenu("languages", T("Language"), () => new[] { "system" }.Concat(AppLanguages.Codes).Select(code =>
             (code == "system" ? T("System") : AppLanguages.Labels[Array.IndexOf(AppLanguages.Codes, code)], code == settings.Language, (Action)(() => SetLanguage(code))))));
-        bar.Children.Add(IconMenu("\uE706", T("Appearance"), () => new[] { "system", "light", "dark" }.Select(mode =>
+        bar.Children.Add(IconMenu("sun-moon", T("Appearance"), () => new[] { "system", "light", "dark" }.Select(mode =>
             (T(mode == "system" ? "System" : mode == "light" ? "Light" : "Dark"), mode == settings.Theme, (Action)(() => SetTheme(mode))))));
         bar.Children.Add(RepositoryButton());
         return bar;
     }
     private Button IconMenu(string glyph, string title, Func<IEnumerable<(string Label, bool Selected, Action Action)>> choices)
     {
-        var button = new Button { Style = roundedButtonStyle, Content = new TextBlock { Text = glyph, FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 16 },
-            ToolTip = title, Foreground = muted, Background = Brushes.Transparent, BorderThickness = new Thickness(0), Padding = new Thickness(8), MinWidth = 32 };
+        var button = new Button { Style = roundedButtonStyle, Content = HeaderIcon(glyph),
+            ToolTip = title, Foreground = muted, Background = Brushes.Transparent, BorderThickness = new Thickness(0), Padding = new Thickness(0), Width = 32, Height = 32, Margin = new Thickness(0, 0, 4, 0) };
         AutomationProperties.SetName(button, title);
         button.Click += (_, _) => {
             var menu = new ContextMenu { PlacementTarget = button, FlowDirection = FlowDirection, Background = card, Foreground = ink };
@@ -37,99 +37,84 @@ public sealed partial class MainWindow
         };
         return button;
     }
-    private string UpdateLabel => T(updateChecking ? "UpdateChecking" : updateFailed ? "UpdateFailed" : updateRelease?.IsNewer == true ? "UpdateAvailable" : "CheckUpdates");
+    // Lucide languages / sun-moon, ISC. Same vectors, size and hit target as macOS.
+    private FrameworkElement HeaderIcon(string name)
+    {
+        var data = name == "languages" ? "M5 8L11 14 M4 14L10 8 12 5 M2 5H14 M7 2H8 M22 22L17 12 12 22 M14 18H20" :
+            "M12 2V4 M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715 M16 12a4 4 0 0 0-4-4 M19 5l-1.256 1.256 M20 12h2";
+        var canvas = new Canvas { Width = 24, Height = 24 };
+        canvas.Children.Add(new System.Windows.Shapes.Path { Data = Geometry.Parse(data), Stroke = muted, StrokeThickness = 2,
+            StrokeStartLineCap = PenLineCap.Round, StrokeEndLineCap = PenLineCap.Round, StrokeLineJoin = PenLineJoin.Round });
+        return new Viewbox { Width = 17, Height = 17, Child = canvas };
+    }
+    private bool UpdateAvailable => updateRelease?.AvailableDownload != null;
     private Button UpdateButton()
     {
-        var button = new Button { Style = roundedButtonStyle, Content = UpdateLabel, ToolTip = UpdateLabel, Foreground = accent, Background = field, BorderThickness = new Thickness(0),
-            FontSize = 10, Padding = new Thickness(6, 4, 6, 4), Margin = new Thickness(6, 0, 0, 0), MaxWidth = 125 };
-        AutomationProperties.SetName(button, UpdateLabel);
-        button.Click += (_, _) => ShowUpdates();
+        var label = new StackPanel { Orientation = Orientation.Horizontal };
+        var glyph = new Canvas { Width = 24, Height = 24 };
+        glyph.Children.Add(new System.Windows.Shapes.Path { Data = Geometry.Parse("M12 16V8 M8 12l4-4 4 4 M22 12A10 10 0 1 1 2 12A10 10 0 1 1 22 12"),
+            Stroke = accent, StrokeThickness = 2, StrokeStartLineCap = PenLineCap.Round, StrokeEndLineCap = PenLineCap.Round, StrokeLineJoin = PenLineJoin.Round });
+        label.Children.Add(new Viewbox { Width = 12, Height = 12, Child = glyph, Margin = new Thickness(0, 0, 4, 0) });
+        label.Children.Add(new TextBlock { Text = T("UpdateAvailable") });
+        var button = new Button { Style = roundedButtonStyle, Content = label, ToolTip = T("UpdateAvailable"), Foreground = accent, Background = field, BorderThickness = new Thickness(0),
+            FontSize = 10, Padding = new Thickness(6, 4, 6, 4), Margin = new Thickness(6, 0, 0, 0), Visibility = UpdateAvailable ? Visibility.Visible : Visibility.Collapsed };
+        AutomationProperties.SetName(button, T("UpdateAvailable"));
+        button.Click += (_, _) => DownloadUpdate();
         updateButtons.RemoveAll(b => !b.IsLoaded);
         updateButtons.Add(button); return button;
     }
     private async Task CheckUpdates()
     {
         if (updateChecking || smoke) return;
-        updateChecking = true; updateFailed = false; RefreshUpdateUI();
+        updateChecking = true; RefreshUpdateUI();
         try { updateRelease = await ReleaseUpdate.Fetch(Program.Version, updateCancellation.Token); }
         catch (OperationCanceledException) when (updateCancellation.IsCancellationRequested) { return; }
-        catch { updateRelease = null; updateFailed = true; }
+        catch { updateRelease = null; }
         finally { updateChecking = false; if (!quitting) RefreshUpdateUI(); }
     }
     private void RefreshUpdateUI()
     {
-        foreach (var button in updateButtons) { button.Content = UpdateLabel; button.ToolTip = UpdateLabel; AutomationProperties.SetName(button, UpdateLabel); }
-        if (updateWindow != null) PopulateUpdateWindow();
+        foreach (var button in updateButtons) button.Visibility = UpdateAvailable ? Visibility.Visible : Visibility.Collapsed;
         SetupTray();
     }
-    private void OpenRelease()
+    private void DownloadUpdate()
     {
-        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updateRelease?.Url ?? ReleaseUpdate.ReleasesUrl) { UseShellExecute = true }); }
-        catch { updateFailed = true; RefreshUpdateUI(); }
+        if (updateRelease?.AvailableDownload is not string url) return;
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch { MessageBox.Show(T("OperationFailed"), "Local Route Launcher"); }
     }
     private Button AuxiliaryButton(string label, Action action)
     {
         var button = new Button { Style = roundedButtonStyle, Content = label, Padding = new Thickness(10, 7, 10, 7), Margin = new Thickness(0, 4, 8, 4), Background = field, Foreground = accent, BorderThickness = new Thickness(0) };
         button.Click += (_, _) => action(); return button;
     }
-    private void ShowUpdates()
-    {
-        trayWindow?.Hide();
-        if (updateWindow == null) {
-            updateWindow = new Window { Title = "Local Route Launcher", Width = 410, SizeToContent = SizeToContent.Height, ResizeMode = ResizeMode.NoResize, ShowInTaskbar = false,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen, Icon = Icon };
-            updateWindow.Closed += (_, _) => updateWindow = null;
-        }
-        PopulateUpdateWindow(); updateWindow.Show(); updateWindow.Activate();
-    }
-    private void PopulateUpdateWindow()
-    {
-        if (updateWindow == null) return;
-        updateWindow.Background = background; updateWindow.Foreground = ink; updateWindow.FlowDirection = FlowDirection;
-        var body = new StackPanel { Margin = new Thickness(22) };
-        body.Children.Add(Text(T(updateChecking ? "UpdateChecking" : updateFailed ? "UpdateFailed" : updateRelease == null ? "CheckUpdates" : updateRelease.IsNewer ? "UpdateFound" : "UpdateLatest"), 19, true));
-        body.Children.Add(Text("Local Route Launcher", 12, false, muted));
-        body.Children.Add(Text(T("UpdateCurrent") + " · v" + Program.Version, 13));
-        if (updateRelease != null) body.Children.Add(Text(T("UpdateStable") + " · " + updateRelease.Version, 13, false, accent));
-        var auto = new CheckBox { Content = T("UpdateAutomatic"), IsChecked = settings.CheckUpdatesAtStartup, Foreground = ink, Margin = new Thickness(0, 18, 0, 12) };
-        auto.Click += (_, _) => {
-            var previous = settings; settings = settings with { CheckUpdatesAtStartup = auto.IsChecked == true };
-            try { if (!smoke) settings.Save(); }
-            catch { settings = previous; auto.IsChecked = previous.CheckUpdatesAtStartup; MessageBox.Show(updateWindow, T("OperationFailed")); }
-        };
-        body.Children.Add(auto); body.Children.Add(Text(T("UpdatePrivacy"), 12, false, muted));
-        if (updateFailed) body.Children.Add(Text(T("UpdateOffline"), 12, false, muted));
-        var check = AuxiliaryButton(T(updateFailed ? "UpdateRetry" : "CheckUpdates"), async () => await CheckUpdates()); check.IsEnabled = !updateChecking;
-        body.Children.Add(check); body.Children.Add(AuxiliaryButton(T(updateRelease?.IsNewer == true ? "UpdateDownload" : "UpdatePage"), OpenRelease));
-        updateWindow.Content = body;
-    }
     private void RefreshAuxiliaryWindows()
     {
-        if (updateWindow != null) PopulateUpdateWindow();
         if (trayWindow?.IsVisible == true) PopulateTrayPanel();
     }
     internal void VerifyAuxiliaryPanels(string output, string language, string theme)
     {
         if (!smoke) throw new InvalidOperationException("Smoke mode required");
         if (Toolbar().Children.Count != 3) throw new InvalidOperationException("Toolbar must contain three icons");
+        if (UpdateButton().Visibility != Visibility.Collapsed) throw new InvalidOperationException("Idle update button must be hidden");
         ShowTrayPanel(); trayWindow!.UpdateLayout();
+        if (trayWindow.ActualWidth != 380) throw new InvalidOperationException("Tray width must follow mockup");
         Program.Capture(trayWindow, System.IO.Path.Combine(output, $"tray-{language}-{theme}.png"), AppLanguages.IsRightToLeft(language));
         trayWindow.Hide();
-        ShowUpdates(); updateWindow!.UpdateLayout();
-        Program.Capture(updateWindow, System.IO.Path.Combine(output, $"updates-{language}-{theme}.png"), AppLanguages.IsRightToLeft(language));
-        updateRelease = new ReleaseUpdate("v99.0.0", ReleaseUpdate.ReleasesUrl, true); RefreshUpdateUI();
-        if (UpdateLabel != T("UpdateAvailable")) throw new InvalidOperationException("Update badge missing");
-        updateRelease = null; updateFailed = true; RefreshUpdateUI();
-        if (UpdateLabel != T("UpdateFailed")) throw new InvalidOperationException("Update failure missing");
-        updateChecking = true; RefreshUpdateUI();
-        if (UpdateLabel != T("UpdateChecking")) throw new InvalidOperationException("Update progress missing");
-        updateChecking = updateFailed = false; updateWindow.Close();
+        updateRelease = new ReleaseUpdate("v99.0.0", ReleaseUpdate.ReleasesUrl, true);
+        if (UpdateButton().Visibility != Visibility.Collapsed) throw new InvalidOperationException("Release without installer must stay hidden");
+        updateRelease = updateRelease with { DownloadUrl = ReleaseUpdate.Repository + "/releases/download/v99.0.0/Local-Route-Launcher-99.0.0-windows-x64-setup.exe" };
+        if (UpdateButton().Visibility != Visibility.Visible) throw new InvalidOperationException("Downloadable update badge missing");
+        updateRelease = null;
+        updateChecking = true;
+        if (UpdateButton().Visibility != Visibility.Collapsed) throw new InvalidOperationException("Checking must stay quiet");
+        updateChecking = false;
     }
     private void ShowTrayPanel()
     {
         if (trayWindow?.IsVisible == true) { trayWindow.Hide(); return; }
         if (trayWindow == null) {
-            trayWindow = new Window { Width = 420, SizeToContent = SizeToContent.Height, WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize,
+            trayWindow = new Window { Width = 380, SizeToContent = SizeToContent.Height, WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize,
                 ShowInTaskbar = false, Topmost = true, Icon = Icon };
             trayWindow.Deactivated += (_, _) => { if (!quitting && trayWindow?.IsVisible == true && !trayWindow.IsKeyboardFocusWithin) trayWindow.Hide(); };
         }
@@ -141,7 +126,7 @@ public sealed partial class MainWindow
     {
         if (trayWindow == null) return;
         trayWindow.Background = background; trayWindow.Foreground = ink; trayWindow.FlowDirection = FlowDirection;
-        var body = new StackPanel { Margin = new Thickness(18) };
+        var body = new StackPanel { Margin = new Thickness(20, 18, 20, 14) };
         var header = new DockPanel(); var tools = Toolbar(); DockPanel.SetDock(tools, Dock.Right); header.Children.Add(tools);
         var brand = new StackPanel { Orientation = Orientation.Horizontal };
         brand.Children.Add(new Image { Source = Icon, Width = 30, Height = 30, Margin = new Thickness(0, 0, 8, 0) });

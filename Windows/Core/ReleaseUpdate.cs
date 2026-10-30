@@ -4,8 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace LocalRouteLauncher;
 
-public sealed record ReleaseUpdate(string Version, string Url, bool IsNewer)
+public sealed record ReleaseUpdate(string Version, string Url, bool IsNewer, string? DownloadUrl = null)
 {
+    public string? AvailableDownload => IsNewer ? DownloadUrl : null;
     public const string Repository = "https://github.com/oliver804/Local-Route-Launcher";
     public const string ReleasesUrl = Repository + "/releases";
     public const string ApiUrl = "https://api.github.com/repos/oliver804/Local-Route-Launcher/releases/latest";
@@ -24,7 +25,14 @@ public sealed record ReleaseUpdate(string Version, string Url, bool IsNewer)
         var url = root.GetProperty("html_url").GetString() ?? "";
         if (root.GetProperty("draft").GetBoolean() || root.GetProperty("prerelease").GetBoolean() || url != Repository + "/releases/tag/" + tag)
             throw new InvalidDataException("Invalid stable release");
-        return new(tag, url, StableVersion(tag) > StableVersion(current));
+        var latest = StableVersion(tag);
+        var name = $"Local-Route-Launcher-{latest}-windows-x64-setup.exe";
+        var expected = Repository + "/releases/download/" + tag + "/" + name;
+        string? download = null;
+        if (root.TryGetProperty("assets", out var assets) && assets.ValueKind == JsonValueKind.Array)
+            foreach (var asset in assets.EnumerateArray())
+                if (asset.GetProperty("name").GetString() == name && asset.GetProperty("browser_download_url").GetString() == expected) download = expected;
+        return new(tag, url, latest > StableVersion(current), download);
     }
     public static async Task<ReleaseUpdate> Fetch(string current, CancellationToken cancellationToken)
     {

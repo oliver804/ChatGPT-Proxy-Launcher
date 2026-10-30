@@ -18,4 +18,4 @@ Windows: requires a directly launchable Electron-based ChatGPT.exe; restricted M
 
 Select an app in the sidebar and save its host, port and path independently. Language, appearance and GitHub controls live at the upper right and are also available in the menu/tray panel. Closing the main window keeps the launcher accessible there.
 
-The version-adjacent update entry opens a manual check and the automatic startup-check preference. An available update refers only to Local Route Launcher, not the target apps. Open the release page to download it yourself; nothing is automatically downloaded or installed. A failed check can be retried without interrupting current use.
+The version-adjacent badge appears only when a newer stable launcher release has an installer for this platform. Clicking downloads that installer directly in your browser, without an intermediate panel. Run the downloaded installer to finish updating. No badge is shown otherwise; offline checks do not interrupt use.

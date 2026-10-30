@@ -4,7 +4,7 @@ import SwiftUI
 @main
 enum RenderPreviews {
     @MainActor
-    static func main() throws {
+    static func main() async throws {
         let app = NSApplication.shared
         app.setActivationPolicy(.prohibited)
         let defaults = UserDefaults(suiteName: "local.chatgpt-proxy-launcher.preview")!
@@ -25,7 +25,12 @@ enum RenderPreviews {
                 let suffix = "\(language.rawValue)-\(dark ? "dark" : "light")"
                 try render(LauncherWindow(store: store).frame(width: 1024, height: 900), name: "window-" + suffix, dark: dark)
                 try render(MenuPanel(store: store), name: "menu-" + suffix, dark: dark)
-                try render(UpdatePanel(store: store), name: "updates-" + suffix, dark: dark)
+                let fixture = ReleaseUpdate(version: "v99.0.0", url: ReleaseUpdate.releasesURL, isNewer: true,
+                    downloadURL: URL(string: ReleaseUpdate.repository + "/releases/download/v99.0.0/Local-Route-Launcher-99.0.0-arm64.dmg")!)
+                await store.updates.check { _ in fixture }
+                try render(MenuPanel(store: store), name: "menu-update-" + suffix, dark: dark)
+                await store.updates.check { _ in throw URLError(.notConnectedToInternet) }
+
             }
         }
         print("PASS: rendered nine language options in light/dark windows and menus")

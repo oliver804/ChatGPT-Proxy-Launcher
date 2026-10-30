@@ -4,7 +4,7 @@ The **1.4.0 development build** adds separate profiles for ChatGPT, Antigravity 
 
 The interface keeps its three main cards and puts language, appearance and GitHub controls at the upper right. A compact menu-bar or system-tray panel lets you start and stop apps after closing the main window. Both macOS and Windows offer nine languages and system, light and dark appearance.
 
-A new version-adjacent panel checks stable launcher releases. Startup checks can be disabled; manual checks remain available. An update produces a quiet indicator linking to GitHub release notes and downloads. Nothing is automatically downloaded or installed.
+The version-adjacent badge appears only when a newer stable launcher release has an installer for this platform. Clicking downloads that installer directly in your browser, without an intermediate panel. Run the downloaded installer to finish updating. No badge is shown otherwise; offline checks do not interrupt use.
 
 The project targets Apple Silicon Macs and Windows x64 with compatible app installations. Connection diagnostics are snapshots, not proof of complete traffic routing, account access or model availability. No proxy service is included.
 

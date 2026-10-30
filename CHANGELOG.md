@@ -3,7 +3,7 @@
 ## 1.4.0 — In development / 开发测试中
 
 - Apply the accepted compact layout: shared language/appearance/GitHub icons at the top right, original three-card content, two-line idle footer, and a compact menu/tray panel.
-- Add optional startup and manual stable-release checks for the launcher, with a quiet new-version indicator, offline retry and browser download links; no automatic downloads or installation.
+- Check stable launcher releases at startup. Show an update badge only for a newer matching installer; clicking directly downloads it without an update popup. Preserve existing startup-check preferences.
 - Preserve symmetric artwork, native macOS menu icon appearance, zoom/fullscreen and close-to-menu behavior.
 - Record the UI baseline and icon constraints; migrate project links to `oliver804/Local-Route-Launcher` while retaining existing app settings.
 - 按已确认设计收紧主窗口及菜单栏/托盘布局，保留三张卡片与两行底部说明；新增启动器稳定版检查与静默提示，无自动下载安装。

@@ -949,3 +949,11 @@ html[lang=en] .feature h3 {
 .article-page a:not(.button) { color: var(--accent); }
 .article-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
 @media(max-width:700px) { .article-page { padding-block: 42px 65px; } .article-page h1 { font-size: 34px; } .article-lead { font-size: 17px; } .article-page figure { padding: 12px; } }
+
+.supported-apps { border-top: 1px solid var(--line); }
+.supported-apps > p { color: var(--muted); margin: 12px 0 28px; }
+.supported-app-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.supported-app-grid article { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
+.supported-app-grid h3 { margin: 0 0 8px; font-size: 19px; }
+.supported-app-grid p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
+@media(max-width:700px) { .supported-app-grid { grid-template-columns: 1fr; } }

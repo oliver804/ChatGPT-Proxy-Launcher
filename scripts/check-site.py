@@ -103,9 +103,11 @@ def main():
         assert page.canonical == locales[page.locale], 'Incorrect canonical URL'
         assert page.alternates == locales, 'Incomplete reciprocal language links'
         assert page.meta.get('description'), 'Missing search description'
-        assert 'ChatGPT' in page.title and 'Local Route Launcher' in page.title, 'Search title does not identify the app'
+        assert all(term in page.title for term in ('ChatGPT', 'Antigravity', 'Local Route Launcher')), 'Search title does not identify supported apps and project'
         if not is_article:
-            assert all(term in page.title for term in ('Windows', 'macOS')), 'Home title omits supported platforms'
+            html = path.read_text()
+            assert all(term in html for term in ('ChatGPT', 'Antigravity App', 'Antigravity IDE', 'macOS', 'Windows')), 'Home page omits a supported app or platform'
+            assert 'aria-labelledby="apps-title"' in html, 'Missing supported-app overview'
         assert page.meta.get('og:title') == page.title, 'Search and sharing titles differ'
         assert page.meta.get('og:description') == page.meta['description'], 'Search and sharing descriptions differ'
         for verification in ('google-site-verification', 'msvalidate.01', 'baidu-site-verification', 'sogou_site_verification'):

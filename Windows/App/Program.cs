@@ -51,6 +51,10 @@ public static class Program
                         var visual = new System.Windows.Media.DrawingVisual();
                         using (var drawing = visual.RenderOpen())
                         {
+                            // The detached VisualBrush retains the RTL ancestor mirror.
+                            // Restore the window's coordinate system so text and LTR fields
+                            // in Arabic/Persian screenshots are not mirrored a second time.
+                            if (AppLanguages.IsRightToLeft(language)) drawing.PushTransform(new System.Windows.Media.ScaleTransform(-1, 1, width / 2.0, 0));
                             drawing.DrawRectangle(windowApp.Background, null, new Rect(0, 0, width, height));
                             drawing.DrawRectangle(new System.Windows.Media.VisualBrush(content), null, new Rect(28, 28, content.ActualWidth, content.ActualHeight));
                         }

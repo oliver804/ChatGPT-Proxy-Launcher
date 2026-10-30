@@ -44,3 +44,5 @@ These are app-rendered previews with sample diagnostic data, not evidence of liv
 - [Main window / 主窗口](images/preview-dark.png)
 - [Compact menu / 紧凑菜单](images/ui-menu-dark.png)
 - [Update panel / 更新面板](images/ui-updates-dark.png)
+
+- [Windows main window / Windows 主窗口](images/windows-dark.png) — the fixed footer remains visible on smaller displays; the cards scroll independently.

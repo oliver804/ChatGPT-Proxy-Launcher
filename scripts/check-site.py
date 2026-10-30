@@ -14,7 +14,7 @@ LOCALES = {'zh-CN': BASE_URL, 'en': BASE_URL + 'en/', 'x-default': BASE_URL}
 ARTICLE_LOCALES = {'zh-CN': BASE_URL + 'blog/v1.4.0/',
                    'en': BASE_URL + 'en/blog/v1.4.0/',
                    'x-default': BASE_URL + 'blog/v1.4.0/'}
-ANALYTICS_SCRIPT = 'https://www.googletagmanager.com/gtag/js?id=G-QVHYT7RFW9'
+ANALYTICS_SCRIPT = 'https://www.googletagmanager.com/gtag/js?id=G-EKDF5J9PFF'
 
 
 class Page(HTMLParser):
@@ -95,10 +95,10 @@ def main():
         locales = ARTICLE_LOCALES if is_article else LOCALES
         assert page.h1_count == 1, 'Expected one primary heading'
         assert page.analytics_count == 1, 'Expected one Google tag per page'
-        assert path.read_text().count("gtag('config', 'G-QVHYT7RFW9');") == 1, 'Missing or duplicate Analytics configuration'
+        assert path.read_text().count("gtag('config', 'G-EKDF5J9PFF');") == 1, 'Missing or duplicate Analytics configuration'
         assert 'clarity-tracking' in page.ids, 'Missing Clarity loader'
         assert path.read_text().count('"https://www.clarity.ms/tag/"+i') == 1, 'Missing or duplicate Clarity script injection'
-        assert path.read_text().count('})(window, document, "clarity", "script", "z0krfkfwwu");') == 1, 'Incorrect Clarity project configuration'
+        assert path.read_text().count('})(window, document, "clarity", "script", "z5pd48bgrz");') == 1, 'Incorrect Clarity project configuration'
         assert len(page.downloads) == (2 if is_article else 4) and set(page.downloads) == {release, windows_release}, 'Wrong release link'
         assert page.canonical == locales[page.locale], 'Incorrect canonical URL'
         assert page.alternates == locales, 'Incomplete reciprocal language links'
@@ -112,6 +112,7 @@ def main():
         assert page.meta.get('og:description') == page.meta['description'], 'Search and sharing descriptions differ'
         for verification in ('google-site-verification', 'msvalidate.01', 'baidu-site-verification', 'sogou_site_verification'):
             assert page.meta.get(verification), f'Missing ownership verification: {verification}'
+        assert page.meta['msvalidate.01'] == '65FC2BE70902B9C77D71057AD7075020', 'Incorrect Bing verification token'
         assert 'noindex' not in page.meta.get('robots', '').lower(), 'Page excludes search indexing'
         assert page.meta.get('og:url') == page.canonical, 'Share URL differs from canonical'
         assert page.meta.get('og:title') and page.meta.get('og:description'), 'Missing share metadata'

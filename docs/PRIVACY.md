@@ -30,13 +30,13 @@ Windows 将语言、外观、地址、端口及应用路径保存到 `%LOCALAPPD
 
 ## 官网访问统计
 
-项目官网的中文和英文页面使用 Google Analytics 4（衡量 ID：`G-QVHYT7RFW9`）分析访问情况。官网加载 Google 提供的 `gtag.js`，向 Google 发送页面浏览等访问数据，可包含页面地址、来源、浏览器和设备信息；Google Analytics 使用第一方 Cookie 区分访客与会话。实际启用的增强型衡量事件和数据保留期限以该 Analytics 资源设置为准。
+项目官网的中文和英文页面使用 Google Analytics 4（衡量 ID：`G-EKDF5J9PFF`）分析访问情况。官网加载 Google 提供的 `gtag.js`，向 Google 发送页面浏览等访问数据，可包含页面地址、来源、浏览器和设备信息；Google Analytics 使用第一方 Cookie 区分访客与会话。实际启用的增强型衡量事件和数据保留期限以该 Analytics 资源设置为准。
 
 这些统计仅用于官网，不集成到 macOS 或 Windows 启动器中，也不读取应用中的代理配置、账号或聊天记录。浏览器限制、内容拦截工具或网络不可达可能阻止统计。有关 Google 的数据处理，请参阅 [Google 隐私政策](https://policies.google.com/privacy) 和 [Google Analytics Cookie 说明](https://support.google.com/analytics/answer/11397207?hl=zh-Hans)。
 
 ### Microsoft Clarity
 
-官网同时使用 Microsoft Clarity（项目 ID：`z0krfkfwwu`），独立于 Google Analytics 加载，用于分析访客行为和改进页面体验。Clarity 将页面及交互数据（例如浏览、点击、滚动，以及浏览器和设备信息）发送给 Microsoft，生成热力图和会话回放。它可能使用第一方、第三方 Cookie 及其他跟踪技术；实际采集受项目设置、同意状态、浏览器和网络条件影响，不保证在所有地区均可访问。
+官网同时使用 Microsoft Clarity（项目 ID：`z5pd48bgrz`），独立于 Google Analytics 加载，用于分析访客行为和改进页面体验。Clarity 将页面及交互数据（例如浏览、点击、滚动，以及浏览器和设备信息）发送给 Microsoft，生成热力图和会话回放。它可能使用第一方、第三方 Cookie 及其他跟踪技术；实际采集受项目设置、同意状态、浏览器和网络条件影响，不保证在所有地区均可访问。
 
 会话回放重建的是官网页面交互，不是录制电脑屏幕；不会访问启动器内的代理配置或 ChatGPT 对话。本次接入未添加自定义用户身份标识，也未覆盖 Clarity 的默认遮罩设置。Microsoft 的数据处理和使用方式见 [Microsoft 隐私声明](https://privacy.microsoft.com/privacystatement)，另见 [Clarity 隐私信息](https://clarity.microsoft.com/privacy)。
 

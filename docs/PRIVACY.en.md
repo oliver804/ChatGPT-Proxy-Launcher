@@ -30,13 +30,13 @@ Windows stores language, theme, host, port and selected executable in `%LOCALAPP
 
 ## Website analytics
 
-The Chinese and English project website pages use Google Analytics 4 (measurement ID: `G-QVHYT7RFW9`) to understand website visits. The website loads Google's `gtag.js` and sends visit data, such as page views, to Google. This may include page URLs, referring sources, browser and device information. Google Analytics uses first-party cookies to distinguish visitors and sessions. Enabled enhanced measurement events and data retention depend on the Analytics property's settings.
+The Chinese and English project website pages use Google Analytics 4 (measurement ID: `G-EKDF5J9PFF`) to understand website visits. The website loads Google's `gtag.js` and sends visit data, such as page views, to Google. This may include page URLs, referring sources, browser and device information. Google Analytics uses first-party cookies to distinguish visitors and sessions. Enabled enhanced measurement events and data retention depend on the Analytics property's settings.
 
 Analytics applies only to the website. It is not included in the macOS or Windows launcher and does not read in-app proxy settings, account details or conversations. Browser restrictions, content blockers or network availability may prevent measurement. See [Google's Privacy Policy](https://policies.google.com/privacy) and [Google Analytics cookie usage](https://support.google.com/analytics/answer/11397207?hl=en) for Google's data handling.
 
 ### Microsoft Clarity
 
-The website also loads Microsoft Clarity (project ID: `z0krfkfwwu`) independently of Google Analytics to understand visitor behavior and improve the site. Clarity sends page and interaction data, such as views, clicks, scrolling, browser and device information, to Microsoft for heatmaps and session replay. It may use first-party and third-party cookies and other tracking technologies. Collection depends on project settings, consent status, browser and network conditions; availability in every region is not guaranteed.
+The website also loads Microsoft Clarity (project ID: `z5pd48bgrz`) independently of Google Analytics to understand visitor behavior and improve the site. Clarity sends page and interaction data, such as views, clicks, scrolling, browser and device information, to Microsoft for heatmaps and session replay. It may use first-party and third-party cookies and other tracking technologies. Collection depends on project settings, consent status, browser and network conditions; availability in every region is not guaranteed.
 
 Session replay reconstructs interactions with the website rather than recording the computer screen. It does not access launcher proxy settings or ChatGPT conversations. This integration adds no custom user identifiers and does not override Clarity's default masking settings. See the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement) and [Clarity privacy information](https://clarity.microsoft.com/privacy) for Microsoft's data handling and use.
 

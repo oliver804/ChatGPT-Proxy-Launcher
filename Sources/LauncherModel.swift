@@ -272,10 +272,26 @@ final class LauncherModel: ObservableObject {
     }
 }
 
+enum AppTheme: String, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var label: String { switch self { case .system: "跟随系统"; case .light: "浅色"; case .dark: "深色" } }
+    var symbol: String { switch self { case .system: "circle.lefthalf.filled"; case .light: "sun.max"; case .dark: "moon" } }
+    var appearance: NSAppearance? {
+        switch self { case .system: nil; case .light: NSAppearance(named: .aqua); case .dark: NSAppearance(named: .darkAqua) }
+    }
+}
+
 /// Owns one independent model per app. Language is shared; draft configuration and
 /// asynchronous results never move to another app when the selection changes.
 @MainActor
 final class LauncherStore: ObservableObject {
+    @Published var theme: AppTheme {
+        didSet {
+            defaults.set(theme.rawValue, forKey: "interfaceTheme")
+            NSApp?.appearance = theme.appearance
+        }
+    }
     @Published var selected: ApplicationKind { didSet { defaults.set(selected.rawValue, forKey: "selectedApplication") } }
     let models: [ApplicationKind: LauncherModel]
     private let defaults: UserDefaults
@@ -286,6 +302,7 @@ final class LauncherStore: ObservableObject {
 
     init(defaults: UserDefaults = .standard, monitor: Bool = true, previewVersion: String? = nil) {
         self.defaults = defaults
+        theme = AppTheme(rawValue: defaults.string(forKey: "interfaceTheme") ?? "") ?? .system
         selected = ApplicationKind(rawValue: defaults.string(forKey: "selectedApplication") ?? "") ?? .chatgpt
         models = Dictionary(uniqueKeysWithValues: ApplicationKind.allCases.map {
             ($0, LauncherModel(defaults: defaults, monitor: monitor, previewVersion: previewVersion, kind: $0))

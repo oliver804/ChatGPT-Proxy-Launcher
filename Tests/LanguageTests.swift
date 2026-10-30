@@ -89,7 +89,13 @@ enum LanguageTests {
         check(store.current.port == "7892" && store.models[.chatgpt]!.port == "8080", "Language and selection preserve independent drafts")
         store.setLanguage(nil)
         check(store.models.values.allSatisfy { $0.followsSystem }, "Follow-system synchronizes every app")
+        store.theme = .dark
+        check(store.current.port == "7892", "Theme preserves the selected app draft")
+        check(defaults.string(forKey: "interfaceTheme") == "dark", "Theme preference persists")
         let restored = LauncherStore(defaults: defaults, monitor: false)
+        check(restored.theme == .dark, "Restore saved appearance")
+        store.theme = .system
+        check(defaults.string(forKey: "interfaceTheme") == "system" && store.theme.appearance == nil, "Follow-system releases the appearance override")
         check(restored.selected == .antigravityIDE, "Selected app persists")
         check(restored.models[.antigravity]!.port == "7891" && restored.current.port == "7890", "Only saved per-app configuration persists")
         check(restored.models[.chatgpt]!.host == "localhost", "Other app settings unchanged")

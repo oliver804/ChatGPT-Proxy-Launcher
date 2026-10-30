@@ -116,6 +116,16 @@ public sealed class MainWindow : Window
         var languageMenu = tray?.ContextMenuStrip?.Items.OfType<Forms.ToolStripMenuItem>().FirstOrDefault(item => item.Text?.EndsWith(" / Language", StringComparison.Ordinal) == true);
         if (languageMenu == null || languageMenu.DropDownItems.Count != 10 || languageMenu.DropDownItems.OfType<Forms.ToolStripMenuItem>().Count(item => item.Checked) != 1)
             throw new Exception("Tray language options do not match the global preference");
+        foreach (var mode in new[] { "system", "light", "dark" })
+        {
+            var appearanceMenu = tray?.ContextMenuStrip?.Items.OfType<Forms.ToolStripMenuItem>().Single(item => item.Name == "appearance");
+            var index = mode == "system" ? 0 : mode == "light" ? 1 : 2;
+            ((Forms.ToolStripMenuItem)appearanceMenu!.DropDownItems[index]).PerformClick();
+            if (settings.Theme != mode || port.Text != "7892") throw new Exception("Tray theme did not preserve draft and preference");
+            var updated = tray!.ContextMenuStrip!.Items.OfType<Forms.ToolStripMenuItem>().Single(item => item.Name == "appearance");
+            if (!((Forms.ToolStripMenuItem)updated.DropDownItems[index]).Checked) throw new Exception("Tray theme checkmark is stale");
+        }
+        if (tray!.ContextMenuStrip!.Items.OfType<Forms.ToolStripMenuItem>().All(item => item.Text != "GitHub")) throw new Exception("Missing GitHub tray entry");
         SelectApp("chatgpt");
         if (port.Text != "8080") throw new Exception("Legacy app profile lost");
         settings = settings with { Language = "en" }; SavePreferences();
@@ -164,16 +174,22 @@ public sealed class MainWindow : Window
         Background = background; Foreground = ink;
         panel = new StackPanel { Margin = new Thickness(24) };
         var shell = new DockPanel();
-        var sidebar = new StackPanel { Width = 200, Margin = new Thickness(16, 24, 0, 24) };
+        var sidebar = new Grid { Width = 200, Margin = new Thickness(16, 24, 0, 24) };
+        sidebar.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        sidebar.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        var sidebarItems = new StackPanel(); sidebar.Children.Add(sidebarItems);
         DockPanel.SetDock(sidebar, Dock.Left); shell.Children.Add(sidebar); shell.Children.Add(panel);
-        sidebar.Children.Add(Text(T("Apps"), 12, false, muted));
+        sidebarItems.Children.Add(Text(T("Apps"), 12, false, muted));
         foreach (var target in TargetApp.All)
         {
             var selector = Button(target.Name + "\n" + T(Running(target.Id) ? "Running" : "NotRunning"), () => SelectApp(target.Id));
             selector.HorizontalContentAlignment = HorizontalAlignment.Left;
             if (target.Id == settings.SelectedApplication) { selector.Background = Color(dark ? "#28473B" : "#DCEEE5"); selector.Foreground = accent; }
-            sidebar.Children.Add(selector);
+            sidebarItems.Children.Add(selector);
         }
+        var sidebarFooter = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 24, 0, 0) };
+        sidebarFooter.Children.Add(Text($"v{Program.Version}", 12, false, muted)); sidebarFooter.Children.Add(RepositoryButton());
+        Grid.SetRow(sidebarFooter, 1); sidebar.Children.Add(sidebarFooter);
         Content = new ScrollViewer { Content = shell, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         FlowDirection = AppLanguages.IsRightToLeft(settings.ResolvedLanguage) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         var header = new DockPanel { Margin = new Thickness(0, 0, 0, 24) };
@@ -293,6 +309,25 @@ public sealed class MainWindow : Window
         };
         translateReport();
     }, "CheckDone");
+    private const string RepositoryUrl = "https://github.com/oliver804/ChatGPT-Proxy-Launcher";
+    // GitHub mark from Primer Octicons (MIT); see THIRD_PARTY_NOTICES.md.
+    private const string GitHubPath = "M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656";
+    private void OpenRepository()
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(RepositoryUrl) { UseShellExecute = true }); }
+        catch { notice = "OperationFailed"; status.Text = T(notice); }
+    }
+    private Button RepositoryButton()
+    {
+        var button = new Button {
+            Content = new System.Windows.Shapes.Path { Data = Geometry.Parse(GitHubPath), Fill = ink, Width = 16, Height = 16, Stretch = Stretch.Uniform },
+            Padding = new Thickness(6), Margin = new Thickness(8, 0, 0, 0), Background = Brushes.Transparent,
+            BorderThickness = new Thickness(0), ToolTip = "GitHub"
+        };
+        System.Windows.Automation.AutomationProperties.SetName(button, "GitHub");
+        button.Click += (_, _) => OpenRepository();
+        return button;
+    }
     private void SetupTray()
     {
         tray?.Dispose();
@@ -318,6 +353,16 @@ public sealed class MainWindow : Window
             languages.DropDownItems.Add(item);
         }
         menu.Items.Add(languages);
+        var appearance = new Forms.ToolStripMenuItem(T("Appearance")) { Name = "appearance", Enabled = !busy };
+        foreach (var mode in new[] { "system", "light", "dark" })
+        {
+            var label = T(mode == "system" ? "System" : mode == "light" ? "Light" : "Dark");
+            var item = new Forms.ToolStripMenuItem(label) { Checked = settings.Theme == mode };
+            item.Click += (_, _) => { if (busy) return; settings = settings with { Theme = mode }; SavePreferences(); };
+            appearance.DropDownItems.Add(item);
+        }
+        menu.Items.Add(appearance);
+        menu.Items.Add("GitHub", null, (_, _) => OpenRepository());
         menu.Items.Add(T("Check"), null, (_, _) => { Reveal(); Check(); });
         menu.Items.Add(T("Quit"), null, (_, _) => { if (!busy) Quit(); });
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Reveal();

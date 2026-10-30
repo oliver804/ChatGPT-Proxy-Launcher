@@ -47,6 +47,9 @@ enum L10n {
     // Chinese keys are also the source-language text. Arguments use positional replacement,
     // never printf parsing, so paths and command output containing percent signs stay literal.
     static let english: [String: String] = [
+        "外观": "Appearance",
+        "浅色": "Light",
+        "深色": "Dark",
         "运行中": "Running",
         "跟随系统": "Follow system",
         "我的应用": "My apps",

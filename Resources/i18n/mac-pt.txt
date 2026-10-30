@@ -1,3 +1,6 @@
+Aparência
+Claro
+Escuro
 Em execução
 Seguir o sistema
 Meus aplicativos

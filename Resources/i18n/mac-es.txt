@@ -1,3 +1,6 @@
+Apariencia
+Claro
+Oscuro
 En ejecución
 Seguir el sistema
 Mis aplicaciones

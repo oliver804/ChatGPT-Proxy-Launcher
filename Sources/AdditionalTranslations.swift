@@ -2,6 +2,9 @@
 enum AdditionalTranslations {
     static let values: [AppLanguage: [String: String]] = [
         .traditionalChinese: [
+            "外观": "外觀",
+            "浅色": "淺色",
+            "深色": "深色",
             "运行中": "執行中",
             "跟随系统": "跟隨系統",
             "我的应用": "我的應用",
@@ -111,6 +114,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "獨立開源工具，與 OpenAI 沒有從屬或背書關係。",
         ],
         .russian: [
+            "外观": "Оформление",
+            "浅色": "Светлая",
+            "深色": "Тёмная",
             "运行中": "Работает",
             "跟随系统": "Как в системе",
             "我的应用": "Мои приложения",
@@ -220,6 +226,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Независимый инструмент с открытым исходным кодом. Не связан с OpenAI и не одобрен ею.",
         ],
         .persian: [
+            "外观": "ظاهر",
+            "浅色": "روشن",
+            "深色": "تیره",
             "运行中": "در حال اجرا",
             "跟随系统": "پیروی از سیستم",
             "我的应用": "برنامه‌های من",
@@ -329,6 +338,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "ابزار متن‌باز مستقل. وابسته به OpenAI نیست و تأیید آن را ندارد.",
         ],
         .belarusian: [
+            "外观": "Выгляд",
+            "浅色": "Светлая",
+            "深色": "Цёмная",
             "运行中": "Працуе",
             "跟随系统": "Як у сістэме",
             "我的应用": "Мае праграмы",
@@ -438,6 +450,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Незалежны інструмент з адкрытым зыходным кодам. Не звязаны з OpenAI і не падтрымліваецца ёю.",
         ],
         .spanish: [
+            "外观": "Apariencia",
+            "浅色": "Claro",
+            "深色": "Oscuro",
             "运行中": "En ejecución",
             "跟随系统": "Seguir el sistema",
             "我的应用": "Mis aplicaciones",
@@ -547,6 +562,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Herramienta independiente y de código abierto. No está afiliada a OpenAI ni cuenta con su respaldo.",
         ],
         .arabic: [
+            "外观": "المظهر",
+            "浅色": "فاتح",
+            "深色": "داكن",
             "运行中": "قيد التشغيل",
             "跟随系统": "اتباع النظام",
             "我的应用": "تطبيقاتي",
@@ -656,6 +674,9 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "أداة مستقلة مفتوحة المصدر. ليست تابعة لـ OpenAI ولا تحظى بتأييدها.",
         ],
         .portuguese: [
+            "外观": "Aparência",
+            "浅色": "Claro",
+            "深色": "Escuro",
             "运行中": "Em execução",
             "跟随系统": "Seguir o sistema",
             "我的应用": "Meus aplicativos",

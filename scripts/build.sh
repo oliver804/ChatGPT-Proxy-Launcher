@@ -26,7 +26,7 @@ info = plistlib.loads(Path('Resources/Info.plist').read_bytes())
 info.update(CFBundleShortVersionString=version, CFBundleVersion=version)
 (app / 'Contents/Info.plist').write_bytes(plistlib.dumps(info, sort_keys=False))
 PY
-cp Resources/Credits.html LICENSE "$APP_PATH/Contents/Resources/"
+cp Resources/Credits.html LICENSE THIRD_PARTY_NOTICES.md "$APP_PATH/Contents/Resources/"
 swiftc "${SWIFT_FLAGS[@]}" -parse-as-library Sources/BrandMark.swift scripts/make-icon.swift \
   -framework SwiftUI -framework AppKit -o build/make-icon
 ICON_FILE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$APP_PATH/Contents/Info.plist")"

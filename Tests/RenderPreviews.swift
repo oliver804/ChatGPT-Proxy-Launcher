@@ -23,7 +23,7 @@ enum RenderPreviews {
             model.message = model.text("检查完成。连接情况是此刻的快照，可在 ChatGPT 请求后再次检查。")
             for dark in [false, true] {
                 let suffix = "\(language.rawValue)-\(dark ? "dark" : "light")"
-                try render(LauncherWindow(store: store), name: "window-" + suffix, dark: dark)
+                try render(LauncherWindow(store: store).frame(width: 865, height: 780), name: "window-" + suffix, dark: dark)
                 try render(MenuPanel(store: store), name: "menu-" + suffix, dark: dark)
             }
         }

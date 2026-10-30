@@ -90,7 +90,7 @@ struct LauncherView: View {
         }
         .padding(.horizontal, 24).padding(.top, 24).padding(.bottom, 20)
         }
-        .frame(width: 660)
+        .frame(minWidth: 660, maxWidth: .infinity, maxHeight: .infinity)
         .background(Palette.canvas)
         .background(MainWindowPresence())
         .tint(Palette.accent)
@@ -215,7 +215,6 @@ struct LauncherView: View {
                 Image(systemName: "menubar.rectangle")
                 Text(model.text("关闭窗口后，仍可从菜单栏访问"))
                 Spacer()
-                Text("v\(model.launcherVersion)")
             }.font(.system(size: 10)).foregroundStyle(.secondary)
             Text(model.text("独立开源工具，与 OpenAI 无隶属或背书关系。"))
                 .font(.system(size: 10)).foregroundStyle(.secondary)
@@ -260,6 +259,28 @@ private struct SharedLanguagePicker: View {
     }
 }
 
+private struct SharedThemePicker: View {
+    @ObservedObject var store: LauncherStore
+    var body: some View {
+        Menu {
+            ForEach(AppTheme.allCases) { theme in
+                Button { store.theme = theme } label: {
+                    if store.theme == theme { Label(store.current.text(theme.label), systemImage: "checkmark") }
+                    else { Text(store.current.text(theme.label)) }
+                }
+            }
+        } label: { Label(store.current.text("外观") + " · " + store.current.text(store.theme.label), systemImage: store.theme.symbol) }
+        .accessibilityLabel(store.current.text("外观"))
+    }
+}
+
+private struct RepositoryLink: View {
+    var body: some View {
+        Link(destination: BrandIdentity.repositoryURL) { GitHubMark().fill(Color.primary).frame(width: 16, height: 16).padding(4) }
+            .buttonStyle(.plain).help("GitHub").accessibilityLabel("GitHub")
+    }
+}
+
 struct LauncherWindow: View {
     @ObservedObject var store: LauncherStore
     var body: some View {
@@ -288,12 +309,18 @@ struct LauncherWindow: View {
                     }
                 }
                 Spacer()
-                SharedLanguagePicker(store: store)
-                Text("v\(store.current.launcherVersion)").font(.system(size: 11)).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 10) {
+                    SharedLanguagePicker(store: store)
+                    SharedThemePicker(store: store)
+                }
+                HStack(spacing: 8) {
+                    Text("v\(store.current.launcherVersion)").font(.system(size: 11)).foregroundStyle(.secondary)
+                    RepositoryLink()
+                }
             }.padding(16).padding(.top, 22).frame(width: 204)
             Divider()
             LauncherView(model: store.current).id(store.selected)
-        }.frame(height: min(780, max(560, (NSScreen.main?.visibleFrame.height ?? 880) - 100)))
+        }.frame(minWidth: 865, minHeight: 560)
             .background(Palette.canvas).tint(Palette.accent)
             .environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
     }
@@ -333,6 +360,12 @@ struct MenuPanel: View {
             }
             Divider()
             SharedLanguagePicker(store: store)
+            SharedThemePicker(store: store)
+            HStack {
+                Text("v\(store.current.launcherVersion)").font(.system(size: 11)).foregroundStyle(.secondary)
+                RepositoryLink()
+                Spacer()
+            }
             HStack {
                 Button(store.current.text("打开主窗口"), action: showMain)
                 Spacer()
@@ -356,6 +389,9 @@ final class DockPresence {
         observers.forEach(NotificationCenter.default.removeObserver)
         observers.removeAll()
         mainWindow = window
+        window.styleMask.insert(.resizable)
+        window.collectionBehavior.insert(.fullScreenPrimary)
+        window.standardWindowButton(.zoomButton)?.isEnabled = true
         prepareToShow()
         // Observe only the main window: dismissing the menu panel or a sheet must not hide the Dock icon.
         observers.append(NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in
@@ -419,9 +455,12 @@ struct LauncherApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var store = LauncherStore()
     var body: some Scene {
-        Window("Local Route Launcher", id: "main") { LauncherWindow(store: store) }
+        Window("Local Route Launcher", id: "main") {
+            LauncherWindow(store: store).onAppear { NSApp.appearance = store.theme.appearance }
+        }
             .windowStyle(.hiddenTitleBar)
-            .windowResizability(.contentSize)
+            .windowResizability(.contentMinSize)
+            .defaultSize(width: 865, height: min(780, max(560, (NSScreen.main?.visibleFrame.height ?? 880) - 100)))
             .defaultPosition(.center)
             .commands { LauncherCommands(model: store.current) }
         MenuBarExtra {

@@ -2,6 +2,10 @@
 
 ## 1.4.0 — In development / 开发测试中
 
+- Restore macOS appearance controls in both the main window and menu panel, with persistent System/Light/Dark settings; add the same theme selector to the Windows tray.
+- Enable macOS window resizing and full screen, make the route icon symmetric, and add GitHub links beside the version and in menu/tray controls.
+- 补齐主窗口与菜单栏/托盘的主题切换；修复图标对称性与 macOS 缩放/全屏按钮，增加版本号旁的 GitHub 入口。
+
 - Added separate ChatGPT, Antigravity App and Antigravity IDE profiles and launch controls on macOS / Windows; existing ChatGPT preferences are retained.
 - Added a multi-app sidebar and menu bar / tray controls, global nine-language selection and Follow system.
 - Added target-specific probes and separate observations for recognized language-server descendants; connection snapshots do not establish full model or account access.

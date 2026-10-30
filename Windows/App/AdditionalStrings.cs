@@ -8,6 +8,7 @@ public static class AdditionalStrings
         {
             ["zh-TW"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "外觀",
                 ["Language"] = "介面語言",
                 ["Apps"] = "我的應用",
                 ["Backend"] = "背景服務",
@@ -68,6 +69,7 @@ public static class AdditionalStrings
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "Оформление",
                 ["Language"] = "Язык",
                 ["Apps"] = "Мои приложения",
                 ["Backend"] = "Фоновые службы",
@@ -128,6 +130,7 @@ public static class AdditionalStrings
             },
             ["fa"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "ظاهر",
                 ["Language"] = "زبان",
                 ["Apps"] = "برنامه‌های من",
                 ["Backend"] = "سرویس‌های پس‌زمینه",
@@ -188,6 +191,7 @@ public static class AdditionalStrings
             },
             ["be"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "Выгляд",
                 ["Language"] = "Мова",
                 ["Apps"] = "Мае праграмы",
                 ["Backend"] = "Фонавыя службы",
@@ -248,6 +252,7 @@ public static class AdditionalStrings
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "Apariencia",
                 ["Language"] = "Idioma",
                 ["Apps"] = "Mis aplicaciones",
                 ["Backend"] = "Servicios en segundo plano",
@@ -308,6 +313,7 @@ public static class AdditionalStrings
             },
             ["ar"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "المظهر",
                 ["Language"] = "اللغة",
                 ["Apps"] = "تطبيقاتي",
                 ["Backend"] = "خدمات الخلفية",
@@ -368,6 +374,7 @@ public static class AdditionalStrings
             },
             ["pt"] = new Dictionary<string, string>
             {
+                ["Appearance"] = "Aparência",
                 ["Language"] = "Idioma",
                 ["Apps"] = "Meus aplicativos",
                 ["Backend"] = "Serviços em segundo plano",

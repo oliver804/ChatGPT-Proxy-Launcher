@@ -1,3 +1,4 @@
+Apariencia
 Idioma
 Mis aplicaciones
 Servicios en segundo plano

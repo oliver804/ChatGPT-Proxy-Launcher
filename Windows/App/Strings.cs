@@ -11,6 +11,7 @@ public static class Strings
     public static IReadOnlyCollection<string> Keys => Items.Keys;
     private static readonly Dictionary<string, (string En, string Zh)> Items = new()
     {
+        ["Appearance"] = ("Appearance", "外观"),
         ["Language"] = ("Language", "界面语言"),
         ["Apps"] = ("My apps", "我的应用"),
         ["Backend"] = ("Background services", "后台服务"),

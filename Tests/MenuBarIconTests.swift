@@ -7,6 +7,13 @@ enum MenuBarIconTests {
         _ = NSApplication.shared
         let image = MenuBarIcon.image
         precondition(image.isTemplate, "Menu bar artwork must be a native template")
+        let bounds = CGRect(x: 0, y: 0, width: 256, height: 256)
+        let glyph = RouteGlyph().path(in: bounds).cgPath.copy(strokingWithWidth: 8, lineCap: .round, lineJoin: .round, miterLimit: 10)
+        for y in stride(from: 0.5, to: 256, by: 1) {
+            for x in stride(from: 0.5, to: 128, by: 1) {
+                guard glyph.contains(CGPoint(x: x, y: y)) == glyph.contains(CGPoint(x: 256-x, y: y)) else { fatalError("Route glyph is not symmetric") }
+            }
+        }
         let original = NSImage(systemSymbolName: "arrow.triangle.branch", accessibilityDescription: nil)!
         precondition(image.size == original.size, "Preserve the native 1.0.0 symbol proportions")
         let button = NSButton(frame: NSRect(x: 0, y: 0, width: 30, height: 24))

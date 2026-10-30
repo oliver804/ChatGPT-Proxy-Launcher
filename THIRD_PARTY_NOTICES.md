@@ -11,3 +11,33 @@ macOS 应用使用 Apple 提供的框架。Windows 安装包内置 Microsoft .NE
 ChatGPT and OpenAI names identify the compatible application only. This project is not affiliated with or endorsed by OpenAI. No ChatGPT binaries, account data, or third-party proxy configurations are included.
 
 ChatGPT 与 OpenAI 名称仅用于说明兼容应用。项目与 OpenAI 无隶属或背书关系，不包含 ChatGPT 程序、账号数据或第三方代理配置。
+
+## GitHub mark / GitHub 图标
+
+Source: https://github.com/primer/octicons/blob/main/icons/mark-github-16.svg
+
+The GitHub link icon is adapted from Primer Octicons and used only to identify the repository link.
+
+```text
+MIT License
+
+Copyright (c) 2026 GitHub Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

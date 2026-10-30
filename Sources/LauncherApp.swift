@@ -355,7 +355,7 @@ struct UpdatePanel: View {
                 Spacer()
                 Link(t(update.release?.isNewer == true ? "查看发布说明与下载" : "打开发布页面"), destination: update.release?.url ?? ReleaseUpdate.releasesURL)
             }
-        }.font(.system(size: 11)).padding(20).frame(width: 330)
+        }.font(.system(size: 11)).padding(20).frame(width: 330).background(Palette.canvas)
             .tint(Palette.accent).environment(\.layoutDirection, store.current.language.isRightToLeft ? .rightToLeft : .leftToRight)
     }
 }

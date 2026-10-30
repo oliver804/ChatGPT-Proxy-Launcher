@@ -1,13 +1,13 @@
-# 用 ChatGPT 桌面应用时想保留独立代理设置？Local Route Launcher 现支持九种语言
+# ChatGPT 与 Antigravity 的独立连接入口：Local Route Launcher 1.4.0
 
-**Local Route Launcher v1.3.0** 已发布。它在启动兼容的 ChatGPT 桌面应用时传入你已有的本地 HTTP 代理配置，无需修改整台电脑的系统代理或 DNS。支持 Apple Silicon Mac 和 Windows x64。
+**1.4.0 开发测试版**为 ChatGPT、Antigravity App 和 Antigravity IDE 提供独立配置，在同一个窗口里切换应用，各自保存连接地址、端口和安装路径，不修改系统代理或 DNS。
 
-这次更新为 **macOS DMG** 和 **Windows EXE** 同时加入语言切换：简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية、Português。选择会保存，主窗口、菜单栏或托盘、错误提示与连接报告随之更新；阿拉伯语和波斯语界面采用从右向左布局。
+这次主要改善了日常操作：主窗口保留三张功能卡片，语言、外观和 GitHub 入口移到右上角；关闭窗口后，仍可在菜单栏或系统托盘启动、停止应用。macOS 和 Windows 均支持九种语言及浅色、深色、跟随系统主题。
 
-使用时，先运行你有权使用的本地代理，保存地址和端口；完全退出 ChatGPT，再从启动器打开。你可以检查代理连通性、启动参数和当前 TCP 连接快照。
+版本号旁新增启动器更新检查，可关闭启动时检查，也可手动检查。发现稳定新版后仅显示提示，点击后前往 GitHub 阅读说明和下载，不会自动下载安装。
 
-适用于 **macOS 13+ / Apple Silicon**，或 **Windows 10 22H2 / Windows 11 x64** 的可识别 Electron 版 ChatGPT。旧原生版本、Intel Mac、Windows ARM64 以及某些受限制的商店安装包不在支持范围。检查结果不保证全部流量经过代理，也不代表账号或服务可用。启动器不提供代理服务。
+支持 Apple Silicon Mac 与 Windows x64，目标应用须为兼容的安装版本。连接检查展示参数和连接快照，不保证全部流量或账号、模型服务可用；项目不提供网络服务。
 
-[下载 v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0) · [GitHub 源码](https://github.com/oliver804/Local-Route-Launcher) · [项目官网](https://oliver804.github.io/Local-Route-Launcher/)
+[源码与进展](https://github.com/oliver804/Local-Route-Launcher) · [已发布版本](https://github.com/oliver804/Local-Route-Launcher/releases)
 
-*作者：Oliver。独立开源项目，与 OpenAI 无隶属或背书关系。ChatGPT 商标仅用于说明兼容性。请遵守适用法律与服务条款，仅使用有权访问的网络和服务。本文使用 AI 辅助起草。*
+*作者：Oliver。独立项目，与 OpenAI / Google 无隶属或背书关系。产品名称仅用于说明兼容性，商标归各自权利人所有。请遵守适用法律及服务条款，仅使用有权访问的网络和服务。本文使用 AI 辅助起草。*

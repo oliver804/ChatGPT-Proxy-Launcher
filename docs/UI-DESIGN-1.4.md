@@ -35,3 +35,12 @@ Accepted by Oliver on 2026-10-30. This is the implementation baseline, not a fut
 ## Validation / 验收
 
 Review main/menu in light/dark modes, all languages including RTL, controls with keyboard/accessibility names, persisted preferences and drafts, update success/failure/version cases, close-to-menu/tray, fullscreen/zoom, and original icon symmetry. macOS GUI tests require an interactive session; Windows behavior must be validated in Windows CI, not inferred from a cross-build.
+
+
+## Reviewed implementation references / 实现参考
+
+These are app-rendered previews with sample diagnostic data, not evidence of live traffic. The update panel intentionally shows the unchecked state rather than an invented release.
+
+- [Main window / 主窗口](images/preview-dark.png)
+- [Compact menu / 紧凑菜单](images/ui-menu-dark.png)
+- [Update panel / 更新面板](images/ui-updates-dark.png)

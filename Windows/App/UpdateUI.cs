@@ -27,7 +27,7 @@ public sealed partial class MainWindow
     }
     private Button IconMenu(string glyph, string title, Func<IEnumerable<(string Label, bool Selected, Action Action)>> choices)
     {
-        var button = new Button { Content = new TextBlock { Text = glyph, FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 16 },
+        var button = new Button { Style = roundedButtonStyle, Content = new TextBlock { Text = glyph, FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 16 },
             ToolTip = title, Foreground = muted, Background = Brushes.Transparent, BorderThickness = new Thickness(0), Padding = new Thickness(8), MinWidth = 32 };
         AutomationProperties.SetName(button, title);
         button.Click += (_, _) => {
@@ -40,7 +40,7 @@ public sealed partial class MainWindow
     private string UpdateLabel => T(updateChecking ? "UpdateChecking" : updateFailed ? "UpdateFailed" : updateRelease?.IsNewer == true ? "UpdateAvailable" : "CheckUpdates");
     private Button UpdateButton()
     {
-        var button = new Button { Content = UpdateLabel, ToolTip = UpdateLabel, Foreground = accent, Background = field, BorderThickness = new Thickness(0),
+        var button = new Button { Style = roundedButtonStyle, Content = UpdateLabel, ToolTip = UpdateLabel, Foreground = accent, Background = field, BorderThickness = new Thickness(0),
             FontSize = 10, Padding = new Thickness(6, 4, 6, 4), Margin = new Thickness(6, 0, 0, 0), MaxWidth = 125 };
         AutomationProperties.SetName(button, UpdateLabel);
         button.Click += (_, _) => ShowUpdates();
@@ -69,7 +69,7 @@ public sealed partial class MainWindow
     }
     private Button AuxiliaryButton(string label, Action action)
     {
-        var button = new Button { Content = label, Padding = new Thickness(10, 7, 10, 7), Margin = new Thickness(0, 4, 8, 4), Background = field, Foreground = accent, BorderThickness = new Thickness(0) };
+        var button = new Button { Style = roundedButtonStyle, Content = label, Padding = new Thickness(10, 7, 10, 7), Margin = new Thickness(0, 4, 8, 4), Background = field, Foreground = accent, BorderThickness = new Thickness(0) };
         button.Click += (_, _) => action(); return button;
     }
     private void ShowUpdates()

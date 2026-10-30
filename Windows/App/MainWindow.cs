@@ -19,6 +19,7 @@ public sealed partial class MainWindow : Window
     private TextBox host = null!, port = null!;
     private TextBlock status = null!, appPath = null!;
     private StackPanel panel = null!, options = null!;
+    private readonly Style roundedButtonStyle = RoundedButtonStyle();
     private readonly List<Button> actions = [];
     private Button? startButton, stopButton;
     private Forms.NotifyIcon? tray;
@@ -93,7 +94,8 @@ public sealed partial class MainWindow : Window
         Build(); SetupTray();
         SourceInitialized += (_, _) => System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle)?.AddHook((IntPtr h, int m, IntPtr w, IntPtr l, ref bool handled) => { if (m == 0x8001) { Reveal(); handled = true; } return IntPtr.Zero; });
         Closing += OnClosing;
-        Closed += (_, _) => { updateCancellation.Cancel(); updateWindow?.Close(); trayWindow?.Close(); monitor.Stop(); tray?.Dispose(); };
+        if (!smoke) SystemEvents.UserPreferenceChanged += SystemAppearanceChanged;
+        Closed += (_, _) => { SystemEvents.UserPreferenceChanged -= SystemAppearanceChanged; updateCancellation.Cancel(); updateWindow?.Close(); trayWindow?.Close(); monitor.Stop(); tray?.Dispose(); };
         monitor.Tick += async (_, _) => await Poll();
         if (!smoke) { monitor.Start(); Loaded += async (_, _) => { if (settings.CheckUpdatesAtStartup) await CheckUpdates(); }; }
         if (!smoke) Loaded += async (_, _) => { if (string.IsNullOrEmpty(settings.ApplicationPath)) await Work(Detect, "Detected"); };
@@ -159,6 +161,14 @@ public sealed partial class MainWindow : Window
         if (!host.IsEnabled || !options.IsEnabled || host.Text != "draft.local")
             throw new InvalidOperationException("Failed operation lost input or left controls disabled.");
     }
+    private void SystemAppearanceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        Dispatcher.BeginInvoke(() => {
+            if (quitting || busy || settings.Theme != "system") return;
+            var draftHost = host.Text; var draftPort = port.Text;
+            Build(); host.Text = draftHost; port.Text = draftPort; RefreshAuxiliaryWindows();
+        });
+    }
     private bool IsDark()
     {
         if (settings.Theme != "system") return settings.Theme == "dark";
@@ -179,7 +189,10 @@ public sealed partial class MainWindow : Window
         sidebar.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         sidebar.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var sidebarItems = new StackPanel(); sidebar.Children.Add(sidebarItems);
-        DockPanel.SetDock(sidebar, Dock.Left); shell.Children.Add(sidebar); shell.Children.Add(panel);
+        DockPanel.SetDock(sidebar, Dock.Left); shell.Children.Add(sidebar);
+        var contentArea = new DockPanel(); shell.Children.Add(contentArea);
+        var footer = new StackPanel { Margin = new Thickness(24, 4, 24, 16) }; DockPanel.SetDock(footer, Dock.Bottom); contentArea.Children.Add(footer);
+        contentArea.Children.Add(new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
         var brand = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 12, 0, 28) };
         brand.Children.Add(new Image { Source = Icon, Width = 32, Height = 32, Margin = new Thickness(0, 0, 10, 0) });
         brand.Children.Add(Text("Local Route\nLauncher", 14, true)); sidebarItems.Children.Add(brand);
@@ -198,52 +211,76 @@ public sealed partial class MainWindow : Window
         var toolbar = new DockPanel { Margin = new Thickness(16, 4, 18, 4) };
         options = Toolbar(); DockPanel.SetDock(options, Dock.Right); toolbar.Children.Add(options);
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
-        root.Children.Add(new ScrollViewer { Content = shell, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
+        root.Children.Add(shell);
         Content = root;
         FlowDirection = AppLanguages.IsRightToLeft(settings.ResolvedLanguage) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-        var header = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+        var header = new StackPanel { Margin = new Thickness(0, 0, 0, 14) };
         header.Children.Add(Text(Target.Name, 23, true)); header.Children.Add(Text(T("Tagline"), 12, false, muted)); panel.Children.Add(header);
-        var launchCard = Card(); launchCard.Children.Add(Text(T("Heading"), 22, true)); launchCard.Children.Add(Text(T(Running(settings.SelectedApplication) ? "Running" : "NotRunning"), 12, false, accent)); launchCard.Children.Add(Text(T("ScopedSettings"), 12, false, muted));
-        var route = new Border { Background = field, CornerRadius = new CornerRadius(12), Padding = new Thickness(15), Margin = new Thickness(0, 18, 0, 16) };
-        var routeLabel = Text($"{Target.Name}   →   {Route(settings.SelectedApplication, Profile(settings.SelectedApplication))}   HTTP", 17, true, accent);
+        var launchCard = Card(); var launchHeader = new DockPanel();
+        var badge = Text(T(Running(settings.SelectedApplication) ? "Running" : "NotRunning"), 11, false, accent); DockPanel.SetDock(badge, Dock.Right); launchHeader.Children.Add(badge);
+        launchHeader.Children.Add(Text(T("Heading"), 20, true)); launchCard.Children.Add(launchHeader);
+        launchCard.Children.Add(Text(T("ScopedSettings"), 12, false, muted));
+        var route = new Border { Background = field, CornerRadius = new CornerRadius(10), Padding = new Thickness(12), Margin = new Thickness(0, 12, 0, 12) };
+        var routeLabel = Text($"{Target.Name}   →   {Route(settings.SelectedApplication, Profile(settings.SelectedApplication))}   HTTP", 14, true, accent);
         routeLabel.FlowDirection = FlowDirection.LeftToRight;
         route.Child = routeLabel; launchCard.Children.Add(route);
         var launchActions = new UniformGridCompat();
         startButton = Button(T("Launch"), async () => await Work(LaunchCurrent, "Launched"), true); launchActions.Children.Add(startButton);
         stopButton = Button(T("Stop"), async () => await Work(async () => { RequireApp(); await WindowsPlatform.Stop(settings.ApplicationPath); ClearResults(); }, "Stopped")); launchActions.Children.Add(stopButton);
         launchCard.Children.Add(launchActions);
-        var proxyCard = Card(); proxyCard.Children.Add(Text(T("Settings"), 18, true)); proxyCard.Children.Add(Text(T("RestartHint"), 12, false, muted));
-        var inputs = new Grid { Margin = new Thickness(0, 14, 0, 0) }; inputs.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) }); inputs.ColumnDefinitions.Add(new() { Width = new GridLength(120) });
-        var hostPanel = new StackPanel { Margin = new Thickness(0, 0, 12, 0) }; hostPanel.Children.Add(Text(T("Host"), 12, false, muted)); host = Input(settings.Host); hostPanel.Children.Add(host); inputs.Children.Add(hostPanel);
-        var portPanel = new StackPanel(); portPanel.Children.Add(Text(T("Port"), 12, false, muted)); port = Input(settings.Port); portPanel.Children.Add(port); Grid.SetColumn(portPanel, 1); inputs.Children.Add(portPanel); proxyCard.Children.Add(inputs);
-        appPath = Text(settings.ApplicationPath.Length == 0 ? T("NoApp") : settings.ApplicationPath, 12, false, muted); appPath.FlowDirection = FlowDirection.LeftToRight; appPath.Margin = new Thickness(0, 12, 0, 8); proxyCard.Children.Add(appPath);
-        var settingsActions = new WrapPanel(); settingsActions.Children.Add(Button(T("Save"), async () => await Work(() => { SaveDraft(); return Task.CompletedTask; }, "Saved")));
-        settingsActions.Children.Add(Button(T("Choose"), Choose)); settingsActions.Children.Add(Button(T("Detect"), async () => await Work(Detect, "Detected"))); proxyCard.Children.Add(settingsActions);
-        var checkCard = Card(); var checkHeader = new DockPanel(); var check = Button(T("Check"), Check); DockPanel.SetDock(check, Dock.Right); checkHeader.Children.Add(check); checkHeader.Children.Add(Text(T("Checks"), 18, true)); checkCard.Children.Add(checkHeader);
+        var proxyCard = Card(); var proxyHeader = new DockPanel();
+        var restart = Text(T("RestartHint"), 11, false, muted); DockPanel.SetDock(restart, Dock.Right); proxyHeader.Children.Add(restart); proxyHeader.Children.Add(Text(T("Settings"), 14, true)); proxyCard.Children.Add(proxyHeader);
+        var inputs = new Grid { Margin = new Thickness(0, 10, 0, 0) }; inputs.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) }); inputs.ColumnDefinitions.Add(new() { Width = new GridLength(96) }); inputs.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
+        var hostPanel = new StackPanel { Margin = new Thickness(0, 0, 12, 0) }; hostPanel.Children.Add(Text(T("Host"), 11, false, muted)); host = Input(settings.Host); hostPanel.Children.Add(host); inputs.Children.Add(hostPanel);
+        var portPanel = new StackPanel(); portPanel.Children.Add(Text(T("Port"), 11, false, muted)); port = Input(settings.Port); portPanel.Children.Add(port); Grid.SetColumn(portPanel, 1); inputs.Children.Add(portPanel);
+        var save = Button(T("Save"), async () => await Work(() => { SaveDraft(); return Task.CompletedTask; }, "Saved")); save.VerticalAlignment = VerticalAlignment.Bottom; save.Margin = new Thickness(12, 0, 0, 0); Grid.SetColumn(save, 2); inputs.Children.Add(save); proxyCard.Children.Add(inputs);
+        var pathRow = new DockPanel { Margin = new Thickness(0, 8, 0, 0) };
+        var choose = Button(T("Choose"), Choose); choose.FontSize = 11; choose.Background = Brushes.Transparent; DockPanel.SetDock(choose, Dock.Right); pathRow.Children.Add(choose);
+        var detect = Button("↻", async () => await Work(Detect, "Detected")); detect.ToolTip = T("Detect"); System.Windows.Automation.AutomationProperties.SetName(detect, T("Detect")); detect.Background = Brushes.Transparent; DockPanel.SetDock(detect, Dock.Right); pathRow.Children.Add(detect);
+        appPath = Text(settings.ApplicationPath.Length == 0 ? T("NoApp") : settings.ApplicationPath, 11, false, muted); appPath.FlowDirection = FlowDirection.LeftToRight; appPath.TextWrapping = TextWrapping.NoWrap; appPath.TextTrimming = TextTrimming.CharacterEllipsis; pathRow.Children.Add(appPath); proxyCard.Children.Add(pathRow);
+        var checkCard = Card(); var checkHeader = new DockPanel(); var check = Button(T("Check"), Check); check.FontSize = 11; check.Background = Brushes.Transparent; DockPanel.SetDock(check, Dock.Right); checkHeader.Children.Add(check); checkHeader.Children.Add(Text(T("Checks"), 14, true)); checkCard.Children.Add(checkHeader);
         var results = new UniformGridCompat(3);
         foreach (var (label, value) in new[] { ("Transport", transport), ("Arguments", arguments), ("Connections", connections) })
         {
             var box = new StackPanel(); box.Children.Add(Text(T(label), 12, false, muted)); box.Children.Add(Text(string.IsNullOrEmpty(value) ? T("NotChecked") : value, 14, true));
             results.Children.Add(new Border { Background = field, CornerRadius = new CornerRadius(12), Padding = new Thickness(12), Margin = new Thickness(0, 10, 8, 8), Child = box });
         }
-        checkCard.Children.Add(results); checkCard.Children.Add(Text(T("Snapshot"), 12, false, muted));
-        checkCard.Children.Add(Button(T("Report"), () => MessageBox.Show(this, report.Length == 0 ? T("NoReport") : report, T("Report"), MessageBoxButton.OK, MessageBoxImage.Information)));
-        status = Text(T(notice), 12, false, accent); status.Margin = new Thickness(0, 4, 0, 8); status.Visibility = notice == "Ready" ? Visibility.Collapsed : Visibility.Visible; panel.Children.Add(status);
-        panel.Children.Add(Text(T("Footer"), 12, false, muted));
-        var legal = Text(T("CompactLegal"), 11, false, muted); legal.Margin = new Thickness(0, 6, 0, 0); panel.Children.Add(legal);
+        checkCard.Children.Add(results); checkCard.Children.Add(Text(T("Snapshot"), 11, false, muted));
+        var details = Button(T("Report"), () => MessageBox.Show(this, report.Length == 0 ? T("NoReport") : report, T("Report"), MessageBoxButton.OK, MessageBoxImage.Information)); details.HorizontalAlignment = HorizontalAlignment.Right; details.FontSize = 11; details.Background = Brushes.Transparent; checkCard.Children.Add(details);
+        status = Text(T(notice), 12, false, accent); status.Margin = new Thickness(0, 4, 0, 8); status.Visibility = notice == "Ready" ? Visibility.Collapsed : Visibility.Visible; footer.Children.Add(status);
+        footer.Children.Add(Text(T("Footer"), 11, false, muted));
+        var legal = Text(T("CompactLegal"), 11, false, muted); legal.Margin = new Thickness(0, 6, 0, 0); footer.Children.Add(legal);
         foreach (var button in actions) button.IsEnabled = !busy;
         startButton.IsEnabled = !busy && !Running(settings.SelectedApplication); stopButton.IsEnabled = !busy && Running(settings.SelectedApplication);
         rebuilding = false;
     }
+    private static Style RoundedButtonStyle()
+    {
+        // Native WPF disabled chrome otherwise becomes a bright rectangle in dark mode.
+        var border = new FrameworkElementFactory(typeof(Border));
+        border.SetValue(Border.CornerRadiusProperty, new CornerRadius(8));
+        border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Control.BackgroundProperty));
+        border.SetValue(Border.PaddingProperty, new TemplateBindingExtension(Control.PaddingProperty));
+        var content = new FrameworkElementFactory(typeof(ContentPresenter));
+        content.SetValue(ContentPresenter.HorizontalAlignmentProperty, new TemplateBindingExtension(Control.HorizontalContentAlignmentProperty));
+        content.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+        content.SetValue(ContentPresenter.RecognizesAccessKeyProperty, true);
+        border.AppendChild(content);
+        var style = new Style(typeof(Button));
+        style.Setters.Add(new Setter(Control.TemplateProperty, new ControlTemplate(typeof(Button)) { VisualTree = border }));
+        var hover = new Trigger { Property = UIElement.IsMouseOverProperty, Value = true }; hover.Setters.Add(new Setter(UIElement.OpacityProperty, 0.85)); style.Triggers.Add(hover);
+        var disabled = new Trigger { Property = UIElement.IsEnabledProperty, Value = false }; disabled.Setters.Add(new Setter(UIElement.OpacityProperty, 0.38)); style.Triggers.Add(disabled);
+        return style;
+    }
     private TextBlock Text(string text, double size = 14, bool bold = false, Brush? color = null) => new() { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal, Foreground = color ?? ink, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 3), VerticalAlignment = VerticalAlignment.Center };
-    private TextBox Input(string text) => new() { Text = text, Background = field, Foreground = ink, BorderThickness = new Thickness(0), Padding = new Thickness(12), FontSize = 17, FlowDirection = FlowDirection.LeftToRight };
+    private TextBox Input(string text) => new() { Text = text, Background = field, Foreground = ink, BorderThickness = new Thickness(0), Padding = new Thickness(10), FontSize = 14, FlowDirection = FlowDirection.LeftToRight };
     private StackPanel Card()
     {
-        var body = new StackPanel(); panel.Children.Add(new Border { Background = card, CornerRadius = new CornerRadius(20), Padding = new Thickness(22), Margin = new Thickness(0, 0, 0, 18), Child = body }); return body;
+        var body = new StackPanel(); panel.Children.Add(new Border { Background = card, CornerRadius = new CornerRadius(18), Padding = new Thickness(20), Margin = new Thickness(0, 0, 0, 14), Child = body }); return body;
     }
     private Button Button(string title, Action action, bool primary = false)
     {
-        var button = new Button { Content = title, Background = primary ? Color("#087F67") : field, Foreground = primary ? Brushes.White : ink, BorderThickness = new Thickness(0), Padding = new Thickness(14, 10, 14, 10), Margin = new Thickness(0, 4, 8, 4), Cursor = System.Windows.Input.Cursors.Hand };
+        var button = new Button { Style = roundedButtonStyle, Content = title, Background = primary ? Color("#087F67") : field, Foreground = primary ? Brushes.White : ink, BorderThickness = new Thickness(0), Padding = new Thickness(12, 9, 12, 9), Margin = new Thickness(0, 4, 8, 4), Cursor = System.Windows.Input.Cursors.Hand };
         button.Click += (_, _) => action(); actions.Add(button); return button;
     }
     private void ClearResults() { transport = arguments = connections = report = ""; translateReport = null; }
@@ -322,7 +359,7 @@ public sealed partial class MainWindow : Window
     private Button RepositoryButton()
     {
         var button = new Button {
-            Content = new System.Windows.Shapes.Path { Data = Geometry.Parse(GitHubPath), Fill = ink, Width = 16, Height = 16, Stretch = Stretch.Uniform },
+            Style = roundedButtonStyle, Content = new System.Windows.Shapes.Path { Data = Geometry.Parse(GitHubPath), Fill = ink, Width = 16, Height = 16, Stretch = Stretch.Uniform },
             Padding = new Thickness(6), Margin = new Thickness(8, 0, 0, 0), Background = Brushes.Transparent,
             BorderThickness = new Thickness(0), ToolTip = "GitHub"
         };

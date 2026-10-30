@@ -64,8 +64,9 @@ public static class Program
     internal static void Capture(Window window, string path, bool rtl)
     {
         var content = (FrameworkElement)window.Content;
-        content.Measure(new Size(window.ActualWidth, double.PositiveInfinity));
-        content.Arrange(new Rect(content.DesiredSize)); content.UpdateLayout();
+        // Capture the displayed client area. Re-arranging to DesiredSize shrinks
+        // SizeToContent.Height tray windows and invents overlaps absent on screen.
+        content.UpdateLayout();
         var width = (int)Math.Ceiling(content.ActualWidth) + 40;
         var height = (int)Math.Ceiling(content.ActualHeight) + 40;
         var visual = new System.Windows.Media.DrawingVisual();
@@ -77,7 +78,6 @@ public static class Program
         var bitmap = new RenderTargetBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32); bitmap.Render(visual);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var file = File.Create(path); encoder.Save(file);
-        content.InvalidateMeasure();
     }
     public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.4.0";
 }

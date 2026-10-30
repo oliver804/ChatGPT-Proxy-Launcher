@@ -77,13 +77,42 @@ enum Commands {
     }
 }
 
+enum ApplicationKind: String, CaseIterable, Identifiable, Codable {
+    case chatgpt, antigravity, antigravityIDE
+    var id: String { rawValue }
+    var name: String {
+        switch self { case .chatgpt: "ChatGPT"; case .antigravity: "Antigravity App"; case .antigravityIDE: "Antigravity IDE" }
+    }
+    var bundleName: String {
+        switch self { case .chatgpt: "ChatGPT"; case .antigravity: "Antigravity"; case .antigravityIDE: "Antigravity IDE" }
+    }
+    var defaultPath: String { "/Applications/\(bundleName).app" }
+    var probeURL: String { self == .chatgpt ? "https://chatgpt.com/" : "https://antigravity.google/" }
+    var symbol: String {
+        switch self { case .chatgpt: "bubble.left.and.bubble.right"; case .antigravity: "sparkles"; case .antigravityIDE: "chevron.left.forwardslash.chevron.right" }
+    }
+    func accepts(identifier: String) -> Bool {
+        switch self {
+        case .chatgpt:
+            #if TEST_FIXTURE
+            if identifier == "local.chatgpt-proxy-launcher.fixture" { return true }
+            #endif
+            return ["com.openai.chat", "com.openai.codex"].contains(identifier)
+        case .antigravity: return identifier == "com.google.antigravity"
+        case .antigravityIDE: return identifier == "com.google.antigravity-ide"
+        }
+    }
+    func key(_ legacy: String) -> String { self == .chatgpt ? legacy : "\(rawValue).\(legacy)" }
+}
+
 struct TargetApplication {
     let url: URL
     let executable: URL
     let identifier: String
     let version: String
+    let kind: ApplicationKind
 
-    init(path: String, language: AppLanguage = .current) throws {
+    init(path: String, language: AppLanguage = .current, kind expected: ApplicationKind? = nil) throws {
         let url = URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath()
         guard url.pathExtension == "app", let bundle = Bundle(url: url),
               let executable = bundle.executableURL,
@@ -97,10 +126,11 @@ struct TargetApplication {
         guard electron else {
             throw LauncherError("所选应用不是可识别的 Electron 版本。本工具不能给旧版原生 ChatGPT 强制设置代理。")
         }
-        let name = info["CFBundleDisplayName"] as? String ?? info["CFBundleName"] as? String ?? ""
-        guard name == "ChatGPT" || identifier == "com.openai.chat" || identifier == "com.openai.codex" else {
+        guard let kind = ApplicationKind.allCases.first(where: { $0.accepts(identifier: identifier) }),
+              expected == nil || kind == expected else {
             throw LauncherError("请选择 ChatGPT 应用。")
         }
+        self.kind = kind
         self.url = url
         self.executable = executable
         self.identifier = identifier
@@ -161,26 +191,30 @@ struct TCPConnection: Equatable {
 struct ProxyProbe {
     let usable: Bool
     let description: String
+    var rawResult: CommandResult? = nil
+    func localized(in language: AppLanguage, kind: ApplicationKind) -> ProxyProbe {
+        rawResult.map { Self.interpret($0, language: language, kind: kind) } ?? self
+    }
 
-    static func interpret(_ result: CommandResult, language: AppLanguage = .current) -> ProxyProbe {
+    static func interpret(_ result: CommandResult, language: AppLanguage = .current, kind: ApplicationKind = .chatgpt) -> ProxyProbe {
         let metrics = result.output.split(separator: "\n").last.map(String.init) ?? ""
         let codes = metrics.split(separator: " ")
         let connect = codes.count == 2 ? Int(codes[0]) ?? 0 : 0
         let response = codes.count == 2 ? Int(codes[1]) ?? 0 : 0
         if result.status == 0 && connect == 200 && (200...599).contains(response) {
-            return ProxyProbe(usable: true, description: L10n.text("HTTP 代理隧道和 TLS 已连通；chatgpt.com 返回 HTTP %@。", language: language, arguments: [String(response)]) + (response >= 400 ? L10n.text("网站拒绝了此探测请求，不代表账号或聊天可用。", language: language) : ""))
+            return ProxyProbe(usable: true, description: L10n.text("HTTP 代理隧道和 TLS 已连通；chatgpt.com 返回 HTTP %@。", language: language, arguments: [String(response)]).replacingOccurrences(of: "chatgpt.com", with: kind == .chatgpt ? "chatgpt.com" : "antigravity.google") + (response >= 400 ? L10n.text("网站拒绝了此探测请求，不代表账号或聊天可用。", language: language) : ""), rawResult: result)
         }
-        if connect == 407 { return ProxyProbe(usable: false, description: L10n.text("代理要求认证。请使用无需账号密码的本地代理端口。", language: language)) }
-        return ProxyProbe(usable: false, description: L10n.text("代理测试未通过。请确认本地代理正在运行、端口正确且服务可用。\n", language: language) + String(result.output.prefix(900)))
+        if connect == 407 { return ProxyProbe(usable: false, description: L10n.text("代理要求认证。请使用无需账号密码的本地代理端口。", language: language), rawResult: result) }
+        return ProxyProbe(usable: false, description: L10n.text("代理测试未通过。请确认本地代理正在运行、端口正确且服务可用。\n", language: language) + String(result.output.prefix(900)), rawResult: result)
     }
 
-    static func check(_ endpoint: ProxyEndpoint, language: AppLanguage = .current) -> ProxyProbe {
+    static func check(_ endpoint: ProxyEndpoint, language: AppLanguage = .current, kind: ApplicationKind = .chatgpt) -> ProxyProbe {
         do {
             let result = try Commands.run("/usr/bin/curl", ["--disable", "--silent", "--show-error", "--head",
                 "--proxy", endpoint.url, "--noproxy", "", "--connect-timeout", "5", "--max-time", "12",
                 "--output", "/dev/null", "--write-out", "\n%{http_connect} %{http_code}\n",
-                "https://chatgpt.com/"], timeout: 15)
-            return interpret(result, language: language)
+                kind.probeURL], timeout: 15)
+            return interpret(result, language: language, kind: kind)
         } catch { return ProxyProbe(usable: false, description: L10n.error(error, language: language)) }
     }
 }
@@ -191,6 +225,7 @@ struct DiagnosticSnapshot {
     let arguments: String
     let connections: [TCPConnection]
     let warnings: [String]
+    var backendPIDs: Set<Int32> = []
 
     static func collect(target: TargetApplication, endpoint: ProxyEndpoint, language: AppLanguage = .current) throws -> DiagnosticSnapshot {
         let ps = try Commands.run("/bin/ps", ["-axo", "pid=,ppid=,comm="])
@@ -217,25 +252,29 @@ struct DiagnosticSnapshot {
             "-iTCP", "-sTCP:ESTABLISHED", "-F", "pn"], timeout: 12)
         warnings.append(contentsOf: TCPConnection.warnings(sockets, language: language))
         return DiagnosticSnapshot(mainPIDs: mainPIDs, configured: configured, arguments: argumentLines.joined(separator: "\n"),
-                                  connections: TCPConnection.parse(sockets.output), warnings: warnings)
+                                  connections: TCPConnection.parse(sockets.output), warnings: warnings,
+                                  backendPIDs: Set(rows.filter { family.contains($0.pid) && $0.executable.lowercased().contains("language_server") }.map(\.pid)))
     }
 
-    func report(endpoint: ProxyEndpoint, probe: ProxyProbe, language: AppLanguage = .current) -> String {
-        func t(_ key: String, _ args: String...) -> String { L10n.text(key, language: language, arguments: args) }
+    func report(endpoint: ProxyEndpoint, probe: ProxyProbe, language: AppLanguage = .current, kind: ApplicationKind = .chatgpt, checkedAt: Date = Date()) -> String {
+        func t(_ key: String, _ args: String...) -> String { L10n.text(key, language: language, arguments: args).replacingOccurrences(of: "ChatGPT", with: kind.name) }
         let matched = connections.filter { endpoint.matches(remote: $0.remote) }
         let formatter = DateFormatter()
         formatter.locale = language.locale
         formatter.dateStyle = .medium
         formatter.timeStyle = .medium
         return [
-            t("检查时间：%@", formatter.string(from: Date())),
+            t("检查时间：%@", formatter.string(from: checkedAt)),
             t("检查地址：%@", endpoint.url),
-            "ChatGPT: " + (mainPIDs.isEmpty ? t("未运行") : t("运行中（PID %@）", mainPIDs.map(String.init).joined(separator: ", "))),
+            kind.name + ": " + (mainPIDs.isEmpty ? t("未运行") : t("运行中（PID %@）", mainPIDs.map(String.init).joined(separator: ", "))),
             t("启动参数：%@", configured ? t("与当前代理地址匹配") : t("未确认匹配")),
             t("代理探测：%@", probe.description),
             t("实际连接：%@", matched.isEmpty ? t("本次快照未观察到到该代理的 TCP 连接") : t("观察到 %@ 条到该代理的 TCP 连接", String(matched.count))),
             "", t("ChatGPT 及其子进程的当前 TCP 连接："),
             connections.isEmpty ? t("无可见的已建立连接") : connections.map { "PID \($0.pid)  \($0.route)" }.joined(separator: "\n"),
+            "", t("后台服务"),
+            backendPIDs.isEmpty ? t("尚未观察到") : backendPIDs.sorted().map { pid in "PID \(pid): \(connections.filter { $0.pid == pid && endpoint.matches(remote: $0.remote) }.count)" }.joined(separator: "\n"),
+            t("后台连接尚需实际请求验证；未观察到不等于未使用代理。"),
             "", warnings.joined(separator: "\n"),
             t("连接快照不证明全部流量均经过代理；域名代理地址与数字 IP 可能无法直接匹配。其他连接也可能来自本地工具或子进程。"),
             t("代理探测由启动器独立发起，不等于 ChatGPT 已使用代理。语音 / WebRTC / UDP 与不支持代理环境变量的子进程不在保证范围内。")

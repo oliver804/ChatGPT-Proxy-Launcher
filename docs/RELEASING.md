@@ -9,7 +9,7 @@
 3. 原作者的公开提交身份使用 `Oliver <oliver804x@gmail.com>`。其他贡献者使用各自愿意公开的姓名和邮箱；不复用 Oliver 身份。
 4. 将本地仓库关联到你实际创建的远端，再推送 `main`。
 5. 在 GitHub Actions 中确认 CI 成功，手动检查发布内容。
-6. 给经审核的提交打标签 `v1.3.0`，然后将该标签推送到远端。
+6. 给经审核的提交打标签 `v1.4.0`，然后将该标签推送到远端。
 
 `v*` 标签会运行 Release 工作流：检查标签与 `VERSION` 一致、执行源码与核心检查、构建并验证 DMG、导出纯净源码包，最后创建带附件的 **草稿 Release**。在 GitHub 检查草稿说明和文件后，再手动点击 Publish release。工作流使用当前仓库的临时 `GITHUB_TOKEN`，无需把个人令牌写入项目。
 
@@ -26,11 +26,11 @@ make dmg
 make verify
 ```
 
-只上传 `dist/1.3.0/` 中以下四个文件：
+只上传 `dist/1.4.0/` 中以下四个文件：
 
-- `Local-Route-Launcher-1.3.0-arm64.dmg`
-- `Local-Route-Launcher-1.3.0-windows-x64-setup.exe`
-- `Local-Route-Launcher-1.3.0-source.zip`
+- `Local-Route-Launcher-1.4.0-arm64.dmg`
+- `Local-Route-Launcher-1.4.0-windows-x64-setup.exe`
+- `Local-Route-Launcher-1.4.0-source.zip`
 - `SHA256SUMS.txt`
 
 校验文件使用相对文件名。在产物目录运行 `shasum -a 256 -c SHA256SUMS.txt` 可验证完整性。应用内包含作者信息与许可证；默认签名为 ad-hoc，未公证。

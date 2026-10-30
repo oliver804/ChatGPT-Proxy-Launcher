@@ -1,3 +1,9 @@
+Idioma
+Mis aplicaciones
+Servicios en segundo plano
+Las conexiones en segundo plano requieren una solicitud real para verificarlas; no observarlas no significa que no usen el proxy.
+En ejecución
+Detenida
 Una ruta dedicada. Un inicio más sencillo.
 Tu aplicación. Tu conexión.
 Inicia ChatGPT con tu proxy HTTP actual.

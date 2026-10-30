@@ -1,3 +1,8 @@
+En ejecución
+Seguir el sistema
+Mis aplicaciones
+Servicios en segundo plano
+Las conexiones en segundo plano requieren una solicitud real para verificarlas; no observarlas no significa que no usen el proxy.
 ChatGPT en ejecución
 ChatGPT detenido
 Configuración de red por aplicación

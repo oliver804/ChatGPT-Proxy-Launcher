@@ -11,6 +11,12 @@ public static class Strings
     public static IReadOnlyCollection<string> Keys => Items.Keys;
     private static readonly Dictionary<string, (string En, string Zh)> Items = new()
     {
+        ["Language"] = ("Language", "界面语言"),
+        ["Apps"] = ("My apps", "我的应用"),
+        ["Backend"] = ("Background services", "后台服务"),
+        ["BackendLimit"] = ("Background connections require a real request to verify; no observation does not mean no proxy use.", "后台连接尚需实际请求验证；未观察到不等于未使用代理。"),
+        ["Running"] = ("Running", "运行中"),
+        ["NotRunning"] = ("Stopped", "未运行"),
         ["Tagline"] = ("A dedicated route. A simpler start.", "独立连接，轻松启动"),
         ["Heading"] = ("Your app. Your connection.", "连接，从这里开始。"),
         ["Subtitle"] = ("Launch ChatGPT with your existing HTTP proxy.", "通过已有的 HTTP 代理启动 ChatGPT。"),

@@ -41,6 +41,21 @@ try
     File.WriteAllText(file, "{\"Host\":null}"); Reject(() => Settings.Load(file), "Null host accepted");
     File.WriteAllText(file, "{broken"); Reject(() => Settings.Load(file), "Corrupt settings accepted");
     File.WriteAllText(file, "{\"Language\":\"unknown\"}"); Reject(() => Settings.Load(file), "Unknown language accepted");
+    var legacy = new Settings { Host = "localhost", Port = "8080", ApplicationPath = "ChatGPT.exe" };
+    var app = legacy.Select("antigravity");
+    Check(app.Host == "127.0.0.1" && app.Port == "7890" && app.ApplicationPath == "", "Fresh target defaults independent of legacy");
+    app = app with { Port = "7891", ApplicationPath = "Antigravity.exe" };
+    var ide = app.Select("antigravityIDE") with { Port = "7892" };
+    var back = ide.Select("chatgpt");
+    Check(back.Host == legacy.Host && back.Port == "8080" && back.ApplicationPath == "ChatGPT.exe", "Legacy target retained");
+    Check(back.Select("antigravity").Port == "7891" && back.Select("antigravityIDE").Port == "7892", "Per-target profiles preserved");
+    back.Save(file);
+    var loaded = Settings.Load(file);
+    Check(loaded.Select("antigravity").Port == "7891", "Profile serialization round trip");
+    Check(loaded.Language == "system" && AppLanguages.Codes.Contains(loaded.ResolvedLanguage), "System language resolves to supported language");
+    Check(TargetApp.Get("antigravityIDE").ProbeUrl != TargetApp.Get("chatgpt").ProbeUrl, "Independent probe targets");
+    Reject(() => back.Select("unknown"), "Unknown target accepted");
+    File.WriteAllText(file, "{\"Profiles\":{\"antigravity\":{\"Port\":\"0\"}}}"); Reject(() => Settings.Load(file), "Invalid profile accepted");
     Check(Directory.GetFiles(folder).Length == 1, "Temporary settings leaked");
 }
 finally { Directory.Delete(folder, true); }

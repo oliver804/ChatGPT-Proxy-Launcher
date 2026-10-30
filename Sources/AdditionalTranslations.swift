@@ -2,6 +2,11 @@
 enum AdditionalTranslations {
     static let values: [AppLanguage: [String: String]] = [
         .traditionalChinese: [
+            "运行中": "執行中",
+            "跟随系统": "跟隨系統",
+            "我的应用": "我的應用",
+            "后台服务": "背景服務",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "背景連線仍需實際請求驗證；未觀察到不代表未使用代理。",
             "ChatGPT 运行中": "ChatGPT 執行中",
             "ChatGPT 未运行": "ChatGPT 已停止",
             "独立连接，轻松启动": "專屬應用程式網路設定",
@@ -106,6 +111,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "獨立開源工具，與 OpenAI 沒有從屬或背書關係。",
         ],
         .russian: [
+            "运行中": "Работает",
+            "跟随系统": "Как в системе",
+            "我的应用": "Мои приложения",
+            "后台服务": "Фоновые службы",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "Фоновые соединения нужно проверять реальным запросом; отсутствие наблюдений не означает, что прокси не используется.",
             "ChatGPT 运行中": "ChatGPT работает",
             "ChatGPT 未运行": "ChatGPT остановлен",
             "独立连接，轻松启动": "Сетевые настройки для отдельного приложения",
@@ -210,6 +220,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Независимый инструмент с открытым исходным кодом. Не связан с OpenAI и не одобрен ею.",
         ],
         .persian: [
+            "运行中": "در حال اجرا",
+            "跟随系统": "پیروی از سیستم",
+            "我的应用": "برنامه‌های من",
+            "后台服务": "سرویس‌های پس‌زمینه",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "اتصال‌های پس‌زمینه باید با درخواست واقعی بررسی شوند؛ مشاهده نشدن به معنای استفاده نکردن از پراکسی نیست.",
             "ChatGPT 运行中": "ChatGPT در حال اجراست",
             "ChatGPT 未运行": "ChatGPT متوقف شده است",
             "独立连接，轻松启动": "تنظیمات شبکهٔ ویژهٔ برنامه",
@@ -314,6 +329,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "ابزار متن‌باز مستقل. وابسته به OpenAI نیست و تأیید آن را ندارد.",
         ],
         .belarusian: [
+            "运行中": "Працуе",
+            "跟随系统": "Як у сістэме",
+            "我的应用": "Мае праграмы",
+            "后台服务": "Фонавыя службы",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "Фонавыя злучэнні трэба правяраць рэальным запытам; адсутнасць назіранняў не азначае, што проксі не выкарыстоўваецца.",
             "ChatGPT 运行中": "ChatGPT працуе",
             "ChatGPT 未运行": "ChatGPT спынены",
             "独立连接，轻松启动": "Сеткавыя налады для асобнай праграмы",
@@ -418,6 +438,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Незалежны інструмент з адкрытым зыходным кодам. Не звязаны з OpenAI і не падтрымліваецца ёю.",
         ],
         .spanish: [
+            "运行中": "En ejecución",
+            "跟随系统": "Seguir el sistema",
+            "我的应用": "Mis aplicaciones",
+            "后台服务": "Servicios en segundo plano",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "Las conexiones en segundo plano requieren una solicitud real para verificarlas; no observarlas no significa que no usen el proxy.",
             "ChatGPT 运行中": "ChatGPT en ejecución",
             "ChatGPT 未运行": "ChatGPT detenido",
             "独立连接，轻松启动": "Configuración de red por aplicación",
@@ -522,6 +547,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "Herramienta independiente y de código abierto. No está afiliada a OpenAI ni cuenta con su respaldo.",
         ],
         .arabic: [
+            "运行中": "قيد التشغيل",
+            "跟随系统": "اتباع النظام",
+            "我的应用": "تطبيقاتي",
+            "后台服务": "خدمات الخلفية",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "تتطلب اتصالات الخلفية طلبًا فعليًا للتحقق؛ عدم رصدها لا يعني عدم استخدام الوكيل.",
             "ChatGPT 运行中": "ChatGPT قيد التشغيل",
             "ChatGPT 未运行": "ChatGPT متوقف",
             "独立连接，轻松启动": "إعدادات شبكة خاصة بالتطبيق",
@@ -626,6 +656,11 @@ enum AdditionalTranslations {
             "独立开源工具，与 OpenAI 无隶属或背书关系。": "أداة مستقلة مفتوحة المصدر. ليست تابعة لـ OpenAI ولا تحظى بتأييدها.",
         ],
         .portuguese: [
+            "运行中": "Em execução",
+            "跟随系统": "Seguir o sistema",
+            "我的应用": "Meus aplicativos",
+            "后台服务": "Serviços em segundo plano",
+            "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "As conexões em segundo plano precisam de uma solicitação real para verificação; não observá-las não significa que não usam o proxy.",
             "ChatGPT 运行中": "ChatGPT em execução",
             "ChatGPT 未运行": "ChatGPT parado",
             "独立连接，轻松启动": "Definições de rede por aplicação",

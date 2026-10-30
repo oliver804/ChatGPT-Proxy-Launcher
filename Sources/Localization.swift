@@ -47,6 +47,12 @@ enum L10n {
     // Chinese keys are also the source-language text. Arguments use positional replacement,
     // never printf parsing, so paths and command output containing percent signs stay literal.
     static let english: [String: String] = [
+        "运行中": "Running",
+        "跟随系统": "Follow system",
+        "我的应用": "My apps",
+        "后台服务": "Background services",
+        "后台连接尚需实际请求验证；未观察到不等于未使用代理。": "Background connections require a real request to verify; no observation does not mean no proxy use.",
+
         "ChatGPT 运行中": "ChatGPT running",
         "ChatGPT 未运行": "ChatGPT stopped",
         "独立连接，轻松启动": "App-specific network settings",

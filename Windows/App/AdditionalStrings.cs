@@ -8,6 +8,12 @@ public static class AdditionalStrings
         {
             ["zh-TW"] = new Dictionary<string, string>
             {
+                ["Language"] = "介面語言",
+                ["Apps"] = "我的應用",
+                ["Backend"] = "背景服務",
+                ["BackendLimit"] = "背景連線仍需實際請求驗證；未觀察到不代表未使用代理。",
+                ["Running"] = "執行中",
+                ["NotRunning"] = "未執行",
                 ["Tagline"] = "專屬路徑，輕鬆啟動。",
                 ["Heading"] = "你的應用程式，你的連線。",
                 ["Subtitle"] = "透過現有的 HTTP 代理啟動 ChatGPT。",
@@ -62,6 +68,12 @@ public static class AdditionalStrings
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["Language"] = "Язык",
+                ["Apps"] = "Мои приложения",
+                ["Backend"] = "Фоновые службы",
+                ["BackendLimit"] = "Фоновые соединения нужно проверять реальным запросом; отсутствие наблюдений не означает, что прокси не используется.",
+                ["Running"] = "Работает",
+                ["NotRunning"] = "Остановлено",
                 ["Tagline"] = "Отдельный маршрут. Простой запуск.",
                 ["Heading"] = "Ваше приложение. Ваше подключение.",
                 ["Subtitle"] = "Запустите ChatGPT через существующий HTTP-прокси.",
@@ -116,6 +128,12 @@ public static class AdditionalStrings
             },
             ["fa"] = new Dictionary<string, string>
             {
+                ["Language"] = "زبان",
+                ["Apps"] = "برنامه‌های من",
+                ["Backend"] = "سرویس‌های پس‌زمینه",
+                ["BackendLimit"] = "اتصال‌های پس‌زمینه باید با درخواست واقعی بررسی شوند؛ مشاهده نشدن به معنای استفاده نکردن از پراکسی نیست.",
+                ["Running"] = "در حال اجرا",
+                ["NotRunning"] = "متوقف",
                 ["Tagline"] = "مسیر ویژه. شروعی ساده‌تر.",
                 ["Heading"] = "برنامهٔ شما. اتصال شما.",
                 ["Subtitle"] = "ChatGPT را با پروکسی HTTP فعلی‌تان اجرا کنید.",
@@ -170,6 +188,12 @@ public static class AdditionalStrings
             },
             ["be"] = new Dictionary<string, string>
             {
+                ["Language"] = "Мова",
+                ["Apps"] = "Мае праграмы",
+                ["Backend"] = "Фонавыя службы",
+                ["BackendLimit"] = "Фонавыя злучэнні трэба правяраць рэальным запытам; адсутнасць назіранняў не азначае, што проксі не выкарыстоўваецца.",
+                ["Running"] = "Працуе",
+                ["NotRunning"] = "Спынена",
                 ["Tagline"] = "Асобны маршрут. Просты запуск.",
                 ["Heading"] = "Ваша праграма. Ваша злучэнне.",
                 ["Subtitle"] = "Запусціце ChatGPT праз ваш існуючы HTTP-проксі.",
@@ -224,6 +248,12 @@ public static class AdditionalStrings
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["Language"] = "Idioma",
+                ["Apps"] = "Mis aplicaciones",
+                ["Backend"] = "Servicios en segundo plano",
+                ["BackendLimit"] = "Las conexiones en segundo plano requieren una solicitud real para verificarlas; no observarlas no significa que no usen el proxy.",
+                ["Running"] = "En ejecución",
+                ["NotRunning"] = "Detenida",
                 ["Tagline"] = "Una ruta dedicada. Un inicio más sencillo.",
                 ["Heading"] = "Tu aplicación. Tu conexión.",
                 ["Subtitle"] = "Inicia ChatGPT con tu proxy HTTP actual.",
@@ -278,6 +308,12 @@ public static class AdditionalStrings
             },
             ["ar"] = new Dictionary<string, string>
             {
+                ["Language"] = "اللغة",
+                ["Apps"] = "تطبيقاتي",
+                ["Backend"] = "خدمات الخلفية",
+                ["BackendLimit"] = "تتطلب اتصالات الخلفية طلبًا فعليًا للتحقق؛ عدم رصدها لا يعني عدم استخدام الوكيل.",
+                ["Running"] = "قيد التشغيل",
+                ["NotRunning"] = "متوقف",
                 ["Tagline"] = "مسار مخصص. بداية أسهل.",
                 ["Heading"] = "تطبيقك. اتصالك.",
                 ["Subtitle"] = "شغّل ChatGPT عبر وكيل HTTP الموجود لديك.",
@@ -332,6 +368,12 @@ public static class AdditionalStrings
             },
             ["pt"] = new Dictionary<string, string>
             {
+                ["Language"] = "Idioma",
+                ["Apps"] = "Meus aplicativos",
+                ["Backend"] = "Serviços em segundo plano",
+                ["BackendLimit"] = "As conexões em segundo plano precisam de uma solicitação real para verificação; não observá-las não significa que não usam o proxy.",
+                ["Running"] = "Em execução",
+                ["NotRunning"] = "Parado",
                 ["Tagline"] = "Uma rota dedicada. Um início mais simples.",
                 ["Heading"] = "A sua aplicação. A sua ligação.",
                 ["Subtitle"] = "Inicie o ChatGPT com o seu proxy HTTP existente.",

@@ -14,9 +14,9 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (args.Length == 3 && args[0] == "--integration-test")
+        if (args.Length is 3 or 4 && args[0] == "--integration-test")
         {
-            try { Integration.Run(args[1], args[2]).GetAwaiter().GetResult(); return 0; }
+            try { Integration.Run(args[1], args[2], args.Length == 4 ? args[3] : "chatgpt").GetAwaiter().GetResult(); return 0; }
             catch (Exception ex) { File.WriteAllText(args[2], ex.ToString()); return 1; }
         }
         using var mutex = new Mutex(true, "Local\\LocalRouteLauncher", out var first);
@@ -59,6 +59,7 @@ public static class Program
                         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
                         using var file = File.Create(Path.Combine(args[1], $"windows-{language}-{theme}.png")); encoder.Save(file);
                     }
+                    windowApp.VerifyProfiles();
                     await windowApp.VerifyBusyControls();
                     windowApp.Close();
                     if (windowApp.IsVisible || windowApp.ShowInTaskbar) throw new InvalidOperationException("Close did not hide the window from the taskbar.");
@@ -72,5 +73,5 @@ public static class Program
         }
         return app.Run();
     }
-    public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.3.0";
+    public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.4.0";
 }

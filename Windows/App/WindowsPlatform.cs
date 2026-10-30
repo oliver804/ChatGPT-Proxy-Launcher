@@ -32,13 +32,13 @@ public static class WindowsPlatform
         return nodes.Select(e => new ProcessRow(e.GetProperty("ProcessId").GetInt32(), e.GetProperty("ParentProcessId").GetInt32(),
             e.GetProperty("ExecutablePath").GetString() ?? "", e.GetProperty("CommandLine").GetString() ?? "")).ToList();
     }
-    public static async Task<string[]> Discover()
+    public static async Task<string[]> Discover(string application = "chatgpt")
     {
         const string script = "@(Get-AppxPackage | Where-Object { $_.Name -in @('OpenAI.ChatGPT','OpenAI.Codex') } | ForEach-Object { $p=$_; $m=Get-AppxPackageManifest $p; @($m.Package.Applications.Application) | ForEach-Object { if ($_.Executable) { Join-Path $p.InstallLocation $_.Executable } } }) | ConvertTo-Json -Compress";
         var candidates = new List<string>();
         try
         {
-            var json = await RunScript(script);
+            var json = application == "chatgpt" ? await RunScript(script) : "";
             if (!string.IsNullOrWhiteSpace(json))
             {
                 using var doc = JsonDocument.Parse(json);
@@ -48,29 +48,42 @@ public static class WindowsPlatform
         }
         catch (Exception ex) when (ex is InvalidOperationException or JsonException) { /* Manual selection remains available. */ }
         var local = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-        candidates.Add(Path.Combine(local, "Programs", "ChatGPT", "ChatGPT.exe"));
-        candidates.Add(Path.Combine(local, "ChatGPT", "ChatGPT.exe"));
-        return candidates.Where(IsCompatible).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        var target = TargetApp.Get(application);
+        foreach (var root in new[] { Path.Combine(local, "Programs"), local, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) })
+        foreach (var executable in application == "antigravityIDE" ? new[] { target.Executable, "Antigravity.exe" } : new[] { target.Executable })
+            candidates.Add(Path.Combine(root, target.Folder, executable));
+        return candidates.Where(path => IsCompatible(path, application)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     }
-    public static bool IsCompatible(string path)
+    public static bool IsCompatible(string path, string application = "chatgpt")
     {
         try
         {
             var directory = Path.GetDirectoryName(Path.GetFullPath(path))!;
-            return File.Exists(path) && string.Equals(Path.GetFileName(path), "ChatGPT.exe", StringComparison.OrdinalIgnoreCase) &&
-                File.Exists(Path.Combine(directory, "resources", "app.asar")) && File.Exists(Path.Combine(directory, "icudtl.dat")) &&
-                File.Exists(Path.Combine(directory, "chrome_100_percent.pak"));
+            var target = TargetApp.Get(application);
+            var file = Path.GetFileName(path);
+            if (!File.Exists(path) || !(string.Equals(file, target.Executable, StringComparison.OrdinalIgnoreCase) ||
+                application == "antigravityIDE" && string.Equals(file, "Antigravity.exe", StringComparison.OrdinalIgnoreCase)) ||
+                !File.Exists(Path.Combine(directory, "icudtl.dat")) || !File.Exists(Path.Combine(directory, "chrome_100_percent.pak"))) return false;
+            if (application == "antigravityIDE")
+            {
+                var product = Path.Combine(directory, "resources", "app", "product.json");
+                if (!File.Exists(product)) return false;
+                using var data = JsonDocument.Parse(File.ReadAllText(product));
+                return data.RootElement.TryGetProperty("applicationName", out var name) && name.GetString() == "antigravity-ide";
+            }
+            if (!File.Exists(Path.Combine(directory, "resources", "app.asar"))) return false;
+            return application == "chatgpt" || string.Equals(FileVersionInfo.GetVersionInfo(path).ProductName, "Antigravity", StringComparison.OrdinalIgnoreCase);
         }
-        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException) { return false; }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or JsonException) { return false; }
     }
     public static List<ProcessRow> Roots(string path, IEnumerable<ProcessRow> rows) => rows.Where(p => string.Equals(p.Path, path, StringComparison.OrdinalIgnoreCase) && !SplitArguments(p.CommandLine).Any(a => a.StartsWith("--type=", StringComparison.Ordinal))).ToList();
-    public static async Task<int> Launch(string path, ProxyEndpoint endpoint)
+    public static async Task<int> Launch(string path, ProxyEndpoint endpoint, string application = "chatgpt")
     {
         path = Path.GetFullPath(path);
-        if (!IsCompatible(path)) throw new InvalidOperationException("InvalidApplication");
+        if (!IsCompatible(path, application)) throw new InvalidOperationException("InvalidApplication");
         var rows = await Processes();
         // Refuse ambiguous same-name processes instead of accidentally starting a second instance.
-        foreach (var process in Process.GetProcessesByName("ChatGPT"))
+        foreach (var process in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(path)))
         {
             using (process)
                 if (!rows.Any(row => row.Pid == process.Id && row.Path.Length > 0 && !string.Equals(row.Path, path, StringComparison.OrdinalIgnoreCase)))

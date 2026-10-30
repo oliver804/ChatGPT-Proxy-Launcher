@@ -1,5 +1,13 @@
 # Changelog / 更新日志
 
+## 1.4.0 — In development / 开发测试中
+
+- Added separate ChatGPT, Antigravity App and Antigravity IDE profiles and launch controls on macOS / Windows; existing ChatGPT preferences are retained.
+- Added a multi-app sidebar and menu bar / tray controls, global nine-language selection and Follow system.
+- Added target-specific probes and separate observations for recognized language-server descendants; connection snapshots do not establish full model or account access.
+- Expanded migration, profile isolation, language, target validation and installed-app smoke coverage. Existing icon and Dock lifecycle behavior is retained.
+
+
 ## 1.3.0 — 2026-10-26
 
 - Add seven interface languages to macOS and Windows: Traditional Chinese, Russian, Persian, Belarusian, Spanish, Arabic and Portuguese, alongside English and Simplified Chinese.

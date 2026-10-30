@@ -40,6 +40,24 @@ enum CoreTests {
         check(!ProxyProbe.interpret(CommandResult(status: 56, output: "\n407 000\n")).usable, "proxy auth must fail")
         let result = try Commands.run("/usr/bin/printf", ["%s", "literal;$(id)"])
         check(result.output == "literal;$(id)", "arguments never evaluated by shell")
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("lrl-targets-" + UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        for (kind, id) in [(ApplicationKind.chatgpt, "com.openai.codex"), (.antigravity, "com.google.antigravity"), (.antigravityIDE, "com.google.antigravity-ide")] {
+            let app = folder.appendingPathComponent(kind.bundleName + ".app")
+            let executable = app.appendingPathComponent("Contents/MacOS/Test")
+            try FileManager.default.createDirectory(at: executable.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data("#!/bin/sh\nexit 0\n".utf8).write(to: executable)
+            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: executable.path)
+            let plist: [String: Any] = ["CFBundleIdentifier": id, "CFBundleName": kind.bundleName, "CFBundleExecutable": "Test", "CFBundlePackageType": "APPL", "ChromiumBaseVersion": "test"]
+            try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: app.appendingPathComponent("Contents/Info.plist"))
+            let found = try TargetApplication(path: app.path, kind: kind)
+            check(found.kind == kind && found.identifier == id, "Recognize exact target identity")
+            do { _ = try TargetApplication(path: app.path, kind: kind == .chatgpt ? .antigravity : .chatgpt); fatalError("Cross-app selection accepted") }
+            catch is LauncherError { count += 1 }
+        }
+        check(!ApplicationKind.antigravity.accepts(identifier: "com.lbjlaq.antigravity-tools"), "Reject unrelated Antigravity Tools")
+        check(ApplicationKind.antigravityIDE.probeURL != ApplicationKind.chatgpt.probeURL, "Probe target isolation")
         print("PASS: \(count) checks")
     }
 }

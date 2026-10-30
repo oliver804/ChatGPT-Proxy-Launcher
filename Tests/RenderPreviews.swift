@@ -11,7 +11,9 @@ enum RenderPreviews {
         defer { defaults.removePersistentDomain(forName: "local.chatgpt-proxy-launcher.preview") }
         for language in AppLanguage.allCases {
             defaults.set(language.rawValue, forKey: "interfaceLanguage")
-            let model = LauncherModel(defaults: defaults, monitor: false, previewVersion: try String(contentsOfFile: "VERSION").trimmingCharacters(in: .whitespacesAndNewlines))
+            let store = LauncherStore(defaults: defaults, monitor: false, previewVersion: try String(contentsOfFile: "VERSION").trimmingCharacters(in: .whitespacesAndNewlines))
+            store.selected = .antigravity
+            let model = store.current
             model.running = true
             model.checkedAt = Date(timeIntervalSince1970: 1_760_000_000)
             model.proxyOK = true; model.parameterOK = true; model.connectionOK = true
@@ -21,8 +23,8 @@ enum RenderPreviews {
             model.message = model.text("检查完成。连接情况是此刻的快照，可在 ChatGPT 请求后再次检查。")
             for dark in [false, true] {
                 let suffix = "\(language.rawValue)-\(dark ? "dark" : "light")"
-                try render(LauncherView(model: model), name: "window-" + suffix, dark: dark)
-                try render(MenuPanel(model: model), name: "menu-" + suffix, dark: dark)
+                try render(LauncherWindow(store: store), name: "window-" + suffix, dark: dark)
+                try render(MenuPanel(store: store), name: "menu-" + suffix, dark: dark)
             }
         }
         print("PASS: rendered nine language options in light/dark windows and menus")

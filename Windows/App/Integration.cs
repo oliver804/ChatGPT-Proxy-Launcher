@@ -7,7 +7,7 @@ namespace LocalRouteLauncher;
 
 internal static class Integration
 {
-    public static async Task Run(string fixture, string resultPath)
+    public static async Task Run(string fixture, string resultPath, string application = "chatgpt")
     {
         fixture = Path.GetFullPath(fixture); Directory.CreateDirectory(Path.GetDirectoryName(resultPath)!);
         var report = resultPath + ".fixture.json";
@@ -19,8 +19,9 @@ internal static class Integration
         try
         {
             Environment.SetEnvironmentVariable("LRL_FIXTURE_REPORT", report);
-            if (!WindowsPlatform.IsCompatible(fixture)) throw new Exception("Fixture compatibility markers not found");
-            pid = await WindowsPlatform.Launch(fixture, endpoint);
+            if (!WindowsPlatform.IsCompatible(fixture, application)) throw new Exception("Fixture compatibility markers not found");
+            if (TargetApp.All.Any(a => a.Id != application && WindowsPlatform.IsCompatible(fixture, a.Id))) throw new Exception("Fixture accepted for a different target");
+            pid = await WindowsPlatform.Launch(fixture, endpoint, application);
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             using var connection = await listener.AcceptTcpClientAsync(deadline.Token);
             while (!File.Exists(report)) await Task.Delay(100, deadline.Token);
@@ -36,7 +37,7 @@ internal static class Integration
             if (!WindowsPlatform.Connections(family).Any(c => c.Pid == pid && endpoint.Matches(c.Remote, c.Port))) throw new Exception("PID-scoped TCP connection not found");
             if (WindowsPlatform.Connections([]).Count != 0) throw new Exception("Unrelated connection exposed");
             bool duplicateRejected = false;
-            try { await WindowsPlatform.Launch(fixture, endpoint); } catch (InvalidOperationException ex) when (ex.Message == "AlreadyRunning") { duplicateRejected = true; }
+            try { await WindowsPlatform.Launch(fixture, endpoint, application); } catch (InvalidOperationException ex) when (ex.Message == "AlreadyRunning") { duplicateRejected = true; }
             if (!duplicateRejected) throw new Exception("Duplicate launch allowed");
             await WindowsPlatform.Stop(fixture);
             if (WindowsPlatform.Roots(fixture, await WindowsPlatform.Processes()).Count != 0) throw new Exception("Graceful stop failed");

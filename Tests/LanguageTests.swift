@@ -75,6 +75,37 @@ enum LanguageTests {
                 check(!value.isEmpty && value != L10n.english[key], "Translated \(language.rawValue) message")
             }
         }
+        defaults.set("localhost", forKey: "proxyHost")
+        defaults.set("8080", forKey: "proxyPort")
+        let store = LauncherStore(defaults: defaults, monitor: false)
+        check(store.models[.chatgpt]!.port == "8080", "Legacy ChatGPT settings retained")
+        check(store.models[.antigravity]!.port == "7890", "New apps do not inherit legacy overrides")
+        store.models[.antigravity]!.port = "7891"
+        store.models[.antigravity]!.save()
+        store.models[.antigravityIDE]!.port = "7892" // Draft only.
+        store.selected = .antigravityIDE
+        store.setLanguage(.arabic)
+        check(store.models.values.allSatisfy { $0.language == .arabic }, "Global language synchronizes every app")
+        check(store.current.port == "7892" && store.models[.chatgpt]!.port == "8080", "Language and selection preserve independent drafts")
+        store.setLanguage(nil)
+        check(store.models.values.allSatisfy { $0.followsSystem }, "Follow-system synchronizes every app")
+        let restored = LauncherStore(defaults: defaults, monitor: false)
+        check(restored.selected == .antigravityIDE, "Selected app persists")
+        check(restored.models[.antigravity]!.port == "7891" && restored.current.port == "7890", "Only saved per-app configuration persists")
+        check(restored.models[.chatgpt]!.host == "localhost", "Other app settings unchanged")
+        store.models[.antigravity]!.busy = true
+        let before = store.current.language
+        store.setLanguage(.english)
+        check(store.current.language == before, "No mixed-language async result while any app is busy")
+        store.models[.antigravity]!.busy = false
+        for language in AppLanguage.allCases {
+            store.setLanguage(language)
+            check(store.current.text("运行中") != "运行中" || language == .chinese, "Running state localized")
+            let probe = ProxyProbe.interpret(CommandResult(status: 0, output: "200 403"), language: language, kind: .antigravity)
+            check(probe.description.contains("antigravity.google") && !probe.description.contains("chatgpt.com"), "Target-specific probe host")
+            let report = snapshot.report(endpoint: endpoint, probe: probe, language: language, kind: .antigravityIDE)
+            check(report.contains("Antigravity IDE") && !report.contains("ChatGPT"), "Target-specific report")
+        }
         print("PASS: \(count) language and preference checks")
     }
 }

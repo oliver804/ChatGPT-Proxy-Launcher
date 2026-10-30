@@ -39,3 +39,5 @@ Windows 将语言、外观、地址、端口及应用路径保存到 `%LOCALAPPD
 官网同时使用 Microsoft Clarity（项目 ID：`z0krfkfwwu`），独立于 Google Analytics 加载，用于分析访客行为和改进页面体验。Clarity 将页面及交互数据（例如浏览、点击、滚动，以及浏览器和设备信息）发送给 Microsoft，生成热力图和会话回放。它可能使用第一方、第三方 Cookie 及其他跟踪技术；实际采集受项目设置、同意状态、浏览器和网络条件影响，不保证在所有地区均可访问。
 
 会话回放重建的是官网页面交互，不是录制电脑屏幕；不会访问启动器内的代理配置或 ChatGPT 对话。本次接入未添加自定义用户身份标识，也未覆盖 Clarity 的默认遮罩设置。Microsoft 的数据处理和使用方式见 [Microsoft 隐私声明](https://privacy.microsoft.com/privacystatement)，另见 [Clarity 隐私信息](https://clarity.microsoft.com/privacy)。
+
+v1.4.0：Antigravity App / IDE 的无凭据 HEAD 探测目标为 `https://antigravity.google/`。每个应用配置独立保存在本机；不修改目标应用配置、不提交 AI 提示词。

@@ -2,7 +2,7 @@
 <p align="center">管理应用启动网络配置的 macOS / Windows 工具</p>
 
 <p align="center">
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0"><img src="https://img.shields.io/badge/version-1.3.0-168570" alt="Version 1.3.0"></a>
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-1.4.0-168570" alt="Version 1.4.0"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-333333" alt="macOS 13+">
   <img src="https://img.shields.io/badge/Apple_Silicon-arm64-333333" alt="Apple Silicon arm64">
   <img src="https://img.shields.io/badge/Windows-10%2F11_x64-0078D4" alt="Windows 10 / 11 x64">
@@ -11,11 +11,13 @@
 <p align="center">
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
   <a href="https://oliver804.github.io/ChatGPT-Proxy-Launcher/">官网</a> ·
-  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0">下载安装</a> ·
+  <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0">下载安装</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
   <a href="https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues">反馈问题</a>
 </p>
+
+> v1.4.0 开发测试版本，尚未正式发布。当前稳定版见 [v1.3.0](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0)。
 
 ## Preview
 
@@ -30,7 +32,7 @@
   </tr>
 </table>
 
-<sub>macOS v1.3.0 界面，使用示例诊断数据渲染。应用内支持九种语言切换。</sub>
+<sub>macOS v1.4.0 界面，使用示例诊断数据渲染。应用内支持九种语言切换。</sub>
 
 
 <details>
@@ -46,17 +48,18 @@
 
 ## 简介
 
-Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Electron 版 ChatGPT 时传入配置。它使用你已运行的代理，不提供网络接入或代理服务。
+Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Electron 版 ChatGPT、Antigravity App 或 Antigravity IDE 时传入配置。它使用你已运行的代理，不提供网络接入或代理服务。
 
 它通过应用支持的启动参数与环境变量设置代理，不修改系统代理或 DNS。macOS 使用 SwiftUI + AppKit，Windows 使用 WPF 并内置 .NET 运行库。
 
 ## 功能
 
-- **独立代理**：保存地址与端口，支持无需认证的 HTTP 代理和兼容的混合代理端口。
-- **启动与停止**：携带代理配置启动 ChatGPT，也可请求其正常退出。
+- **多应用管理**：左侧选择 ChatGPT、Antigravity App 或 Antigravity IDE，分别启停、保存配置和检查连接。
+- **独立代理**：每个应用独立保存地址与端口，支持无需认证的 HTTP 代理和兼容的混合代理端口。
+- **启动与停止**：携带代理配置启动所选应用，也可请求其正常退出；不会强制关闭未保存的工作。
 - **连接检查**：查看代理连通性、实际启动参数和应用 TCP 连接。
 - **菜单栏 / 系统托盘**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 或任务栏入口。
-- **原生界面**：支持浅色、深色外观；九种语言界面即时切换并记住选择，项目文档提供中英文。
+- **原生界面**：支持浅色、深色外观；主窗口和菜单栏 / 托盘均可切换九种语言，支持跟随系统并记住选择，项目文档提供中英文。
 
 界面语言：简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية、Português。
 
@@ -64,27 +67,27 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 
 | 版本 | 运行环境 | 下载 |
 | --- | --- | --- |
-| **v1.3.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.3.0/Local-Route-Launcher-1.3.0-arm64.dmg) |
-| **v1.3.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.3.0/Local-Route-Launcher-1.3.0-windows-x64-setup.exe) |
+| **v1.4.0** | Apple Silicon · macOS 13+ | [下载 DMG](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg) |
+| **v1.4.0** | Windows 10 22H2 / Windows 11 · x64 | [下载 EXE 安装包](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe) |
 
-打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.3.0)同时提供源码包和 SHA-256 校验文件。
+打开 DMG，将 **Local Route Launcher** 拖入 **Applications（应用程序）**。[发布页面](https://github.com/oliver804/ChatGPT-Proxy-Launcher/releases/tag/v1.4.0)同时提供源码包和 SHA-256 校验文件。
 
-> 仅支持可识别的 **Electron 版 ChatGPT**，不支持旧版原生应用；当前安装包不支持 Intel Mac。
+> 支持可识别的 **Electron 版 ChatGPT、Antigravity App 和 Antigravity IDE**，不支持旧版原生 ChatGPT；当前安装包不支持 Intel Mac。
 
-**Windows：**运行 EXE 安装包，按提示安装到当前用户，无需另装 .NET。应用支持九种语言、系统托盘和深浅外观。自动查找已安装的兼容应用；找不到时使用「选择应用」指定 `ChatGPT.exe`。Windows ARM64 尚未验证，不作为支持平台。
+**Windows：**运行 EXE 安装包，按提示安装到当前用户，无需另装 .NET。应用支持九种语言、系统托盘和深浅外观。自动查找已安装的兼容应用；找不到时使用「选择应用」指定所选应用的 EXE。Windows ARM64 尚未验证，不作为支持平台。
 
 安装包暂未进行 Authenticode 签名，可能显示 SmartScreen 提示。请核对官方 Release 来源与 SHA-256；不要关闭系统安全功能。若组织策略禁止安装，请联系管理员。
 
 ## 快速开始
 
 1. 保持你有权使用的本地 HTTP 代理运行；在启动器语言菜单中选择所需语言。
-2. 在启动器填写代理地址与端口，例如 `127.0.0.1` 和 `7890`，点击 **保存设置**。
-3. 完全退出已经运行的 ChatGPT，再点击 **启动 ChatGPT**。
+2. 先在左侧选择应用，再填写代理地址与端口，例如 `127.0.0.1` 和 `7890`，点击 **保存设置**。
+3. 保存工作并正常退出所选应用，再点击对应的 **启动** 按钮。
 4. 点击 **查看代理情况** 检查连接，按需打开详细报告。
 
-**修改配置后需要重启 ChatGPT，后续也请通过启动器打开。** 从 Dock 直接打开 ChatGPT，不会自动附带这里保存的代理配置。
+**修改配置后需要重启对应应用，后续也请通过启动器打开。** 从 Dock 直接打开应用，不会自动附带这里保存的代理配置。
 
-关闭主窗口后，仍可从 macOS 菜单栏或 Windows 系统托盘操作。退出启动器不会停止已运行的 ChatGPT。
+关闭主窗口后，仍可从 macOS 菜单栏或 Windows 系统托盘操作。退出启动器不会停止已运行的应用。
 
 ## 常见问题
 
@@ -110,8 +113,9 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 | 检查项 | 含义 |
 | --- | --- |
 | 代理连通 | 经指定代理建立 CONNECT 隧道并获得 TLS 网站响应 |
-| 启动参数 | ChatGPT 主进程携带与当前配置匹配的代理参数 |
+| 启动参数 | 所选应用主进程携带与当前配置匹配的代理参数 |
 | 实际连接 | 快照中观察到应用或子进程到代理的 TCP 连接 |
+| 后台服务 | 独立显示识别到的 language_server 子进程及其代理连接；需实际请求验证 |
 
 HTTP 403 只能说明隧道与 TLS 检查取得了响应，不代表聊天或账号可用。连接检查是即时快照，不能证明全部流量都经过代理；没有观察到连接也不代表直连。域名代理地址可能无法与快照中的数字 IP 匹配。
 
@@ -138,7 +142,7 @@ make dmg         # 生成 DMG、源码 ZIP 和校验文件
 make verify      # 验证安装包、签名与图标
 ```
 
-应用输出到 `build/release/`，发布文件输出到 `dist/1.3.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
+应用输出到 `build/release/`，发布文件输出到 `dist/1.4.0/`。[`VERSION`](VERSION) 是构建版本的唯一来源。
 
 `make integration`、`make ui` 需要已登录的 macOS 图形会话，仅操作独立测试应用与窗口；`make previews` 可生成模拟数据界面预览。
 
@@ -148,17 +152,21 @@ make verify      # 验证安装包、签名与图标
 ./scripts/build-windows.ps1 -Test
 ```
 
-安装包输出到 `dist/1.3.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
+安装包输出到 `dist/1.4.0/`。测试使用隔离应用，不操作真实 ChatGPT 账号。
 
 欢迎提交 [Issue](https://github.com/oliver804/ChatGPT-Proxy-Launcher/issues) 或 PR。开发细节参见[贡献指南](CONTRIBUTING.md)、[架构说明](docs/ARCHITECTURE.md)和[发布指南](docs/RELEASING.md)。
 
 ## 隐私与许可证
 
-无账号登录、遥测或自动上传；配置保存在本机。连接检查会经指定代理向 `chatgpt.com` 发起不携带账号凭据的 HEAD 请求。诊断报告在本地显示，分享前请移除私人路径、内部地址等敏感信息。[隐私说明](docs/PRIVACY.md) · [安全问题](SECURITY.md)
+无账号登录、遥测或自动上传；配置保存在本机。连接检查会经指定代理向 `chatgpt.com`（ChatGPT）或 `antigravity.google`（Antigravity）发起不携带账号凭据的 HEAD 请求。诊断报告在本地显示，分享前请移除私人路径、内部地址等敏感信息。[隐私说明](docs/PRIVACY.md) · [安全问题](SECURITY.md)
 
 **作者：Oliver** · [oliver804x@gmail.com](mailto:oliver804x@gmail.com)<br>
 **许可证：[MIT](LICENSE)** · [更新日志](CHANGELOG.md)
 
-独立项目，与 OpenAI 无隶属、赞助或背书关系。ChatGPT 是 OpenAI 的商标，仅用于说明兼容性。请仅用于有权访问的网络和服务，并遵守适用法律及服务条款。[使用边界](docs/USAGE.md) · [第三方说明](THIRD_PARTY_NOTICES.md) · [项目介绍](docs/ANNOUNCEMENT.md)。
+独立项目，与 OpenAI、Google 无隶属、赞助或背书关系。ChatGPT 和 Antigravity 名称仅用于说明兼容性，商标归各自权利人所有。请仅用于有权访问的网络和服务，并遵守适用法律及服务条款。[使用边界](docs/USAGE.md) · [第三方说明](THIRD_PARTY_NOTICES.md) · [项目介绍](docs/ANNOUNCEMENT.md)。
 
 为保持已有链接有效，仓库网址保持不变；应用对外名称为 **Local Route Launcher**。
+
+### v1.4.0 验证范围
+
+本机 macOS 已验证 Antigravity App 2.28.1、IDE 2.6.0 的识别、携带代理参数启动及代理 TCP 连接。启动器不提交 AI 提示词，不声称已验证账号权限、所有模型请求、远程开发或所有后台进程。Windows 使用隔离夹具验证启动与连接机制，真实安装包仍需目标机器验收。

@@ -23,6 +23,16 @@ $exe = Join-Path $install 'LocalRouteLauncher.exe'
 if (!(Test-Path $exe)) { throw 'Installer did not create the app' }
 # Test the installed self-contained executable, not dotnet run.
 Run-App $exe "--integration-test `"$(Join-Path $fixture 'ChatGPT.exe')`" `"$(Join-Path $results 'integration.txt')`""
+# Build distinct test-owned executables to exercise exact App / IDE selection.
+foreach ($target in @(@{ Id='antigravity'; Name='Antigravity' }, @{ Id='antigravityIDE'; Name='Antigravity IDE' })) {
+    $targetFolder = Join-Path $build ("fixture " + $target.Id)
+    dotnet publish Windows/Fixture -c Release -r win-x64 --self-contained true -o $targetFolder "-p:AssemblyName=$($target.Name)" "-p:Product=$($target.Name)"
+    if ($LASTEXITCODE -ne 0) { throw 'Target fixture build failed' }
+    New-Item -ItemType Directory -Force (Join-Path $targetFolder 'resources/app') | Out-Null
+    foreach ($marker in @('resources/app.asar', 'icudtl.dat', 'chrome_100_percent.pak')) { Set-Content (Join-Path $targetFolder $marker) 'Integration fixture only' }
+    if ($target.Id -eq 'antigravityIDE') { Set-Content (Join-Path $targetFolder 'resources/app/product.json') '{"applicationName":"antigravity-ide"}' }
+    Run-App $exe "--integration-test `"$(Join-Path $targetFolder ($target.Name + '.exe'))`" `"$(Join-Path $results ($target.Id + '-integration.txt'))`" $($target.Id)"
+}
 Run-App $exe "--smoke-test `"$results`""
 if (!(Test-Path (Join-Path $results 'ui-result.txt'))) { throw 'UI smoke test did not complete' }
 Get-Content (Join-Path $results 'integration.txt'), (Join-Path $results 'ui-result.txt')

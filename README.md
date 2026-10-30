@@ -180,11 +180,3 @@ make verify      # 验证安装包、签名与图标
 **许可证：[MIT](LICENSE)** · [更新日志](CHANGELOG.md)
 
 独立项目，与 OpenAI、Google 无隶属、赞助或背书关系。ChatGPT 和 Antigravity 名称仅用于说明兼容性，商标归各自权利人所有。请仅用于有权访问的网络和服务，并遵守适用法律及服务条款。[使用边界](docs/USAGE.md) · [第三方说明](THIRD_PARTY_NOTICES.md) · [项目介绍](docs/ANNOUNCEMENT.md)。
-
-为保持已有链接有效，仓库网址保持不变；应用对外名称为 **Local Route Launcher**。
-
-### v1.4.0 验证范围
-
-本机 macOS 已验证 Antigravity App 2.28.1、IDE 2.6.0 的识别、携带代理参数启动及代理 TCP 连接。启动器不提交 AI 提示词，不声称已验证账号权限、所有模型请求、远程开发或所有后台进程。Windows 使用隔离夹具验证启动与连接机制，真实安装包仍需目标机器验收。
-
-新增紧凑主窗口及菜单栏/托盘布局，右上角统一提供语言、外观与 GitHub 入口。仅在有稳定新版安装包时显示“有更新”，点击直接下载对应平台安装包，无中间弹窗。设计约定见 [UI 设计记忆](docs/UI-DESIGN-1.4.md)。

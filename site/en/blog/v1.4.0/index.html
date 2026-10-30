@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Google Analytics and Microsoft Clarity are disclosed in the site footer. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVHYT7RFW9"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config', 'G-QVHYT7RFW9');</script>
+  <script type="text/javascript" id="clarity-tracking">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window, document, "clarity", "script", "z0krfkfwwu");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="8eRDF6N91aW9TyLi74Nr5WRXzjcHKN9oCjXirlSPpRA">
+  <meta name="msvalidate.01" content="65FC2BE70902B9C77D71057AD7075020">
+  <meta name="baidu-site-verification" content="codeva-K3lErbCF7Q">
+  <meta name="sogou_site_verification" content="Wid5BHwv2Q">
+  <meta name="theme-color" content="#f7faf8">
+  <title>Per-app proxy launch for ChatGPT and Antigravity | Local Route Launcher 1.4.0</title>
+  <meta name="description" content="Local Route Launcher 1.4.0 adds separate HTTP proxy profiles for ChatGPT, Antigravity App and IDE on macOS and Windows. Read the release guide, compatibility notes and download links.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/">
+  <link rel="alternate" hreflang="zh-CN" href="https://oliver804.github.io/Local-Route-Launcher/blog/v1.4.0/">
+  <link rel="alternate" hreflang="en" href="https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/">
+  <link rel="alternate" hreflang="x-default" href="https://oliver804.github.io/Local-Route-Launcher/blog/v1.4.0/">
+  <link rel="icon" type="image/png" href="../../../assets/icon.png">
+  <link rel="stylesheet" href="../../../style.css">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Local Route Launcher">
+  <meta property="og:title" content="Per-app proxy launch for ChatGPT and Antigravity | Local Route Launcher 1.4.0">
+  <meta property="og:description" content="Local Route Launcher 1.4.0 adds separate HTTP proxy profiles for ChatGPT, Antigravity App and IDE on macOS and Windows. Read the release guide, compatibility notes and download links.">
+  <meta property="og:url" content="https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/">
+  <meta property="og:image" content="https://oliver804.github.io/Local-Route-Launcher/assets/preview-dark.en.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Per-app proxy launch for ChatGPT and Antigravity | Local Route Launcher 1.4.0","description":"Local Route Launcher 1.4.0 adds separate HTTP proxy profiles for ChatGPT, Antigravity App and IDE on macOS and Windows. Read the release guide, compatibility notes and download links.","url":"https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/","mainEntityOfPage":"https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/","datePublished":"2026-10-30","dateModified":"2026-10-30","inLanguage":"en","author":{"@type":"Person","name":"Oliver"},"publisher":{"@type":"Organization","name":"Local Route Launcher"},"image":"https://oliver804.github.io/Local-Route-Launcher/assets/preview-dark.en.png"}</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">1.4.0: three apps, separate connection profiles</a>
+  <header class="header wrap"><a class="brand" href="../../../" aria-label="Local Route Launcher"><img src="../../../assets/icon.png" width="42" height="42" alt=""><span>Local Route <b>Launcher</b></span></a><nav aria-label="Navigation"><a href="../../../">Back to home</a><a href="https://oliver804.github.io/Local-Route-Launcher/blog/v1.4.0/" lang="zh-CN" class="language">中文 ↗</a><a class="nav-github" href="https://github.com/oliver804/Local-Route-Launcher">GitHub ↗</a></nav></header>
+  <main id="main" class="article-page wrap"><article><div class="eyebrow">LOCAL ROUTE LAUNCHER · 1.4.0</div><h1>1.4.0: three apps, separate connection profiles</h1><p class="article-lead">Local Route Launcher now manages ChatGPT, Antigravity App and Antigravity IDE from one window. Each app keeps its own proxy host, port and installation path. The launcher passes those settings when opening a compatible app without changing the system proxy or DNS.</p><figure><img src="../../../assets/preview-dark.en.png" width="720" height="800" loading="eager" alt="Local Route Launcher 1.4.0 English macOS interface"></figure><section><h2>What changed</h2><ul><li>Separate settings and connection status for ChatGPT, Antigravity App and Antigravity IDE.</li><li>A three-card main window, plus macOS menu-bar and Windows system-tray controls after closing it.</li><li>Nine interface languages with system, light and dark appearance.</li><li>An update badge only when GitHub offers a newer stable release with an installer for your platform; clicking downloads it in your browser.</li></ul></section><section><h2>Get started</h2><ol><li>Keep an HTTP or mixed proxy port you are authorized to use running.</li><li>Choose a target app and save its proxy host, port and installation path.</li><li>Fully quit the target app, then open it through the launcher; restart it after changing settings.</li><li>After an actual app request, inspect proxy reachability, launch arguments and connection snapshots.</li></ol></section><section><h2>Compatibility and limits</h2><p>Supports detectable compatible Electron builds on Apple Silicon Macs with macOS 13+, and Windows 10 22H2 / Windows 11 x64. Diagnostics are snapshots, not proof that all traffic uses the proxy or that an account or model works. The launcher does not provide a proxy service. Use only authorized networks and services in accordance with applicable laws and terms.</p></section><section><h2>Download 1.4.0</h2><div class="article-actions"><a class="button primary" href="https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-arm64.dmg">Download macOS DMG</a><a class="button secondary" href="https://github.com/oliver804/Local-Route-Launcher/releases/download/v1.4.0/Local-Route-Launcher-1.4.0-windows-x64-setup.exe">Download Windows EXE</a></div><p><a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0">GitHub Release ↗</a></p></section></article></main>
+  <footer class="footer wrap"><div><a class="footer-brand" href="../../../">Local Route Launcher</a><p>© 2026 Oliver · Independent open-source project. Not affiliated with or endorsed by OpenAI or Google. Product names identify compatibility only; their owners retain their trademarks.</p><p>Website visits are measured with Google Analytics and Microsoft Clarity, including heatmaps and session replay.</p></div><div class="footer-links"><a href="https://github.com/oliver804/Local-Route-Launcher/blob/main/docs/PRIVACY.en.md">Privacy</a><a href="https://github.com/oliver804/Local-Route-Launcher">GitHub ↗</a><a href="mailto:oliver804x@gmail.com">Oliver</a></div></footer>
+</body>
+</html>

@@ -12,12 +12,13 @@
   <a href="README.md">简体中文</a> · <b>English</b><br>
   <a href="https://oliver804.github.io/Local-Route-Launcher/en/">Website</a> ·
   <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0">Download</a> ·
+  <a href="https://oliver804.github.io/Local-Route-Launcher/en/blog/v1.4.0/">Release article</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#faq">FAQ</a> ·
   <a href="https://github.com/oliver804/Local-Route-Launcher/issues">Report an issue</a>
 </p>
 
-> v1.4.0 is under development and testing, not yet publicly released. The current stable release is [v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0).
+> Current stable release: [v1.4.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0), with separate profiles for ChatGPT, Antigravity App and Antigravity IDE.
 
 ## Preview
 
@@ -60,6 +61,7 @@ It uses application-supported launch arguments and environment variables, withou
 - **Connection checks**: inspect proxy connectivity, actual launch arguments, and application TCP connections.
 - **Menu bar / system tray**: start, stop, and check status; closing the window hides its Dock or taskbar entry.
 - **Native interface**: light and dark appearance; instant switching among nine interface languages, with the choice saved for future launches.
+- **Launcher update reminder**: appears only for a newer stable GitHub release with an installer for your platform; clicking opens its download in your browser.
 
 Interface languages: English, Simplified Chinese, Traditional Chinese, Russian, Persian, Belarusian, Spanish, Arabic, and Portuguese.
 
@@ -129,6 +131,20 @@ HTTP 403 indicates a response during the tunnel and TLS check, not working chat 
 
 </details>
 
+<details>
+<summary><b>How do I use Antigravity App or IDE?</b></summary>
+
+Select the app in the sidebar and save its own proxy host, port and installation path. Fully quit the target app, then launch it through Local Route Launcher. Each app keeps separate settings. Check again after a real request to observe background-service connections.
+
+</details>
+
+<details>
+<summary><b>When does the update badge appear? Does it install automatically?</b></summary>
+
+The badge appears only when GitHub has a newer stable release with an installer for your platform. Clicking opens the installer download in your browser; you run it yourself. Offline checks and current versions do not interrupt your work.
+
+</details>
+
 ## Development
 
 **macOS development:** requires an Apple Silicon Mac, Xcode Command Line Tools (Swift 5.9+), and Python 3.
@@ -163,8 +179,6 @@ No login, telemetry, or automatic uploads; settings stay on your device. Connect
 **License: [MIT](LICENSE)** · [Changelog](CHANGELOG.md)
 
 Independent project, not affiliated with, sponsored by, or endorsed by OpenAI or Google. Product names and trademarks belong to their respective owners and identify compatibility only. Use only with networks and services you are authorized to access; applicable laws and service terms still apply. [Usage boundaries](docs/USAGE.en.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Project introduction](docs/ANNOUNCEMENT.en.md).
-
-The existing repository URL is retained for link continuity; the public app name is **Local Route Launcher**.
 
 ### Multi-app support in v1.4.0
 

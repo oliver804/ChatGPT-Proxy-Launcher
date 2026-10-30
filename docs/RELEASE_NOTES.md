@@ -1,6 +1,6 @@
 ## Local Route Launcher 1.4.0 — multi-app profiles and a compact interface
 
-Development build / 开发测试版本。正式发布前须完成两端安装包验证。
+正式发布 / Stable release · 2026-10-30。
 
 ### 中文
 

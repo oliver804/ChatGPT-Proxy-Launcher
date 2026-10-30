@@ -12,12 +12,13 @@
   <b>简体中文</b> · <a href="README.en.md">English</a><br>
   <a href="https://oliver804.github.io/Local-Route-Launcher/">官网</a> ·
   <a href="https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0">下载安装</a> ·
+  <a href="https://oliver804.github.io/Local-Route-Launcher/blog/v1.4.0/">版本文章</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#常见问题">常见问题</a> ·
   <a href="https://github.com/oliver804/Local-Route-Launcher/issues">反馈问题</a>
 </p>
 
-> v1.4.0 开发测试版本，尚未正式发布。当前稳定版见 [v1.3.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.3.0)。
+> 当前稳定版：[v1.4.0](https://github.com/oliver804/Local-Route-Launcher/releases/tag/v1.4.0)。支持 ChatGPT、Antigravity App 和 Antigravity IDE 独立配置。
 
 ## Preview
 
@@ -60,6 +61,7 @@ Local Route Launcher 保存本地 HTTP 代理设置，并在启动兼容的 Elec
 - **连接检查**：查看代理连通性、实际启动参数和应用 TCP 连接。
 - **菜单栏 / 系统托盘**：随时启动、停止或查看状态；关闭主窗口后隐藏 Dock 或任务栏入口。
 - **原生界面**：支持浅色、深色外观；主窗口和菜单栏 / 托盘均可切换九种语言，支持跟随系统并记住选择，项目文档提供中英文。
+- **启动器更新提醒**：仅当 GitHub 上有适用于当前平台的稳定新版时显示入口，点击后在浏览器下载对应安装包。
 
 界面语言：简体中文、繁體中文、English、Русский、فارسی、Беларуская、Español、العربية、Português。
 
@@ -127,6 +129,20 @@ HTTP 403 只能说明隧道与 TLS 检查取得了响应，不代表聊天或账
 **Windows：**从托盘退出启动器，再运行新版安装包，原配置继续保留。
 
 **macOS：**从菜单栏退出旧启动器，再安装 **Local Route Launcher.app**。从 v1.0.0 升级时，确认新版本正常后移除旧启动器应用，避免同时运行两份。保留原偏好设置标识，因此原配置可继续使用，ChatGPT 无需停止。语言切换即时生效；macOS 自带菜单和系统对话框可能跟随系统语言。
+
+</details>
+
+<details>
+<summary><b>Antigravity App / IDE 如何使用？</b></summary>
+
+在左侧选择 Antigravity App 或 IDE，为各自保存代理地址、端口和安装路径，完全退出目标应用后再从启动器打开。两者与 ChatGPT 的配置互不影响。后台服务的连接观察需要在目标应用产生实际请求后再次检查。
+
+</details>
+
+<details>
+<summary><b>“有更新”何时出现？点击后会直接安装吗？</b></summary>
+
+仅当 GitHub 有高于当前版本的稳定版，且提供当前平台安装包时才出现。点击会在默认浏览器下载安装包；安装仍需自行完成。离线或无新版时不会打扰使用。
 
 </details>
 

@@ -1,6 +1,6 @@
 # Changelog / 更新日志
 
-## 1.4.0 — In development / 开发测试中
+## 1.4.0 — 2026-10-30
 
 - Apply the accepted compact layout: shared language/appearance/GitHub icons at the top right, original three-card content, two-line idle footer, and a compact menu/tray panel.
 - Check stable launcher releases at startup. Show an update badge only for a newer matching installer; clicking directly downloads it without an update popup. Preserve existing startup-check preferences.

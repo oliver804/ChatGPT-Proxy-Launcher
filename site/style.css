@@ -936,3 +936,16 @@ html[lang=en] .feature h3 {
 .platform-preview img { width: 100%; border-radius: 12px; }
 .platform-preview figcaption, .platform-preview>p { color: var(--muted); font-size: 13px; }
 @media(max-width:700px) { .platform-preview-grid { grid-template-columns: 1fr; } }
+
+/* 1.4.0 release article, shared by Chinese and English pages. */
+.article-page { max-width: 940px; padding-block: 70px 90px; }
+.article-page h1 { font-size: clamp(34px, 5vw, 58px); line-height: 1.18; margin: 20px 0; }
+.article-lead { color: var(--muted); font-size: 19px; line-height: 1.8; max-width: 760px; }
+.article-page figure { margin: 38px 0; padding: 20px; background: var(--deep); border-radius: 20px; text-align: center; }
+.article-page figure img { display: block; width: min(100%, 590px); height: auto; margin: auto; border-radius: 12px; }
+.article-page section { border-top: 1px solid var(--line); padding: 30px 0; }
+.article-page section h2 { margin: 0 0 18px; }
+.article-page li, .article-page section p { color: var(--muted); font-size: 17px; line-height: 1.85; margin-bottom: 8px; }
+.article-page a:not(.button) { color: var(--accent); }
+.article-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+@media(max-width:700px) { .article-page { padding-block: 42px 65px; } .article-page h1 { font-size: 34px; } .article-lead { font-size: 17px; } .article-page figure { padding: 12px; } }

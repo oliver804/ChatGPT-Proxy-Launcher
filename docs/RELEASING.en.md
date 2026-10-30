@@ -49,7 +49,7 @@ Update `VERSION`, README version/download examples, and `CHANGELOG.md`; review t
 
 ## Website (GitHub Pages)
 
-Website sources live in `site/`, with a Chinese homepage and an English page under `en/`. Run `make site` to build and check `build/site/`; preview locally with `python3 -m http.server 4173 --directory build/site`. The build copies only explicitly listed pages and reviewed images, never the repository root.
+Website sources live in `site/`, with Chinese and English homepages and release articles under `blog/`. Run `make site` to build and check `build/site/`; preview locally with `python3 -m http.server 4173 --directory build/site`. The build copies only explicitly listed pages and reviewed images, never the repository root.
 
 For the first deployment, a repository administrator must select **GitHub Actions** under **Settings → Pages → Build and deployment → Source**. Then push website changes, or use **Actions → Website → Run workflow**. The workflow checks both locales, assets, download versions, and privacy before deploying only the website files. Pull requests run build checks without deploying.
 
@@ -57,7 +57,7 @@ The website is hosted at `https://oliver804.github.io/Local-Route-Launcher/`, wi
 
 ### Search engines and sharing metadata
 
-The build generates `sitemap.xml` with both pages and reciprocal language links. Each page includes its own title, description, canonical URL, sharing preview, and software structured data. Update `softwareVersion` and `downloadUrl` when releasing a new version. Do not add unsubstantiated ratings or reviews; structured data does not guarantee search rich results.
+The build generates `sitemap.xml` with both homepages and both release articles, plus reciprocal language links. Each page includes its own title, description, canonical URL, sharing preview, and software structured data. Update `softwareVersion` and `downloadUrl` when releasing a new version. Do not add unsubstantiated ratings or reviews; structured data does not guarantee search rich results.
 
 Create a URL-prefix property with the full website URL in Google Search Console, and add the same site in Bing Webmaster Tools. Verify ownership with the public HTML verification tags supplied by each service, then submit `https://oliver804.github.io/Local-Route-Launcher/sitemap.xml`. Keep verification tags in place. They are not account passwords or API access tokens; never commit those credentials.
 

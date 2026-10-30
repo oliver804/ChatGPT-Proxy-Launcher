@@ -49,7 +49,7 @@ make verify
 
 ## 官网（GitHub Pages）
 
-官网源码位于 `site/`，包含中文首页与 `en/` 英文页面。运行 `make site` 生成并检查 `build/site/`；可用 `python3 -m http.server 4173 --directory build/site` 本地预览。构建只复制明确列出的网页和已审核图片，不发布仓库根目录。
+官网源码位于 `site/`，包含中英文首页及 `blog/` 下的双语版本文章。运行 `make site` 生成并检查 `build/site/`；可用 `python3 -m http.server 4173 --directory build/site` 本地预览。构建只复制明确列出的网页和已审核图片，不发布仓库根目录。
 
 首次部署需由仓库管理员在 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。随后推送网站修改，或在 **Actions → Website → Run workflow** 手动触发。工作流检查双语链接、资源、下载版本和隐私后，仅部署网站文件。PR 只构建检查，不部署。
 
@@ -57,7 +57,7 @@ make verify
 
 ### 搜索引擎与分享信息
 
-构建会生成 `sitemap.xml`，列出中英文页面及对应语言链接。两页包含独立的标题、描述、规范网址、分享预览和软件结构化数据；更新版本时同步其中的 `softwareVersion` 和 `downloadUrl`。不添加未经证实的评分或评论，结构化数据不代表一定获得搜索富媒体结果。
+构建会生成 `sitemap.xml`，列出中英文首页、双语版本文章及对应语言链接。两页包含独立的标题、描述、规范网址、分享预览和软件结构化数据；更新版本时同步其中的 `softwareVersion` 和 `downloadUrl`。不添加未经证实的评分或评论，结构化数据不代表一定获得搜索富媒体结果。
 
 在 Google Search Console 使用官网完整地址创建“网址前缀”资源，在 Bing Webmaster Tools 添加同一站点。使用各平台提供的公开 HTML 验证标签完成所有权验证，再提交 `https://oliver804.github.io/Local-Route-Launcher/sitemap.xml`。验证标签需要持续保留；它们不是账号密码或 API 访问令牌，后两者不得写入源码。
 

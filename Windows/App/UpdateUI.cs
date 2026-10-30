@@ -131,7 +131,7 @@ public sealed partial class MainWindow
         if (trayWindow == null) {
             trayWindow = new Window { Width = 420, SizeToContent = SizeToContent.Height, WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize,
                 ShowInTaskbar = false, Topmost = true, Icon = Icon };
-            trayWindow.Deactivated += (_, _) => { if (!trayWindow!.IsKeyboardFocusWithin) trayWindow.Hide(); };
+            trayWindow.Deactivated += (_, _) => { if (!quitting && trayWindow?.IsVisible == true && !trayWindow.IsKeyboardFocusWithin) trayWindow.Hide(); };
         }
         PopulateTrayPanel(); trayWindow.Show(); trayWindow.UpdateLayout();
         var area = SystemParameters.WorkArea;
